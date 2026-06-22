@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7x0: F1 Shift & Draft - Absolute Champions & AutoPlay</title>
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #1f2833;
+            --text-main: #c5c6c7;
+            --accent: #ff4545;
+            --zica-red: #ff4a4a;
+            --success-green: #2ecc71;
+            --warning-orange: #e67e22;
+            --gold: #f1c40f;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        header h1 { color: #fff; margin: 0; text-transform: uppercase; }
+        header h1 span { color: var(--zica-red); }
+
+        .screen { display: none; background: var(--card-bg); padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .active { display: block; }
+
+        h2 { color: #fff; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 0; }
+        
+        .draft-header-inline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        h3 { color: var(--accent); margin: 0; font-size: 1.1rem; }
+        
+        .btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+        .btn:hover { opacity: 0.9; transform: scale(1.02); }
+        .btn-gold { background: var(--gold); color: #000; }
+        .btn-zica { background: var(--zica-red); color: white; }
+        .btn-fast { background: var(--warning-orange); color: white; }
+        .btn-autoplay { background: #8e44ad; color: white; }
+        .btn-autoplay.active-ap { background: #2ecc71; color: black; animation: pulse 1.5s infinite; }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        .btn-reroll {
+            background: #2b3a4a;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+      .btn-reroll:hover:not(:disabled) { background: var(--accent); color: #000; }
+        .btn-reroll:disabled { opacity: 0.3; cursor: not-allowed; border-color: #555; color: #777; }
+                .btn-back {
+                        background: transparent;
+                        color: #fff;
+                        border: 1px solid #666;
+                        padding: 8px 14px;
+                        font-size: 0.85rem;
+                        font-weight: bold;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        transition: 0.2s;
+                }
+                .btn-back:hover { border-color: var(--accent); color: var(--accent); }
+
+        .draft-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .pilot-section {
+            margin-bottom: 16px;
+            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.18);
+        }
+        .pilot-section h4 {
+            margin: 0 0 10px 0;
+            color: var(--gold);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .pilot-section-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+        .card { background: rgba(0,0,0,0.4); padding: 14px; border-radius: 6px; border: 1px solid #444; cursor: pointer; transition: 0.15s; position: relative; }
+        .card:hover { border-color: var(--accent); background: rgba(69, 243, 255, 0.05); }
+        .card.selected { border-color: var(--success-green); background: rgba(46, 204, 113, 0.1); }
+        
+        .ovr-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #000;
+            color: var(--accent);
+            padding: 2px 6px;
+            font-weight: bold;
+            border-radius: 4px;
+            border: 1px solid var(--accent);
+            font-size: 0.85rem;
+        }
+        .ovr-gold { color: var(--gold); border-color: var(--gold); }
+        .rarity-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .rarity-common { background: rgba(255,255,255,0.08); color: #cfd8dc; }
+        .rarity-rare { background: rgba(69, 243, 255, 0.12); color: var(--accent); }
+        .rarity-epic { background: rgba(142, 68, 173, 0.16); color: #d7b4ff; }
+        .rarity-legendary { background: rgba(241, 196, 15, 0.16); color: var(--gold); }
+        .rarity-mythic { background: rgba(255, 74, 74, 0.16); color: #ffb3b3; }
+
+        .race-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        @media(max-width: 768px) { .race-grid { grid-template-columns: 1fr; } }
+
+        #race-log {
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 15px;
+            height: 380px;
+            overflow-y: auto;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+        .log-entry { margin-bottom: 8px; line-height: 1.4; border-left: 3px solid #555; padding-left: 8px; font-size: 0.9rem; }
+        .log-zica { color: var(--zica-red); font-weight: bold; border-left-color: var(--zica-red); }
+        .log-success { color: var(--success-green); border-left-color: var(--success-green); }
+
+        .table-container { background: #111; border: 1px solid #333; border-radius: 4px; height: 380px; overflow-y: auto; padding: 10px; }
+        .main-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .main-table th { background: #000; color: var(--accent); padding: 8px; text-align: left; position: sticky; top: 0; }
+        .main-table td { padding: 6px 8px; border-bottom: 1px solid #222; }
+        .main-table tr.player-row { background: rgba(46, 204, 113, 0.15); font-weight: bold; color: #fff; }
+        .main-table tr.player-row td:first-child { border-left: 4px solid var(--success-green); }
+
+        .status-bar { display: flex; justify-content: space-between; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 4px; margin-bottom: 20px; font-weight: bold; }
+        .summary-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #333; }
+        .mode-badge { background: var(--gold); color: #000; padding: 4px 8px; font-size: 0.8rem; font-weight: bold; border-radius: 4px; text-transform: uppercase; }
+        
+        #autoplay-countdown { color: var(--gold); font-weight: bold; font-size: 1.1rem; margin-top: 10px; text-align: center; min-height: 24px; }
+        .page-credit {
+            margin-top: 24px;
+            text-align: center;
+            color: #888;
+            font-size: 0.85rem;
+        }
+        .settings-panel {
+            max-width: 560px;
+            margin: 18px auto 0 auto;
+            padding: 14px 16px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.22);
+            text-align: left;
+        }
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .settings-row:first-child { border-top: none; }
+        .settings-row label { font-weight: bold; color: #fff; }
+        .settings-row small { display: block; color: #aaa; margin-top: 2px; font-weight: normal; }
+        .settings-toggle {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>7x0: <span>F1 Shift & Draft</span></h1>
+        <p>Edição Histórica OVR - Modo Campeões Absolutos</p>
+    </header>
+
+    <div id="screen-menu" class="screen active" style="text-align: center;">
+        <h2>Escolha o seu Modo de Jogo</h2>
+        <p>Simule ou dispute campeonatos completos compostos por 24 circuitos clássicos.</p>
+        <br>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <button class="btn" onclick="startNewGame('normal')">Modo Carreira Atual</button>
+            <button class="btn btn-gold" onclick="startNewGame('champions')">🏆 Apenas Campeões Mundiais (1950-Atuais)</button>
+        </div>
+
+        <div class="settings-panel">
+            <h3 style="margin-bottom: 8px;">Configurações</h3>
+            <div class="settings-row">
+                <div>
+                    <label for="setting-autoplay">Auto-Play sempre ligado</label>
+                    <small>Começa e continua com Auto-Play ativado por padrão.</small>
+                </div>
+                <input id="setting-autoplay" class="settings-toggle" type="checkbox" checked onchange="updateGameSettings()">
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-draft" class="screen">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <button class="btn-back" onclick="returnToMenuFromDraft()">← Voltar ao Menu</button>
+            <h2>Draft e Alinhamento Estrutural</h2>
+            <div id="game-mode-indicator"></div>
+        </div>
+        
+        <div style="background: rgba(230, 126, 34, 0.1); border: 1px solid var(--warning-orange); padding: 12px; border-radius: 6px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="color:var(--warning-orange); font-size: 0.9rem;">*Os contratos durarão todo o campeonato atual.</span>
+            <span style="font-weight: bold; color: #fff;">🔄 Rerolls: <span id="reroll-counter" style="color:var(--accent); font-size: 1.2rem;">3</span></span>
+        </div>
+        
+        <div class="draft-header-inline">
+            <h3 id="draft-chassis-title">1. Escolha a Equipe Base</h3>
+            <button class="btn-reroll" id="reroll-chassis" onclick="triggerSingleReroll('chassis')">🔄 Reroll Chassis</button>
+        </div>
+        <div class="draft-options" id="pool-chassis"></div>
+
+        <div class="draft-header-inline">
+            <h3 id="draft-motor-title">2. Escolha o Fornecedor de Motor</h3>
+            <button class="btn-reroll" id="reroll-motor" onclick="triggerSingleReroll('motor')">🔄 Reroll Motor</button>
+        </div>
+        <div class="draft-options" id="pool-motor"></div>
+
+        <div class="draft-header-inline">
+            <h3 id="draft-piloto-title">3. Escolha o Piloto 1</h3>
+            <button class="btn-reroll" id="reroll-piloto1" onclick="triggerSingleReroll('piloto1')">🔄 Reroll Piloto 1</button>
+        </div>
+        <div class="draft-options" id="pool-piloto1"></div>
+
+        <div class="draft-header-inline">
+            <h3>4. Escolha o Piloto 2 (Sem duplicata)</h3>
+            <button class="btn-reroll" id="reroll-piloto2" onclick="triggerSingleReroll('piloto2')">🔄 Reroll Piloto 2</button>
+        </div>
+        <div class="draft-options" id="pool-piloto2"></div>
+
+        <div class="summary-box" style="border-color: var(--accent); margin-top: 18px;">
+            <h3>Nome da equipe (opcional)</h3>
+            <p style="margin-top: 0; color: #aaa;">Se deixar em branco, o jogo usa "Sua Escuderia".</p>
+            <input id="team-name-input" type="text" placeholder="Ex: Team 7x0" oninput="updateTeamName()" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border-radius: 4px; border: 1px solid #444; background: #111; color: #fff; font-size: 1rem;">
+        </div>
+
+        <button class="btn" id="btn-confirm-draft" onclick="confirmDraftAndLaunch()" style="width: 100%; margin-top: 20px;">Assinar e Ir para o Grid ✍️</button>
+    </div>
+
+    <div id="screen-pre-race" class="screen">
+        <h2 id="pre-race-title">Próxima Etapa</h2>
+        <div class="summary-box">
+            <p>🏁 <b>Rodada:</b> <span id="pre-race-round">-</span></p>
+            <p>📏 <b>Total de Voltas:</b> <span id="pre-race-laps" style="color:var(--warning-orange)">-</span></p>
+            <p>🌍 <b>Estilo de Circuito:</b> <span id="pre-race-bioma" style="color:var(--accent)">-</span></p>
+            <p>📝 <b>Efeito de Pista:</b> <span id="pre-race-desc">-</span></p>
+        </div>
+        <div class="summary-box" style="border-color: var(--accent);">
+            <h3>Sua Estrutura Escolhida</h3>
+            <p>🏁 <b>Equipe:</b> <span id="fixed-team">-</span></p>
+            <p>🏎️ <b>Chassis:</b> <span id="fixed-chassis">-</span> | ⚡ <b>Motor:</b> <span id="fixed-motor">-</span></p>
+            <p>👤 <b>P1:</b> <span id="fixed-p1">-</span> | 👤 <b>P2:</b> <span id="fixed-p2">-</span></p>
+        </div>
+        <button class="btn" id="btn-start-race-manual" onclick="startRaceSim()" style="width: 100%;">Iniciar Fim de Semana de Corrida 🚦</button>
+    </div>
+
+    <div id="screen-race" class="screen">
+        <h2 id="race-title">Simulação em Tempo Real</h2>
+        <div class="status-bar">
+            <span>Seu P1: <span id="race-pos1" style="color:var(--accent)">-</span> | P2: <span id="race-pos2" style="color:var(--accent)">-</span></span>
+            <span>Voltas Restantes: <span id="race-lap">-</span></span>
+            <span>Corridas Restantes: <span id="race-remaining">-</span></span>
+        </div>
+
+        <div class="race-grid">
+            <div>
+                <h3>Telemetria e Rádio</h3>
+                <div id="race-log"></div>
+            </div>
+            <div>
+                <h3>Posições na Pista</h3>
+                <div class="table-container">
+                    <table class="main-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%">Pos</th>
+                                <th style="width: 45%">Piloto</th>
+                                <th style="width: 40%">Equipe</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="action-zone" style="text-align: center;">
+            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; gap: 15px;">
+                <span>Velocidade:</span>
+                <button class="btn" id="btn-speed" onclick="toggleSpeed()" style="padding: 6px 12px; font-size: 0.85rem; background: var(--text-main);">Normal</button>
+                <button class="btn btn-fast" onclick="skipRace()" style="padding: 6px 12px; font-size: 0.85rem;">⏩ Concluir Prova</button>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-zica" onclick="useZica('galvao')">🎙️ Zica do Galvão</button>
+                <button class="btn btn-zica" onclick="useZica('pitstop')">🔧 Sabotar Rivais</button>
+                <button class="btn btn-zica" onclick="useZica('ers')">⚡ Liberar ERS Extra</button>
+            </div>
+        </div>
+        
+        <div id="post-race-zone" style="text-align: center; margin-top: 20px; display: none;">
+            <button class="btn" onclick="showStandingsScreen()">Ver Classificações Globais</button>
+        </div>
+    </div>
+
+    <div id="screen-standings" class="screen">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2>Mundiais Classificatórios Globais</h2>
+            <button class="btn btn-autoplay" id="btn-toggle-autoplay" onclick="toggleAutoPlay()">Ligar Auto-Play 🤖</button>
+        </div>
+        
+        <div class="race-grid">
+            <div>
+                <h3>Campeonato de Pilotos (WDC)</h3>
+                <div class="table-container" style="height: 380px;">
+                    <table class="main-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%">Pos</th>
+                                <th style="width: 55%">Piloto</th>
+                                <th style="width: 30%">Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody id="driver-standings-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <h3>Campeonato de Construtores (WCC)</h3>
+                <div class="table-container" style="height: 380px;">
+                    <table class="main-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%">Pos</th>
+                                <th style="width: 55%">Equipe</th>
+                                <th style="width: 30%">Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody id="constructor-standings-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div id="autoplay-countdown"></div>
+        <button class="btn" id="btn-next-gp" onclick="goToNextGP()" style="width: 100%; margin-top: 10px;">Avançar Calendário</button>
+    </div>
+
+    <div id="screen-silly-season" class="screen">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2>Silly Season</h2>
+            <div class="mode-badge" style="background: var(--warning-orange); color: #000;">Apenas modo campeões</div>
+        </div>
+        <div class="summary-box">
+            <p>Escolha um piloto do seu time para trocar. Depois selecione o substituto entre os campeões disponíveis.</p>
+            <p id="silly-season-status" style="margin: 0; color: var(--accent); font-weight: bold;">Selecione o piloto a ser substituído.</p>
+        </div>
+
+        <div class="summary-box" style="border-color: var(--warning-orange);">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <div>
+                    <h3 style="margin-bottom: 4px;">3. Não trocar pilotos</h3>
+                    <small style="color:#aaa;">Mantém a dupla atual e pula a troca desta janela.</small>
+                </div>
+                <button class="btn btn-fast" onclick="skipSillySeason()">Manter minha dupla atual</button>
+            </div>
+        </div>
+
+        <div class="summary-box">
+            <h3>1. Seu piloto atual</h3>
+            <div class="draft-options" id="silly-current-driver-pool"></div>
+        </div>
+
+        <div class="summary-box">
+            <h3>2. Substitutos disponíveis</h3>
+            <div class="draft-options" id="silly-replacement-pool"></div>
+        </div>
+
+        <button class="btn" id="btn-continue-after-silly" onclick="continueAfterSillySeason()" style="width: 100%; margin-top: 10px;">Confirmar troca e seguir para a próxima corrida</button>
+    </div>
+
+    <div class="page-credit">Feito por FelipeGamerbr48</div>
+</div>
+
+<script>
+    let modoJogo = 'normal';
+    let autoPlayAtivo = false;
+    let autoPlayTimer = null;
+
+    const gps = [
+        { nome: "GP do Bahrein (Sakhir)", bioma: "Equilibrado", voltas: 31, desc: "Asfalto abrasivo pune tração traseira." },
+        { nome: "GP da Arábia Saudita (Jeddah)", bioma: "Velocidade", voltas: 28, desc: "Muros colados a mais de 250 km/h." },
+        { nome: "GP da Austrália (Melbourne)", bioma: "Confiabilidade", voltas: 32, desc: "Zonas de DRS consecutivas estressam motores." },
+        { nome: "GP do Japão (Suzuka)", bioma: "Equilibrado", voltas: 30, desc: "O traçado em '8' exige estabilidade de ponta." },
+        { nome: "GP da China (Xangai)", bioma: "Velocidade", voltas: 31, desc: "A colossal reta de 1.2km exige motor linear forte." },
+        { nome: "GP de Miami", bioma: "Rua", voltas: 31, desc: "Pista semi-permanente rápida de rua ao redor do estádio." },
+        { nome: "GP da Emília-Romanha (Imola)", bioma: "Equilibrado", voltas: 35, desc: "Zebras agressivas clássicas da velha guarda." },
+        { nome: "GP de Mônaco", bioma: "Rua", voltas: 39, desc: "Muros microscópicos onde a classificação define tudo." },
+        { nome: "GP do Canadá (Montreal)", bioma: "Confiabilidade", voltas: 38, desc: "Frenagens brutais e o famoso Muro dos Campeões." },
+        { nome: "GP da Espanha (Barcelona)", bioma: "Equilibrado", voltas: 36, desc: "Revela a verdadeira força aerodinâmica geral." },
+        { nome: "GP da Áustria (Spielberg)", bioma: "Velocidade", voltas: 40, desc: "Zonas severas de subidas de alta rotação mecânica." },
+        { nome: "GP da Inglaterra (Silverstone)", bioma: "Velocidade", voltas: 29, desc: "Curvas históricas rápidas de altíssima energia." },
+        { nome: "GP da Hungria (Hungaroring)", bioma: "Rua", voltas: 38, desc: "Travado e sinuoso, sem momentos para respirar." },
+        { nome: "GP da Bélgica (Spa-Francorchamps)", bioma: "Velocidade", voltas: 24, desc: "A mística subida da Eau Rouge com clima instável." },
+        { nome: "GP da Holanda (Zandvoort)", bioma: "Equilibrado", voltas: 39, desc: "Curvas ovais inclinadas altamente técnicas." },
+        { nome: "GP da Itália (Monza)", bioma: "Velocidade", voltas: 29, desc: "O templo sagrado clássico de velocidade de ponta." },
+        { nome: "GP do Azerbaijão (Baku)", bioma: "Rua", voltas: 28, desc: "Setor ultra-estreito com monumental reta de 2km." },
+        { nome: "GP de Singapura (Marina Bay)", bioma: "Rua", voltas: 33, desc: "Calor insuportável e umidade extrema exaustiva." },
+        { nome: "GP dos Estados Unidos (Austin)", bioma: "Equilibrado", voltas: 31, desc: "Ondulações severas no relevo castigam o assoalho." },
+        { nome: "GP do México", bioma: "Confiabilidade", voltas: 38, desc: "Altitude de 2.200m que sufoca a refrigeração mecânica." },
+        { nome: "GP de São Paulo (Interlagos)", bioma: "Equilibrado", voltas: 39, desc: "Clima imprevisível e subida dos boxes mística." },
+        { nome: "GP de Las Vegas", bioma: "Velocidade", voltas: 28, desc: "Madrugada fria no deserto com baixa aderência inicial." },
+        { nome: "GP do Catar (Lusail)", bioma: "Equilibrado", voltas: 31, desc: "Forças G colossais laterais sacrificam os pneus." },
+        { nome: "GP de Abu Dhabi (Yas Marina)", bioma: "Decisão", voltas: 32, desc: "A grande final sob as luzes artificiais do crepúsculo." }
+    ];
+
+    const gpsCampeoes = [
+        { nome: "Adelaide", bioma: "Rua", voltas: 61, desc: "Clássica australiana de rua, rápida e traiçoeira nas disputas." },
+        { nome: "Aida", bioma: "Equilibrado", voltas: 50, desc: "Circuito técnico japonês com ritmo constante e pouco erro permitido." },
+        { nome: "Ain-Diab", bioma: "Confiabilidade", voltas: 48, desc: "Traçado antigo e exigente, com trecho rápido e desgaste alto." },
+        { nome: "Aintree", bioma: "Velocidade", voltas: 58, desc: "Layout britânico clássico que recompensa eficiência e velocidade de ponta." },
+        { nome: "Anderstorp", bioma: "Equilibrado", voltas: 55, desc: "Pista sueca de ritmo fluido e boa tração em saídas de curva." },
+        { nome: "Austin", bioma: "Equilibrado", voltas: 56, desc: "Circuito completo, com mudanças de direção rápidas e bom desgaste." },
+        { nome: "AVUS", bioma: "Velocidade", voltas: 45, desc: "Retas brutais e pouquíssima margem para errar em alta velocidade." },
+        { nome: "Bacu", bioma: "Rua", voltas: 51, desc: "Trecho estreito e reta gigantesca: equilíbrio perfeito é tudo." },
+        { nome: "Barcelona", bioma: "Equilibrado", voltas: 66, desc: "Boa pista para medir o pacote completo do carro." },
+        { nome: "Brands Hatch", bioma: "Velocidade", voltas: 60, desc: "Curvas rápidas e fluídas exigem coragem e carro muito bem acertado." },
+        { nome: "Bremgarten", bioma: "Confiabilidade", voltas: 54, desc: "Clássico antigo de alta velocidade e muita exigência mecânica." },
+        { nome: "Buenos Aires", bioma: "Equilibrado", voltas: 61, desc: "Pista argentina de luta constante e freadas pesadas." },
+        { nome: "Caesars Palace", bioma: "Rua", voltas: 50, desc: "Circuito de estacionamento com aderência baixa e pouca margem de erro." },
+        { nome: "Cidade do México", bioma: "Confiabilidade", voltas: 71, desc: "Altitude extrema que pune motor, freios e refrigeração." },
+        { nome: "Clermont-Ferrand", bioma: "Equilibrado", voltas: 52, desc: "Traçado técnico francês com curvas longas e ritmo metódico." },
+        { nome: "Dallas", bioma: "Confiabilidade", voltas: 47, desc: "Asfalto quente e alto desgaste exigem muito do conjunto mecânico." },
+        { nome: "Detroit", bioma: "Rua", voltas: 57, desc: "Bumpiness, muros e frenagens curtas tornam a corrida bem física." },
+        { nome: "Dijon-Prenois", bioma: "Velocidade", voltas: 53, desc: "Curvas rápidas e mudanças de direção premiam carros soltos." },
+        { nome: "Donington", bioma: "Velocidade", voltas: 64, desc: "Circuito britânico de fluidez alta e ritmo muito agressivo." },
+        { nome: "East London", bioma: "Equilibrado", voltas: 45, desc: "Traçado sul-africano de velha escola com trechos rápidos e técnicos." },
+        { nome: "Estoril", bioma: "Equilibrado", voltas: 59, desc: "Pista portuguesa versátil, boa para testar carro e piloto por inteiro." },
+        { nome: "Fuji", bioma: "Velocidade", voltas: 67, desc: "Retas longas e trecho técnico que pede boa entrega de potência." },
+        { nome: "Gidá", bioma: "Velocidade", voltas: 50, desc: "Muros próximos e altíssima velocidade punem qualquer erro." },
+        { nome: "Hockenheim", bioma: "Velocidade", voltas: 67, desc: "Mistura de retas longas e áreas técnicas de aceleração intensa." },
+        { nome: "Hungaroring", bioma: "Rua", voltas: 70, desc: "Travada, técnica e muito difícil de ultrapassar." },
+        { nome: "Imola", bioma: "Equilibrado", voltas: 63, desc: "Clássica, rápida e punitiva com zebras e limites de pista." },
+        { nome: "Indianapolis", bioma: "Velocidade", voltas: 73, desc: "Ritmo forte, curvas amplas e muita demanda de eficiência." },
+        { nome: "Interlagos", bioma: "Equilibrado", voltas: 71, desc: "Clima imprevisível e pista histórica de grandes viradas." },
+        { nome: "Istambul", bioma: "Equilibrado", voltas: 58, desc: "Mudanças de apoio e curvas longas desafiam o acerto ideal." },
+        { nome: "Jacarepagua", bioma: "Equilibrado", voltas: 61, desc: "Traçado brasileiro clássico com fluidez e trechos de alta pressão." },
+        { nome: "Jarama", bioma: "Rua", voltas: 54, desc: "Pista espanhola compacta, curta e com pouco espaço para escapar." },
+        { nome: "Jerez de la Frontera", bioma: "Equilibrado", voltas: 62, desc: "Boa para medir aderência e consistência em ritmo de corrida." },
+        { nome: "Kuala Lumpur", bioma: "Confiabilidade", voltas: 56, desc: "Calor e umidade castigam pneus, freios e sistema térmico." },
+        { nome: "Kyalami", bioma: "Velocidade", voltas: 69, desc: "Subidas e trechos rápidos fazem a diferença na potência pura." },
+        { nome: "Las Vegas", bioma: "Velocidade", voltas: 50, desc: "Noite fria, baixa aderência e muita precisão de aceleração." },
+        { nome: "Le Castellet", bioma: "Equilibrado", voltas: 53, desc: "Traçado de curvas amplas que premia estabilidade aerodinâmica." },
+        { nome: "Le Mans", bioma: "Velocidade", voltas: 60, desc: "Longas retas e zona rápida favorecem velocidade e consumo controlado." },
+        { nome: "Long Beach", bioma: "Rua", voltas: 59, desc: "Rua estreita, muro perto e corrida de precisão absoluta." },
+        { nome: "Lusail", bioma: "Equilibrado", voltas: 57, desc: "As curvas longas testam pneus e constância de ritmo." },
+        { nome: "Magny-Cours", bioma: "Equilibrado", voltas: 61, desc: "Circuito francês técnico e equilibrado, sem espaço para relaxar." },
+        { nome: "Melbourne", bioma: "Confiabilidade", voltas: 58, desc: "Abertura clássica que cobra consistência e adaptação imediata." },
+        { nome: "Miami", bioma: "Rua", voltas: 57, desc: "Semiurbana, rápida e cheia de armadilhas para o erro." },
+        { nome: "Monaco", bioma: "Rua", voltas: 78, desc: "Muros apertados onde classificar bem vale ouro puro." },
+        { nome: "Monsanto", bioma: "Velocidade", voltas: 46, desc: "Traçado português histórico de ritmo agressivo e boa coragem." },
+        { nome: "Mont-Tremblant", bioma: "Equilibrado", voltas: 64, desc: "Pista canadense de técnica e fluidez em terreno variado." },
+        { nome: "Montjuïc Park", bioma: "Rua", voltas: 53, desc: "Pista espanhola antiga com curvas de risco e pouca margem de erro." },
+        { nome: "Montreal", bioma: "Confiabilidade", voltas: 70, desc: "Frenagens fortes e o Muro dos Campeões sempre ameaçando." },
+        { nome: "Monza", bioma: "Velocidade", voltas: 53, desc: "O templo da velocidade pura e da eficiência aerodinâmica." },
+        { nome: "Mosport Park", bioma: "Velocidade", voltas: 62, desc: "Curvas rápidas e terreno fluido que favorecem coragem e controle." },
+        { nome: "Mugello", bioma: "Equilibrado", voltas: 59, desc: "Sequência de curvas rápidas e ritmo técnico muito forte." },
+        { nome: "Nivelles", bioma: "Confiabilidade", voltas: 48, desc: "Layout antigo e exigente, onde estabilidade é essencial." },
+        { nome: "Nova Deli", bioma: "Confiabilidade", voltas: 58, desc: "Calor e forte exigência mecânica em uma pista de ritmo pesado." },
+        { nome: "Nürburgring", bioma: "Equilibrado", voltas: 67, desc: "Traçado lendário de alta complexidade e adaptação constante." },
+        { nome: "Österreichring", bioma: "Velocidade", voltas: 54, desc: "Subidas rápidas e curvas longas valorizam potência e coragem." },
+        { nome: "Pedralbes", bioma: "Velocidade", voltas: 45, desc: "Antiga pista espanhola com velocidade alta e pouca tolerância a erros." },
+        { nome: "Pescara", bioma: "Velocidade", voltas: 52, desc: "Longo, rápido e clássico, exige compromisso máximo em alta velocidade." },
+        { nome: "Phoenix", bioma: "Confiabilidade", voltas: 51, desc: "Calor e desgaste cobram muito da parte mecânica do carro." },
+        { nome: "Portimão", bioma: "Equilibrado", voltas: 60, desc: "Ondulações e variação de altitude testam equilíbrio geral." },
+        { nome: "Porto", bioma: "Rua", voltas: 47, desc: "Trecho de rua apertado com curva curta e muita precisão." },
+        { nome: "Reims", bioma: "Velocidade", voltas: 55, desc: "Alta velocidade linear e traçado clássico de muito fluxo." },
+        { nome: "Riverside", bioma: "Velocidade", voltas: 68, desc: "Longo e rápido, favorece quem tem boa eficiência em retas." },
+        { nome: "Rouen-les-Essarts", bioma: "Equilibrado", voltas: 54, desc: "Trecho técnico e rápido em meio a mudanças de direção." },
+        { nome: "Sakhir", bioma: "Equilibrado", voltas: 31, desc: "O deserto exige tração limpa e leitura precisa dos pneus." },
+        { nome: "Sebring", bioma: "Confiabilidade", voltas: 49, desc: "Asfalto irregular e desgaste alto punem qualquer desequilíbrio." },
+        { nome: "Silverstone", bioma: "Velocidade", voltas: 52, desc: "Alta energia e curvas históricas de muito compromisso." },
+        { nome: "Singapura", bioma: "Rua", voltas: 62, desc: "Calor, umidade e corrida mental do começo ao fim." },
+        { nome: "Sóchi", bioma: "Equilibrado", voltas: 53, desc: "Misto de retas e curvas que pede acerto bem balanceado." },
+        { nome: "Spa-Francorchamps", bioma: "Velocidade", voltas: 44, desc: "Clima instável e a Eau Rouge cobram coragem total." },
+        { nome: "Spielberg", bioma: "Velocidade", voltas: 71, desc: "Subidas e freadas curtas favorecem potência e tração." },
+        { nome: "Suzuka", bioma: "Equilibrado", voltas: 53, desc: "O traçado em 8 premia equilíbrio e técnica cirúrgica." },
+        { nome: "Valência", bioma: "Rua", voltas: 57, desc: "Pista de rua técnica com pouca margem para erro de pilotagem." },
+        { nome: "Watkins Glen", bioma: "Equilibrado", voltas: 60, desc: "Clássica e fluida, exige confiança nas transições rápidas." },
+        { nome: "Xangai", bioma: "Velocidade", voltas: 56, desc: "A longa reta e o setor sinuoso testam motor e desgaste." },
+        { nome: "Yas Marina", bioma: "Decisão", voltas: 58, desc: "Final sob as luzes, onde estratégia pesa tanto quanto ritmo." },
+        { nome: "Yeongam", bioma: "Equilibrado", voltas: 55, desc: "Pista coreana com técnica, ritmo e disputa de acerto fino." },
+        { nome: "Zandvoort", bioma: "Equilibrado", voltas: 72, desc: "Curvas inclinadas e ritmo constante em alta pressão." },
+        { nome: "Zeltweg", bioma: "Velocidade", voltas: 49, desc: "Layout austríaco curto e veloz, com foco em tração e motor." },
+        { nome: "Zolder", bioma: "Equilibrado", voltas: 57, desc: "Circuito belga compacto e técnico, bom para corrida agressiva." }
+    ];
+
+    const equipesNormais = [
+        { nome: "Mercedes", ovr: 98, desc: "Eficiência aerodinâmica perfeita e excelente estabilidade." },
+        { nome: "Ferrari", ovr: 95, desc: "Mecânica refinada com tração incomparável." },
+        { nome: "McLaren", ovr: 93, desc: "Chassis equilibrado, muito gentil com os pneus." },
+        { nome: "Red Bull", ovr: 90, desc: "Excelente eficiência de arrasto aerodinâmico." },
+        { nome: "Alpine", ovr: 84, desc: "Projeto intermediário com picos eficientes." },
+        { nome: "Haas", ovr: 78, desc: "Boa velocidade máxima em retas." },
+        { nome: "Williams", ovr: 75, desc: "Chassis minimalista otimizado para arrasto reduzido." }
+    ];
+
+    const equipesCampeãs = [
+        { nome: "Ferrari", ovr: 99, titulos: 16, desc: "Maior campeã da F1, com tradição absoluta e presença em todas as eras." },
+        { nome: "McLaren", ovr: 97, titulos: 10, desc: "Referência de eficiência, inovação e vitórias em múltiplas gerações." },
+        { nome: "Williams", ovr: 95, titulos: 9, desc: "Potência britânica clássica, forte em engenharia e consistência histórica." },
+        { nome: "Mercedes", ovr: 94, titulos: 8, desc: "Dominante na era moderna, com combinação de força e refinamento técnico." },
+        { nome: "Lotus", ovr: 92, titulos: 7, desc: "Inovação lendária e leveza técnica que marcaram época na categoria." },
+        { nome: "Red Bull", ovr: 91, titulos: 6, desc: "Aerodinâmica agressiva e performance de ponta na era contemporânea." },
+        { nome: "Cooper", ovr: 84, titulos: 2, desc: "Pioneira em soluções simples e eficientes, com forte legado histórico." },
+        { nome: "Brabham", ovr: 83, titulos: 2, desc: "Equipe clássica britânica, lembrada pela competitividade e inovação." },
+        { nome: "Renault", ovr: 82, titulos: 2, desc: "Projeto francês técnico e eficiente, importante em várias fases da F1." },
+        { nome: "Vanwall", ovr: 81, titulos: 1, desc: "Nome histórico que ajudou a construir a base competitiva da categoria." },
+        { nome: "BRM", ovr: 80, titulos: 1, desc: "Marca britânica tradicional, símbolo de perseverança e engenharia clássica." },
+        { nome: "Matra", ovr: 79, titulos: 1, desc: "Equipe francesa com identidade forte e passagem marcante pela F1." },
+        { nome: "Tyrrell", ovr: 78, titulos: 1, desc: "Equipe icônica, associada a soluções criativas e muita personalidade." },
+        { nome: "Benetton", ovr: 77, titulos: 1, desc: "Equipe de era moderna, competitiva e importante na história recente da F1." },
+        { nome: "Brawn GP", ovr: 96, titulos: 1, desc: "O maior conto de fadas da F1, campeã em uma temporada histórica." }
+    ];
+
+    const motoresNormais = [
+        { nome: "Mercedes Híbrido", ovr: 96, desc: "A referência em potência e eficiência do grid de 2026." },
+        { nome: "Ferrari Power Unit", ovr: 95, desc: "Tecnologia de Maranello com torque e performance de ponta." },
+        { nome: "Red Bull-Ford Powertrains", ovr: 93, desc: "A nova força da Red Bull com suporte técnico da Ford." },
+        { nome: "Honda Híbrido", ovr: 94, desc: "Excelência japonesa com foco em durabilidade e energia." },
+        { nome: "Audi Power Unit", ovr: 92, desc: "A estreia histórica da marca alemã na categoria." }
+    ];
+
+    const motoresCampeões = [
+        { nome: "Ferrari", ovr: 99, titulos: 16, desc: "O motor mais vitorioso da história, símbolo máximo de tradição e potência." },
+        { nome: "Mercedes", ovr: 98, titulos: 12, desc: "Referência de eficiência híbrida e força técnica em múltiplas eras." },
+        { nome: "Renault", ovr: 96, titulos: 12, desc: "Engenharia francesa decisiva em vários ciclos vencedores da categoria." },
+        { nome: "Ford Cosworth", ovr: 95, titulos: 10, desc: "O bloco clássico que moldou a F1 moderna com equilíbrio e robustez." },
+        { nome: "Honda", ovr: 93, titulos: 6, desc: "Potência japonesa precisa, forte em desempenho e confiabilidade." },
+        { nome: "Climax", ovr: 91, titulos: 4, desc: "Motor clássico britânico que marcou o início da era vitoriosa dos independentes." },
+        { nome: "Repco", ovr: 89, titulos: 2, desc: "Unidade australiana histórica, simples, leve e muito eficaz na época certa." },
+        { nome: "TAG Porsche", ovr: 88, titulos: 2, desc: "Projeto alemão de alta eficiência, lembrado pela força e consistência." },
+        { nome: "Vanwall", ovr: 86, titulos: 1, desc: "Um dos pioneiros vencedores da F1, com identidade técnica muito própria." },
+        { nome: "BRM", ovr: 85, titulos: 1, desc: "Projeto britânico clássico, importante na evolução técnica da categoria." },
+        { nome: "RBPT", ovr: 94, titulos: 1, desc: "A força moderna da Red Bull, agressiva e competitiva na era atual." },
+        { nome: "Honda RBPT", ovr: 92, titulos: 1, desc: "Combinação moderna de engenharia japonesa e operação de ponta no grid." }
+    ];
+
+    // O Universo Completo de Pilotos Mapeado
+    const pilotos2026 = [
+        // Campeões Mundiais (OVR >= 90)
+        { nome: "Max Verstappen", ovr: 97, inicio: 2015, campeao: true, desc: "Converte ritmo puro em domínio total e raramente desperdiça uma chance de vitória." },
+        { nome: "Lewis Hamilton", ovr: 98, inicio: 2007, campeao: true, desc: "Referência de consistência, leitura de corrida e velocidade de elite em qualquer cenário." },
+        { nome: "Fernando Alonso", ovr: 95, inicio: 2001, campeao: true, desc: "Veterano agressivo e inteligente, sempre perigoso em estratégia e no duelo direto." },
+
+        // Grid Atual 2026 (Baseado em desempenho e potencial)
+        { nome: "Lando Norris", ovr: 90, inicio: 2019, campeao: true, desc: "Rápido, leve nos pneus e muito forte quando a corrida pede coragem nas ultrapassagens." },
+        { nome: "Charles Leclerc", ovr: 89, inicio: 2018, campeao: false, desc: "Explosivo em volta lançada e preciso quando o carro responde ao limite." },
+        { nome: "George Russell", ovr: 88, inicio: 2019, campeao: false, desc: "Método, frieza e boa leitura tática para extrair resultados consistentes." },
+        { nome: "Oscar Piastri", ovr: 88, inicio: 2023, campeao: false, desc: "Jovem e calculista, combina maturidade de corrida com crescimento acelerado." },
+        { nome: "Carlos Sainz", ovr: 87, inicio: 2015, campeao: false, desc: "Piloto completo, técnico e confiável em qualquer tipo de pista." },
+        { nome: "Alexander Albon", ovr: 85, inicio: 2019, campeao: false, desc: "Evoluiu muito em ritmo e costuma brilhar em corridas de recuperação." },
+        { nome: "Pierre Gasly", ovr: 84, inicio: 2017, campeao: false, desc: "Bom em aproveitar oportunidades e perigoso quando o carro encaixa." },
+        { nome: "Nico Hülkenberg", ovr: 84, inicio: 2010, campeao: false, desc: "Experiente, sólido e sempre pronto para surpreender com eficiência." },
+        { nome: "Esteban Ocon", ovr: 83, inicio: 2016, campeao: false, desc: "Resistente em disputas apertadas e forte em corridas físicas e longas." },
+        { nome: "Valtteri Bottas", ovr: 82, inicio: 2013, campeao: false, desc: "Ritmo limpo, boa largada e postura confiável para pontuar com regularidade." },
+        { nome: "Sergio Pérez", ovr: 82, inicio: 2011, campeao: false, desc: "Especialista em pneus e em corridas de paciência, com talento no caos." },
+        { nome: "Lance Stroll", ovr: 80, inicio: 2017, campeao: false, desc: "Pode oscilar, mas às vezes entrega corridas muito fortes em condições difíceis." },
+        { nome: "Gabriel Bortoleto", ovr: 80, inicio: 2025, campeao: false, desc: "Promessa brasileira com crescimento rápido e mentalidade de aprendizado constante." },
+        { nome: "Liam Lawson", ovr: 79, inicio: 2023, campeao: false, desc: "Competitivo, agressivo e com perfil de quem aproveita bem uma chance grande." },
+        { nome: "Andrea Kimi Antonelli", ovr: 79, inicio: 2025, campeao: false, desc: "Talento precoce com projeção alta e muita velocidade natural." },
+        { nome: "Oliver Bearman", ovr: 78, inicio: 2024, campeao: false, desc: "Jovem de resposta rápida, bom em adaptar o estilo ao que a corrida exige." },
+        { nome: "Franco Colapinto", ovr: 78, inicio: 2024, campeao: false, desc: "Briga forte, não se intimida e costuma crescer sob pressão." },
+        { nome: "Isack Hadjar", ovr: 77, inicio: 2026, campeao: false, desc: "Agressivo e técnico, com potencial para surpreender em ritmo de classificação." },
+        { nome: "Arvid Lindblad", ovr: 77, inicio: 2026, campeao: false, desc: "Nova geração com velocidade limpa e fome de evolução rápida." }
+    ];
+const pilotosHistoricos = [
+    { nome: "Michael Schumacher", ovr: 99, inicio: 1991, campeao: true, desc: "Domínio cirúrgico, mentalidade vencedora e pressão constante sobre qualquer rival." },
+    { nome: "Ayrton Senna", ovr: 99, inicio: 1984, campeao: true, desc: "Intensidade máxima, precisão absurda e velocidade que mudava corridas sozinho." },
+    { nome: "Juan Manuel Fangio", ovr: 98, inicio: 1950, campeao: true, desc: "Elegância, controle e uma taxa de aproveitamento quase lendária para sua era." },
+    { nome: "Jim Clark", ovr: 96, inicio: 1960, campeao: true, desc: "Naturalidade impressionante ao volante, com calma e ritmo acima da média." },
+    { nome: "Niki Lauda", ovr: 95, inicio: 1971, campeao: true, desc: "Racional, preciso e extremamente forte na leitura técnica da corrida." },
+    { nome: "Jackie Stewart", ovr: 94, inicio: 1965, campeao: true, desc: "Pioneiro na consistência e um dos grandes nomes da inteligência de corrida." },
+    { nome: "Emerson Fittipaldi", ovr: 92, inicio: 1970, campeao: true, desc: "Representante da técnica brasileira com versatilidade e sangue competitivo." }
+];
+
+    const todosPilotosMapeados = [...pilotos2026, ...pilotosHistoricos];
+
+    const tabelaPontos = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+
+    let currentGP = 0;
+    let selectedDraft = { chassis: null, motor: null, piloto1: null, piloto2: null };
+    let laps = 0;
+    let maxLapsThisRace = 0;
+    let raceInterval;
+    let zicaUsed = false;
+    let simSpeed = 2000;
+    let gridCorrida = [];
+    let rerollsRestantes = 3;
+    let sillySeasonDriverSlot = null;
+    let sillySeasonReplacement = null;
+    let sillySeasonCount = 0;
+    let teamName = '';
+    let fixedTeamName = 'Sua Escuderia';
+    let gameSettings = {
+        autoplayAlwaysOn: true
+    };
+
+    let pontosPilotos = {};
+    let pontosConstrutores = {};
+
+    function getRandomSubarray(arr, size) {
+        let shuffled = arr.slice(0), i = arr.length, temp, index;
+        while (i--) {
+            index = Math.floor((i + 1) * Math.random());
+            temp = shuffled[index];
+            shuffled[index] = shuffled[i];
+            shuffled[i] = temp;
+        }
+        return shuffled.slice(0, size);
+    }
+
+    function getCurrentGpList() {
+        return (modoJogo === 'champions') ? gpsCampeoes : gps;
+    }
+
+    function getTeamDisplayName() {
+        return fixedTeamName;
+    }
+
+    function getRemainingRacesCount() {
+        return Math.max(0, getCurrentGpList().length - currentGP - 1);
+    }
+
+    function updateTeamName() {
+        teamName = document.getElementById('team-name-input').value;
+    }
+
+    function getRarityFromOvr(ovr) {
+        if (ovr >= 98) return { label: 'Mítico', className: 'rarity-mythic' };
+        if (ovr >= 94) return { label: 'Lendário', className: 'rarity-legendary' };
+        if (ovr >= 88) return { label: 'Épico', className: 'rarity-epic' };
+        if (ovr >= 82) return { label: 'Raro', className: 'rarity-rare' };
+        return { label: 'Comum', className: 'rarity-common' };
+    }
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function updateGameSettings() {
+        gameSettings.autoplayAlwaysOn = document.getElementById('setting-autoplay').checked;
+    }
+
+    function startNewGame(modo) {
+        modoJogo = modo;
+        currentGP = 0;
+        rerollsRestantes = 3;
+        sillySeasonCount = 0;
+        teamName = '';
+        fixedTeamName = 'Sua Escuderia';
+        autoPlayAtivo = gameSettings.autoplayAlwaysOn;
+        if(autoPlayTimer) clearTimeout(autoPlayTimer);
+        document.getElementById('autoplay-countdown').innerText = "";
+        
+        const btnAp = document.getElementById('btn-toggle-autoplay');
+        if (autoPlayAtivo) {
+            btnAp.classList.add('active-ap');
+            btnAp.innerText = "Auto-Play Ligado 🤖";
+        } else {
+            btnAp.classList.remove('active-ap');
+            btnAp.innerText = "Ligar Auto-Play 🤖";
+        }
+
+        document.getElementById('reroll-counter').innerText = rerollsRestantes;
+        
+        const badgeContainer = document.getElementById('game-mode-indicator');
+        const chassisTitle = document.getElementById('draft-chassis-title');
+        const motorTitle = document.getElementById('draft-motor-title');
+        const pilotoTitle = document.getElementById('draft-piloto-title');
+        
+        // FILTRO ABSOLUTO: Se for modo campeões, filtra o banco de dados permitindo APENAS quem tem campeao = true
+        let universoPilotosFiltrados = getPilotosBase();
+        if (modoJogo === 'champions') {
+            badgeContainer.innerHTML = `<span class="mode-badge">🏆 Campeões Mundiais Apenas</span>`;
+            chassisTitle.innerText = "1. Escolha a Equipe Base (Mundiais Históricos)";
+            motorTitle.innerText = "2. Escolha o Motor (Títulos de Construtores)";
+            pilotoTitle.innerText = "3. Escolha o Piloto (Apenas Campeões da F1)";
+        } else {
+            badgeContainer.innerHTML = `<span class="mode-badge" style="background:#555; color:#fff">Carreira Normal</span>`;
+            chassisTitle.innerText = "1. Escolha a Equipe Base (Chassis Atual)";
+            motorTitle.innerText = "2. Escolha o Fornecedor de Motor Atual";
+            pilotoTitle.innerText = "3. Escolha o Piloto Atual";
+        }
+
+        pontosPilotos = {};
+        universoPilotosFiltrados.forEach(p => { pontosPilotos[p.nome] = 0; });
+        
+        pontosConstrutores = {};
+        const listaEquipesUniverso = (modoJogo === 'champions') ? equipesCampeãs : equipesNormais;
+        listaEquipesUniverso.forEach(e => { pontosConstrutores[e.nome] = 0; });
+        pontosConstrutores[fixedTeamName] = 0;
+
+        updateRerollButtons();
+        triggerInitialDraft();
+    }
+
+    function triggerInitialDraft() {
+        showScreen('screen-draft');
+        selectedDraft = { chassis: null, motor: null, piloto1: null, piloto2: null };
+        const teamInput = document.getElementById('team-name-input');
+        if (teamInput) teamInput.value = teamName;
+
+        generatePool('chassis');
+        generatePool('motor');
+        generatePool('piloto1');
+        generatePool('piloto2');
+    }
+
+    function returnToMenuFromDraft() {
+        selectedDraft = { chassis: null, motor: null, piloto1: null, piloto2: null };
+        showScreen('screen-menu');
+    }
+
+    function openSillySeasonScreen() {
+        sillySeasonCount++;
+        sillySeasonDriverSlot = null;
+        sillySeasonReplacement = null;
+        showScreen('screen-silly-season');
+        renderSillySeasonScreen();
+    }
+
+    function renderSillySeasonScreen() {
+        const currentPool = document.getElementById('silly-current-driver-pool');
+        const replacementPool = document.getElementById('silly-replacement-pool');
+        const status = document.getElementById('silly-season-status');
+        const continueBtn = document.getElementById('btn-continue-after-silly');
+        const mythicsLiberados = sillySeasonCount >= 3 || modoJogo !== 'champions';
+
+        currentPool.innerHTML = '';
+        replacementPool.innerHTML = '';
+        status.innerText = mythicsLiberados
+            ? 'Selecione o piloto a ser substituído.'
+            : 'Pilotos Míticos serão liberados a partir da 3ª Silly Season.';
+        continueBtn.disabled = true;
+        continueBtn.style.opacity = '0.5';
+
+        const currentDrivers = [
+            { slot: 'piloto1', piloto: selectedDraft.piloto1 },
+            { slot: 'piloto2', piloto: selectedDraft.piloto2 }
+        ];
+
+        currentDrivers.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="ovr-badge">OVR ${item.piloto.ovr}</div>
+                <strong>${item.piloto.nome}</strong><br>
+                <small style="display:block; margin-top:8px; color:#aaa; font-size:0.8rem;">Seu ${item.slot === 'piloto1' ? 'P1' : 'P2'}</small>
+            `;
+            card.onclick = () => {
+                sillySeasonDriverSlot = item.slot;
+                sillySeasonReplacement = null;
+                document.querySelectorAll('#silly-current-driver-pool .card').forEach(c => c.classList.remove('selected'));
+                document.querySelectorAll('#silly-replacement-pool .card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                status.innerText = `Troca selecionada: ${item.piloto.nome}. Agora escolha o substituto.`;
+            };
+            currentPool.appendChild(card);
+        });
+
+        const campeoesDisponiveis = todosPilotosMapeados
+            .filter(p => p.campeao === true && p.nome !== selectedDraft.piloto1.nome && p.nome !== selectedDraft.piloto2.nome)
+            .filter(p => mythicsLiberados || p.ovr < 98)
+            .sort((a, b) => b.ovr - a.ovr);
+
+        campeoesDisponiveis.slice(0, 8).forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            const rarity = getRarityFromOvr(item.ovr);
+            card.innerHTML = `
+                <div class="ovr-badge ovr-gold">OVR ${item.ovr} <span class="rarity-badge ${rarity.className}">${rarity.label}</span></div>
+                <strong>${item.nome}</strong><br>
+                <small style="display:block; margin-top:8px; color:#aaa; font-size:0.8rem;">${item.desc}</small>
+            `;
+            card.onclick = () => {
+                if (!sillySeasonDriverSlot) {
+                    status.innerText = 'Primeiro escolha um piloto do seu time para trocar.';
+                    return;
+                }
+                sillySeasonReplacement = item;
+                document.querySelectorAll('#silly-replacement-pool .card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                status.innerText = `Troca pronta: ${selectedDraft[sillySeasonDriverSlot].nome} por ${item.nome}.`;
+                continueBtn.disabled = false;
+                continueBtn.style.opacity = '1';
+            };
+            replacementPool.appendChild(card);
+        });
+    }
+
+    function continueAfterSillySeason() {
+        if (!sillySeasonDriverSlot || !sillySeasonReplacement) {
+            alert('Selecione um piloto do seu time e um substituto antes de continuar.');
+            return;
+        }
+
+        selectedDraft[sillySeasonDriverSlot] = sillySeasonReplacement;
+        sillySeasonDriverSlot = null;
+        sillySeasonReplacement = null;
+        currentGP++;
+        openPreRaceScreen();
+    }
+
+    function skipSillySeason() {
+        sillySeasonDriverSlot = null;
+        sillySeasonReplacement = null;
+        currentGP++;
+        openPreRaceScreen();
+    }
+
+    function getPilotosBase() {
+        if (modoJogo === 'champions') {
+            return todosPilotosMapeados.filter(p => p.campeao === true);
+        }
+
+        return pilotos2026.filter(p => p.campeao === false);
+    }
+
+    function getPilotosPorCategoria() {
+        if (modoJogo === 'champions') {
+            return [
+                {
+                    titulo: 'Pilotos históricos',
+                    itens: getRandomSubarray(pilotosHistoricos, 4)
+                },
+                {
+                    titulo: 'Campeões de 2026',
+                    itens: getRandomSubarray(pilotos2026.filter(p => p.campeao === true), 4)
+                }
+            ];
+        }
+
+        return [
+            {
+                titulo: 'F1 2026',
+                itens: getRandomSubarray(getPilotosBase(), 5)
+            }
+        ];
+    }
+
+    function generatePool(type) {
+        if (type === 'chassis') {
+            const listaOrigem = (modoJogo === 'champions') ? equipesCampeãs : equipesNormais;
+            const pool = getRandomSubarray(listaOrigem, 4);
+            renderOptions('pool-chassis', pool, 'chassis');
+        } else if (type === 'motor') {
+            const listaOrigemMotores = (modoJogo === 'champions') ? motoresCampeões : motoresNormais;
+            const pool = getRandomSubarray(listaOrigemMotores, 3);
+            renderOptions('pool-motor', pool, 'motor');
+        } else if (type === 'piloto1') {
+            renderPilotoPorCategoria('pool-piloto1', 'piloto1');
+        } else if (type === 'piloto2') {
+            renderPilotoPorCategoria('pool-piloto2', 'piloto2');
+        }
+    }
+
+    function renderPilotoPorCategoria(elementId, type) {
+        const container = document.getElementById(elementId);
+        container.innerHTML = '';
+
+        const categorias = getPilotosPorCategoria();
+        categorias.forEach(categoria => {
+            const itensFiltrados = categoria.itens.filter(item => !selectedDraft.piloto1 || item.nome !== selectedDraft.piloto1.nome || type === 'piloto1');
+            if (!itensFiltrados.length) return;
+
+            const secao = document.createElement('div');
+            secao.className = 'pilot-section';
+            secao.innerHTML = `<h4>${categoria.titulo}</h4><div class="pilot-section-grid"></div>`;
+
+            const grid = secao.querySelector('.pilot-section-grid');
+            itensFiltrados.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'card';
+
+                let badges = '';
+                let customOvrClass = '';
+                const rarity = getRarityFromOvr(item.ovr);
+                if (item.campeao) {
+                    badges += ` <span style="color:var(--zica-red); font-weight:bold; font-size:0.75rem;">🏆 CAMPEÃO MUNDIAL</span>`;
+                    customOvrClass = 'ovr-gold';
+                } else if (item.titulos) {
+                    badges += ` <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">🏆 ${item.titulos}x Histórico</span>`;
+                    customOvrClass = 'ovr-gold';
+                }
+
+                const extraInfo = item.inicio ? `<br><small style="color:var(--accent)">Estreia Oficial: ${item.inicio}</small>` : '';
+
+                div.innerHTML = `
+                    <div class="ovr-badge ${customOvrClass}">OVR ${item.ovr} <span class="rarity-badge ${rarity.className}">${rarity.label}</span></div>
+                    <strong>${item.nome}</strong>${badges}${extraInfo}<br>
+                    <small style="display:block; margin-top:8px; color:#aaa; font-size:0.8rem; line-height:1.2;">${item.desc}</small>
+                `;
+
+                div.onclick = () => {
+                    document.querySelectorAll(`#${elementId} .card`).forEach(c => c.classList.remove('selected'));
+                    div.classList.add('selected');
+                    selectedDraft[type] = item;
+
+                    if (type === 'piloto1') {
+                        selectedDraft.piloto2 = null;
+                        renderPilotoPorCategoria('pool-piloto2', 'piloto2');
+                    }
+                };
+
+                grid.appendChild(div);
+            });
+
+            container.appendChild(secao);
+        });
+    }
+
+    function triggerSingleReroll(type) {
+        if (rerollsRestantes <= 0) return;
+        
+        rerollsRestantes--;
+        document.getElementById('reroll-counter').innerText = rerollsRestantes;
+        
+        selectedDraft[type] = null; 
+        generatePool(type);
+        updateRerollButtons();
+    }
+
+    function updateRerollButtons() {
+        const botoes = ['chassis', 'motor', 'piloto1', 'piloto2'];
+        botoes.forEach(b => {
+            const btn = document.getElementById(`reroll-${b}`);
+            if (rerollsRestantes <= 0) {
+                btn.disabled = true;
+                btn.innerText = "Esgotado";
+            } else {
+                btn.disabled = false;
+            }
+        });
+    }
+
+    function renderOptions(elementId, items, type) {
+        const container = document.getElementById(elementId);
+        container.innerHTML = '';
+        items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            
+            let badges = '';
+            let customOvrClass = '';
+            const rarity = getRarityFromOvr(item.ovr);
+            if (item.campeao) {
+                badges += ` <span style="color:var(--zica-red); font-weight:bold; font-size:0.75rem;">🏆 CAMPEÃO MUNDIAL</span>`;
+                customOvrClass = 'ovr-gold';
+            } else if (item.titulos) {
+                badges += ` <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">🏆 ${item.titulos}x Histórico</span>`;
+                customOvrClass = 'ovr-gold';
+            }
+
+            let extraInfo = item.inicio ? `<br><small style="color:var(--accent)">Estreia Oficial: ${item.inicio}</small>` : '';
+
+            div.innerHTML = `
+                <div class="ovr-badge ${customOvrClass}">OVR ${item.ovr} <span class="rarity-badge ${rarity.className}">${rarity.label}</span></div>
+                <strong>${item.nome}</strong>${badges}${extraInfo}<br>
+                <small style="display:block; margin-top:8px; color:#aaa; font-size:0.8rem; line-height:1.2;">${item.desc}</small>
+            `;
+            
+            div.onclick = () => {
+                document.querySelectorAll(`#${elementId} .card`).forEach(c => c.classList.remove('selected'));
+                div.classList.add('selected');
+                selectedDraft[type] = item;
+                
+                if (type === 'piloto1') {
+                    selectedDraft.piloto2 = null;
+                    generatePool('piloto2');
+                }
+            };
+            container.appendChild(div);
+        });
+    }
+
+    function confirmDraftAndLaunch() {
+        if (!selectedDraft.chassis || !selectedDraft.motor || !selectedDraft.piloto1 || !selectedDraft.selectedDraft && !selectedDraft.piloto2) {
+            if(!selectedDraft.chassis || !selectedDraft.motor || !selectedDraft.piloto1 || !selectedDraft.piloto2) {
+                alert("Por favor, selecione todas as 4 opções de contrato para continuar.");
+                return;
+            }
+        }
+        const previousTeamName = fixedTeamName;
+        fixedTeamName = teamName.trim() || 'Sua Escuderia';
+        if (previousTeamName !== fixedTeamName && pontosConstrutores[previousTeamName] !== undefined) {
+            pontosConstrutores[fixedTeamName] = pontosConstrutores[previousTeamName];
+            delete pontosConstrutores[previousTeamName];
+        }
+        openPreRaceScreen();
+    }
+
+    function openPreRaceScreen() {
+        showScreen('screen-pre-race');
+        const gp = getCurrentGpList()[currentGP];
+        const totalGps = getCurrentGpList().length;
+        
+        document.getElementById('pre-race-round').innerText = `${currentGP + 1} de ${totalGps}`;
+        document.getElementById('pre-race-laps').innerText = `${gp.voltas} Voltas`;
+        document.getElementById('pre-race-bioma').innerText = gp.bioma;
+        document.getElementById('pre-race-desc').innerText = gp.desc;
+        document.getElementById('pre-race-title').innerText = `Próxima Corrida: ${gp.nome}`;
+
+        document.getElementById('fixed-team').innerText = fixedTeamName;
+        document.getElementById('fixed-chassis').innerText = `${selectedDraft.chassis.nome} (OVR ${selectedDraft.chassis.ovr})`;
+        document.getElementById('fixed-motor').innerText = `${selectedDraft.motor.nome} (OVR ${selectedDraft.motor.ovr})`;
+        document.getElementById('fixed-p1').innerText = `${selectedDraft.piloto1.nome} (OVR ${selectedDraft.piloto1.ovr})`;
+        document.getElementById('fixed-p2').innerText = `${selectedDraft.piloto2.nome} (OVR ${selectedDraft.piloto2.ovr})`;
+
+        // Se o Auto-Play estiver ativo, ele pula a intercessão imediatamente e inicia a corrida
+        if (autoPlayAtivo) {
+            setTimeout(() => {
+                startRaceSim();
+            }, 400);
+        }
+    }
+
+    function startRaceSim() {
+        showScreen('screen-race');
+        const gp = getCurrentGpList()[currentGP];
+        document.getElementById('race-title').innerText = gp.nome;
+        document.getElementById('action-zone').style.display = 'block';
+        document.getElementById('post-race-zone').style.display = 'none';
+        
+        maxLapsThisRace = gp.voltas;
+        laps = gp.voltas;
+        document.getElementById('race-lap').innerText = laps;
+        document.getElementById('race-remaining').innerText = getRemainingRacesCount();
+        zicaUsed = false;
+
+        buildFixedGrid();
+        const log = document.getElementById('race-log');
+        log.innerHTML = `<div class="log-entry log-success">🟢 LUZES APAGADAS! Grid de campeões em movimento por ${maxLapsThisRace} voltas!</div>`;
+
+        // Se o Auto-Play estiver ativo, bota a simulação no talo (Rápido/Instantâneo) automaticamente
+        if (autoPlayAtivo) {
+            simSpeed = 50; 
+            document.getElementById('btn-speed').innerText = "Rápido";
+            document.getElementById('btn-speed').style.background = "var(--success-green)";
+        } else {
+            simSpeed = 2000;
+            document.getElementById('btn-speed').innerText = "Normal";
+            document.getElementById('btn-speed').style.background = "var(--text-main)";
+        }
+
+        runSimulationLoop();
+    }
+
+    function buildFixedGrid() {
+        gridCorrida = [];
+        const teamDisplayName = fixedTeamName;
+        let p1RitmoBase = (selectedDraft.chassis.ovr + selectedDraft.motor.ovr + selectedDraft.piloto1.ovr) / 90;
+        let p2RitmoBase = (selectedDraft.chassis.ovr + selectedDraft.motor.ovr + selectedDraft.piloto2.ovr) / 90;
+
+        gridCorrida.push({
+            nome: `★ ${selectedDraft.piloto1.nome}`, equipe: teamDisplayName, isPlayer: true, isP1: true, idPiloto: selectedDraft.piloto1.nome, idEquipe: teamDisplayName, pontuacaoRitmo: p1RitmoBase, scoreAleatorio: Math.random() * 8
+        });
+
+        gridCorrida.push({
+            nome: `★ ${selectedDraft.piloto2.nome}`, equipe: teamDisplayName, isPlayer: true, isP1: false, idPiloto: selectedDraft.piloto2.nome, idEquipe: teamDisplayName, pontuacaoRitmo: p2RitmoBase, scoreAleatorio: Math.random() * 8
+        });
+
+        const listaEquipesUniverso = (modoJogo === 'champions') ? equipesCampeãs : equipesNormais;
+        let listaPilotosUniverso = getPilotosBase();
+
+        listaPilotosUniverso.forEach(p => {
+            if (p.nome !== selectedDraft.piloto1.nome && p.nome !== selectedDraft.piloto2.nome) {
+                let eqObj = listaEquipesUniverso[Math.floor(Math.random() * listaEquipesUniverso.length)];
+                let rivalRitmoBase = (eqObj.ovr + 94 + p.ovr) / 90; 
+
+                gridCorrida.push({
+                    nome: p.nome, equipe: eqObj.nome, isPlayer: false, isP1: false, idPiloto: p.nome, idEquipe: eqObj.nome, pontuacaoRitmo: rivalRitmoBase, scoreAleatorio: Math.random() * 7
+                });
+            }
+        });
+
+        reordenarEAtualizarUI();
+    }
+
+    function reordenarEAtualizarUI() {
+        gridCorrida.sort((a, b) => b.scoreAleatorio - a.scoreAleatorio);
+        const tbody = document.getElementById('leaderboard-body');
+        tbody.innerHTML = '';
+
+        let p1Pos = "-", p2Pos = "-";
+
+        gridCorrida.forEach((carro, idx) => {
+            const tr = document.createElement('tr');
+            if(carro.isPlayer) {
+                tr.className = "player-row";
+                if(carro.isP1) p1Pos = `${idx + 1}º`;
+                else p2Pos = `${idx + 1}º`;
+            }
+            tr.innerHTML = `<td>${idx + 1}º</td><td>${carro.nome}</td><td>${carro.equipe}</td>`;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('race-pos1').innerText = p1Pos;
+        document.getElementById('race-pos2').innerText = p2Pos;
+    }
+
+    function runSimulationLoop() {
+        if (raceInterval) clearInterval(raceInterval);
+        raceInterval = setInterval(simulateLap, simSpeed);
+    }
+
+    function toggleSpeed() {
+        const btn = document.getElementById('btn-speed');
+        if (simSpeed === 2000) {
+            simSpeed = 100; 
+            btn.innerText = "Rápido";
+            btn.style.background = "var(--success-green)";
+        } else {
+            simSpeed = 2000;
+            btn.innerText = "Normal";
+            btn.style.background = "var(--text-main)";
+        }
+        if (laps > 0) runSimulationLoop();
+    }
+
+    function skipRace() {
+        simSpeed = 1;
+        if (laps > 0) runSimulationLoop();
+    }
+
+    function simulateLap() {
+        laps--;
+        document.getElementById('race-lap').innerText = laps;
+        let bioma = getCurrentGpList()[currentGP].bioma;
+        let currentLapNumber = maxLapsThisRace - laps;
+
+        gridCorrida.forEach(c => {
+            let ganho = c.pontuacaoRitmo * (Math.random() * 1.2 + 0.4);
+            if (bioma === "Rua") ganho *= 0.88; 
+            if (bioma === "Confiabilidade" && Math.random() < 0.02) ganho -= 3.0;
+            c.scoreAleatorio += ganho;
+        });
+
+        if (currentLapNumber % 4 === 0 || laps === 0) {
+            const log = document.getElementById('race-log');
+            let radios = ["Batalhas intensas por espaço nas curvas de alta.", "Gerenciamento de energia térmica dos pneus em andamento.", "Janela tática aberta."];
+            log.innerHTML += `<div class="log-entry">🏎️ <b>Volta ${currentLapNumber}:</b> ${radios[Math.floor(Math.random() * radios.length)]}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        reordenarEAtualizarUI();
+
+        if (laps <= 0) endRace();
+    }
+
+    function useZica(tipo) {
+        if (zicaUsed) return;
+        zicaUsed = true;
+        const log = document.getElementById('race-log');
+
+        if (tipo === 'galvao') {
+            let count = 0;
+            gridCorrida.forEach(c => { if(!c.isPlayer && count < 3) { c.scoreAleatorio -= 6; count++; } });
+            log.innerHTML += `<div class="log-entry log-zica">🎙️ RÁDIO: Líderes perdem tração momentânea!</div>`;
+        } else if (tipo === 'pitstop') {
+            gridCorrida.forEach(c => { if(!c.isPlayer) c.scoreAleatorio -= 4; });
+            log.innerHTML += `<div class="log-entry log-zica">🔧 BOXES: Erro mecânico atrasa carros adversários.</div>`;
+        } else if (tipo === 'ers') {
+            gridCorrida.forEach(c => { if(c.isPlayer) c.scoreAleatorio += 7; });
+            log.innerHTML += `<div class="log-entry log-success">⚡ OVERCLOCK: Baterias liberadas para potência linear total!</div>`;
+        }
+        reordenarEAtualizarUI();
+    }
+
+    function endRace() {
+        clearInterval(raceInterval);
+        document.getElementById('action-zone').style.display = 'none';
+        document.getElementById('post-race-zone').style.display = 'block';
+
+        gridCorrida.forEach((carro, index) => {
+            let pts = tabelaPontos[index] || 0;
+            if (pontosPilotos[carro.idPiloto] !== undefined) pontosPilotos[carro.idPiloto] += pts;
+            if (pontosConstrutores[carro.idEquipe] !== undefined) pontosConstrutores[carro.idEquipe] += pts;
+        });
+
+        // Se o Auto-Play estiver ativo, ele clica para ver as tabelas instantaneamente após a bandeirada
+        if (autoPlayAtivo) {
+            setTimeout(() => {
+                showStandingsScreen();
+            }, 600);
+        }
+    }
+
+    function toggleAutoPlay() {
+        autoPlayAtivo = !autoPlayAtivo;
+        const btn = document.getElementById('btn-toggle-autoplay');
+        
+        if (autoPlayAtivo) {
+            btnAp.classList.add('active-ap');
+            btnAp.innerText = "Auto-Play Ligado 🤖";
+        } else {
+            btn.classList.remove('active-ap');
+            btn.innerText = "Ligar Auto-Play 🤖";
+            if (autoPlayTimer) clearTimeout(autoPlayTimer);
+            document.getElementById('autoplay-countdown').innerText = "";
+        }
+    }
+
+    function iniciarContagemAutoPlay() {
+        if(autoPlayTimer) clearTimeout(autoPlayTimer);
+        let tempoRestante = 4; // 4 segundos fixos para ler as tabelas confortavelmente
+        
+        function countdown() {
+            if (!autoPlayAtivo) return;
+            if (tempoRestante > 0) {
+                document.getElementById('autoplay-countdown').innerText = `🤖 Auto-Play ativo: Mudando de pista em ${tempoRestante}s...`;
+                tempoRestante--;
+                autoPlayTimer = setTimeout(countdown, 1000);
+            } else {
+                document.getElementById('autoplay-countdown').innerText = "Avançando...";
+                goToNextGP();
+            }
+        }
+        countdown();
+    }
+
+    function showStandingsScreen() {
+        showScreen('screen-standings');
+
+        let wdc = [];
+        for (let p in pontosPilotos) wdc.push({ nome: p, pts: pontosPilotos[p] });
+        wdc.sort((a,b) => b.pts - a.pts);
+
+        const dBody = document.getElementById('driver-standings-body');
+        dBody.innerHTML = '';
+        wdc.forEach((item, idx) => {
+            const tr = document.createElement('tr');
+            if(item.nome === selectedDraft.piloto1.nome || item.nome === selectedDraft.piloto2.nome) tr.className = "player-row";
+            tr.innerHTML = `<td>${idx + 1}º</td><td>${item.nome}</td><td>${item.pts}</td>`;
+            dBody.appendChild(tr);
+        });
+
+        let wcc = [];
+        for (let e in pontosConstrutores) wcc.push({ nome: e, pts: pontosConstrutores[e] });
+        wcc.sort((a,b) => b.pts - a.pts);
+
+        const cBody = document.getElementById('constructor-standings-body');
+        cBody.innerHTML = '';
+        wcc.forEach((item, idx) => {
+            const tr = document.createElement('tr');
+            if(item.nome === fixedTeamName) tr.className = "player-row";
+            tr.innerHTML = `<td>${idx + 1}º</td><td>${item.nome}</td><td>${item.pts}</td>`;
+            cBody.appendChild(tr);
+        });
+
+        const nextBtn = document.getElementById('btn-next-gp');
+        if (currentGP >= getCurrentGpList().length - 1) {
+            nextBtn.innerText = "🏆 Finalizar Temporada Absoluta! 🏆";
+        } else {
+            nextBtn.innerText = "Avançar para a Próxima Rodada";
+        }
+
+        // Se o Auto-Play ligou nesta tela, dispara o cronômetro visual de 4 segundos
+        if (autoPlayAtivo) {
+            iniciarContagemAutoPlay();
+        }
+    }
+
+    function goToNextGP() {
+        if(autoPlayTimer) clearTimeout(autoPlayTimer);
+        document.getElementById('autoplay-countdown').innerText = "";
+
+        if (modoJogo === 'champions' && (currentGP + 1) % 20 === 0 && currentGP < getCurrentGpList().length - 1) {
+            openSillySeasonScreen();
+            return;
+        }
+
+        if (currentGP >= getCurrentGpList().length - 1) {
+            let finalWdc = [];
+            for (let p in pontosPilotos) finalWdc.push({ nome: p, pts: pontosPilotos[p] });
+            finalWdc.sort((a,b) => b.pts - a.pts);
+
+            alert(`🏆 CAMPEONATO ABSOLUTO ENCERRADO 🏆\n\n🥇 Campeão de Pilotos: ${finalWdc[0].nome} (${finalWdc[0].pts} pts)`);
+            autoPlayAtivo = false;
+            showScreen('screen-menu');
+        } else {
+            currentGP++;
+            openPreRaceScreen();
+        }
+    }
+</script>
+</body>
+</html>
