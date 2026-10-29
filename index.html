@@ -433,13 +433,14 @@
     </div>
 
     <div class="page-credit">Feito por FelipeGamerbr48</div>
+    <div class="page-credit">Versão 1.2</div>
 </div>
 
 <script>
     let modoJogo = 'normal';
     let autoPlayAtivo = false;
     let autoPlayTimer = null;
-
+    //pistas de todos os modos
     const gps = [
         { nome: "GP do Bahrein (Sakhir)", bioma: "Equilibrado", voltas: 31, desc: "Asfalto abrasivo pune tração traseira." },
         { nome: "GP da Arábia Saudita (Jeddah)", bioma: "Velocidade", voltas: 28, desc: "Muros colados a mais de 250 km/h." },
@@ -551,15 +552,15 @@
     const equipesNormais = [
         { nome: "Mercedes", ovr: 98, desc: "Eficiência aerodinâmica perfeita e excelente estabilidade." },
         { nome: "Ferrari", ovr: 95, desc: "Mecânica refinada com tração incomparável." },
-        { nome: "McLaren", ovr: 93, desc: "Chassis equilibrado, muito gentil com os pneus." },
-        { nome: "Red Bull", ovr: 90, desc: "Excelente eficiência de arrasto aerodinâmico." },
-        { nome: "Alpine", ovr: 84, desc: "Projeto intermediário com picos eficientes." },
-        { nome: "Haas", ovr: 78, desc: "Boa velocidade máxima em retas." },
-        { nome: "Williams", ovr: 75, desc: "Chassis minimalista otimizado para arrasto reduzido." },
-        { nome: "Racing Bulls", ovr: 76, desc: "Equipe Junior, mais estavel em comparação a equipe A." },
+        { nome: "McLaren", ovr: 94, desc: "Chassis equilibrado, muito gentil com os pneus." },
+        { nome: "Red Bull", ovr: 95, desc: "Excelente eficiência de arrasto aerodinâmico." },
+        { nome: "Alpine", ovr: 82, desc: "Projeto intermediário com picos eficientes." },
+        { nome: "Haas", ovr: 80, desc: "Boa velocidade máxima em retas." },
+        { nome: "Williams", ovr: 73, desc: "Chassis minimalista otimizado para arrasto reduzido." },
+        { nome: "Racing Bulls", ovr: 83, desc: "Equipe Junior, mais estavel em comparação a equipe A." },
         { nome: "Audi", ovr: 83, desc: "Equipe remomada, com motores bons, mas aerodinamica a desejar." },
-        { nome: "Aston Martin", ovr: 70, desc: "Equipe dos sonhos, mas deu errado, motor ruim e chassi que prejudica o motor." },
-        { nome: "Cadillac", ovr: 71, desc: "Equipe Nova, motor Ferrari, tudo novo" }
+        { nome: "Aston Martin", ovr: 69, desc: "Equipe dos sonhos, mas deu errado, motor ruim e chassi que prejudica o motor." },
+        { nome: "Cadillac", ovr: 72, desc: "Equipe Nova, motor Ferrari, tudo novo" }
     ];
 
     const equipesCampeãs = [
@@ -581,16 +582,16 @@
     ];
 
     const motoresNormais = [
-        { nome: "Mercedes Híbrido", ovr: 96, desc: "A referência em potência e eficiência do grid de 2026." },
-        { nome: "Ferrari Power Unit", ovr: 95, desc: "Tecnologia de Maranello com torque e performance de ponta." },
-        { nome: "Red Bull-Ford Powertrains", ovr: 93, desc: "A nova força da Red Bull com suporte técnico da Ford." },
-        { nome: "Honda Híbrido", ovr: 94, desc: "Excelência japonesa com foco em durabilidade e energia." },
+        { nome: "Mercedes Híbrido", ovr: 94, desc: "A referência em potência e eficiência do grid de 2026." },
+        { nome: "Ferrari Power Unit", ovr: 92, desc: "Tecnologia de Maranello com torque e performance de ponta." },
+        { nome: "Red Bull-Ford Powertrains", ovr: 97, desc: "A nova força da Red Bull com suporte técnico da Ford." },
+        { nome: "Honda Híbrido", ovr: 70, desc: "Excelência japonesa com foco em durabilidade e energia." },
         { nome: "Audi Power Unit", ovr: 92, desc: "A estreia histórica da marca alemã na categoria." }
     ];
 
     const motoresCampeões = [
         { nome: "Ferrari", ovr: 99, titulos: 16, desc: "O motor mais vitorioso da história, símbolo máximo de tradição e potência." },
-        { nome: "Mercedes", ovr: 98, titulos: 12, desc: "Referência de eficiência híbrida e força técnica em múltiplas eras." },
+        { nome: "Mercedes", ovr: 98, titulos: 13, desc: "Referência de eficiência híbrida e força técnica em múltiplas eras." },
         { nome: "Renault", ovr: 96, titulos: 12, desc: "Engenharia francesa decisiva em vários ciclos vencedores da categoria." },
         { nome: "Ford Cosworth", ovr: 95, titulos: 10, desc: "O bloco clássico que moldou a F1 moderna com equilíbrio e robustez." },
         { nome: "Honda", ovr: 93, titulos: 6, desc: "Potência japonesa precisa, forte em desempenho e confiabilidade." },
@@ -600,7 +601,7 @@
         { nome: "Vanwall", ovr: 86, titulos: 1, desc: "Um dos pioneiros vencedores da F1, com identidade técnica muito própria." },
         { nome: "BRM", ovr: 85, titulos: 1, desc: "Projeto britânico clássico, importante na evolução técnica da categoria." },
         { nome: "RBPT", ovr: 94, titulos: 1, desc: "A força moderna da Red Bull, agressiva e competitiva na era atual." },
-        { nome: "Honda RBPT", ovr: 92, titulos: 1, desc: "Combinação moderna de engenharia japonesa e operação de ponta no grid." }
+        { nome: "Honda RBPT", ovr: 98, titulos: 1, desc: "Combinação moderna de engenharia japonesa e operação de ponta no grid." }
     ];
 
     const pilotos2026 = [
@@ -608,7 +609,7 @@
         { nome: "Lewis Hamilton", ovr: 96, inicio: 2007, campeao: true, desc: "Referência de consistência, leitura de corrida e velocidade de elite em qualquer cenário." },
         { nome: "Fernando Alonso", ovr: 95, inicio: 2001, campeao: true, desc: "Veterano agressivo, no prime e inteligente, sempre perigoso em estratégia e no duelo direto." },
         { nome: "Lando Norris", ovr: 93, inicio: 2019, campeao: true, desc: "Rápido, leve nos pneus e muito forte quando a corrida pede coragem nas ultrapassagens." },
-        { nome: "Andrea Kimi Antonelli", ovr: 79, inicio: 2025, campeao: false, desc: "Talento precoce com projeção alta e muita velocidade natural." },
+        { nome: "Andrea Kimi Antonelli", ovr: 79, inicio: 2025, campeao: true, desc: "Talento precoce com projeção alta e muita velocidade natural." },
         
         { nome: "Charles Leclerc", ovr: 89, inicio: 2018, campeao: false, desc: "Explosivo em volta lançada e preciso quando o carro responde ao limite." },
         { nome: "George Russell", ovr: 89, inicio: 2019, campeao: false, desc: "Método, frieza e boa leitura tática para extrair resultados consistentes." },
