@@ -90,20 +90,21 @@
             cursor: pointer;
             transition: 0.2s;
         }
-      .btn-reroll:hover:not(:disabled) { background: var(--accent); color: #000; }
+        .btn-reroll:hover:not(:disabled) { background: var(--accent); color: #000; }
         .btn-reroll:disabled { opacity: 0.3; cursor: not-allowed; border-color: #555; color: #777; }
-                .btn-back {
-                        background: transparent;
-                        color: #fff;
-                        border: 1px solid #666;
-                        padding: 8px 14px;
-                        font-size: 0.85rem;
-                        font-weight: bold;
-                        border-radius: 4px;
-                        cursor: pointer;
-                        transition: 0.2s;
-                }
-                .btn-back:hover { border-color: var(--accent); color: var(--accent); }
+        
+        .btn-back {
+            background: transparent;
+            color: #fff;
+            border: 1px solid #666;
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-back:hover { border-color: var(--accent); color: var(--accent); }
 
         .draft-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 20px; }
         .pilot-section {
@@ -554,12 +555,11 @@
         { nome: "Red Bull", ovr: 90, desc: "Excelente eficiência de arrasto aerodinâmico." },
         { nome: "Alpine", ovr: 84, desc: "Projeto intermediário com picos eficientes." },
         { nome: "Haas", ovr: 78, desc: "Boa velocidade máxima em retas." },
-        { nome: "Williams", ovr: 75, desc: "Chassis minimalista otimizado para arrasto reduzido." }
+        { nome: "Williams", ovr: 75, desc: "Chassis minimalista otimizado para arrasto reduzido." },
         { nome: "Racing Bulls", ovr: 76, desc: "Equipe Junior, mais estavel em comparação a equipe A." },
         { nome: "Audi", ovr: 83, desc: "Equipe remomada, com motores bons, mas aerodinamica a desejar." },
         { nome: "Aston Martin", ovr: 70, desc: "Equipe dos sonhos, mas deu errado, motor ruim e chassi que prejudica o motor." },
-        { nome: "Cadillac", ovr: 71, desc: "Equipe Nova, motor Ferrari, tudo novo" },
-        
+        { nome: "Cadillac", ovr: 71, desc: "Equipe Nova, motor Ferrari, tudo novo" }
     ];
 
     const equipesCampeãs = [
@@ -603,16 +603,13 @@
         { nome: "Honda RBPT", ovr: 92, titulos: 1, desc: "Combinação moderna de engenharia japonesa e operação de ponta no grid." }
     ];
 
-    // O Universo Completo de Pilotos Mapeado
     const pilotos2026 = [
-        // Campeões Mundiais (OVR >= 90)
         { nome: "Max Verstappen", ovr: 98, inicio: 2015, campeao: true, desc: "Converte ritmo puro em domínio total e raramente desperdiça uma chance de vitória." },
         { nome: "Lewis Hamilton", ovr: 96, inicio: 2007, campeao: true, desc: "Referência de consistência, leitura de corrida e velocidade de elite em qualquer cenário." },
         { nome: "Fernando Alonso", ovr: 95, inicio: 2001, campeao: true, desc: "Veterano agressivo, no prime e inteligente, sempre perigoso em estratégia e no duelo direto." },
         { nome: "Lando Norris", ovr: 93, inicio: 2019, campeao: true, desc: "Rápido, leve nos pneus e muito forte quando a corrida pede coragem nas ultrapassagens." },
         { nome: "Andrea Kimi Antonelli", ovr: 79, inicio: 2025, campeao: false, desc: "Talento precoce com projeção alta e muita velocidade natural." },
         
-        // Grid Atual 2026 (Baseado em desempenho e potencial)
         { nome: "Charles Leclerc", ovr: 89, inicio: 2018, campeao: false, desc: "Explosivo em volta lançada e preciso quando o carro responde ao limite." },
         { nome: "George Russell", ovr: 89, inicio: 2019, campeao: false, desc: "Método, frieza e boa leitura tática para extrair resultados consistentes." },
         { nome: "Oscar Piastri", ovr: 85, inicio: 2023, campeao: false, desc: "Jovem e calculista, combina maturidade de corrida com crescimento acelerado." },
@@ -631,18 +628,18 @@
         { nome: "Isack Hadjar", ovr: 87, inicio: 2026, campeao: false, desc: "Agressivo e técnico, com potencial para surpreender em ritmo de classificação." },
         { nome: "Arvid Lindblad", ovr: 79, inicio: 2026, campeao: false, desc: "Nova geração com velocidade limpa e fome de evolução rápida." }
     ];
-const pilotosHistoricos = [
-    { nome: "Michael Schumacher", ovr: 99, inicio: 1991, campeao: true, desc: "Domínio cirúrgico, mentalidade vencedora e pressão constante sobre qualquer rival." },
-    { nome: "Ayrton Senna", ovr: 99, inicio: 1984, campeao: true, desc: "Intensidade máxima, precisão absurda e velocidade que mudava corridas sozinho." },
-    { nome: "Juan Manuel Fangio", ovr: 98, inicio: 1950, campeao: true, desc: "Elegância, controle e uma taxa de aproveitamento quase lendária para sua era." },
-    { nome: "Jim Clark", ovr: 96, inicio: 1960, campeao: true, desc: "Naturalidade impressionante ao volante, com calma e ritmo acima da média." },
-    { nome: "Niki Lauda", ovr: 95, inicio: 1971, campeao: true, desc: "Racional, preciso e extremamente forte na leitura técnica da corrida." },
-    { nome: "Jackie Stewart", ovr: 94, inicio: 1965, campeao: true, desc: "Pioneiro na consistência e um dos grandes nomes da inteligência de corrida." },
-    { nome: "Emerson Fittipaldi", ovr: 92, inicio: 1970, campeao: true, desc: "Representante da técnica brasileira com versatilidade e sangue competitivo." }
-];
+
+    const pilotosHistoricos = [
+        { nome: "Michael Schumacher", ovr: 99, inicio: 1991, campeao: true, desc: "Domínio cirúrgico, mentalidade vencedora e pressão constante sobre qualquer rival." },
+        { nome: "Ayrton Senna", ovr: 99, inicio: 1984, campeao: true, desc: "Intensidade máxima, precisão absurda e velocidade que mudava corridas sozinho." },
+        { nome: "Juan Manuel Fangio", ovr: 98, inicio: 1950, campeao: true, desc: "Elegância, controle e uma taxa de aproveitamento quase lendária para sua era." },
+        { nome: "Jim Clark", ovr: 96, inicio: 1960, campeao: true, desc: "Naturalidade impressionante ao volante, com calma e ritmo acima da média." },
+        { nome: "Niki Lauda", ovr: 95, inicio: 1971, campeao: true, desc: "Racional, preciso e extremamente forte na leitura técnica da corrida." },
+        { nome: "Jackie Stewart", ovr: 94, inicio: 1965, campeao: true, desc: "Pioneiro na consistência e um dos grandes nomes da inteligência de corrida." },
+        { nome: "Emerson Fittipaldi", ovr: 92, inicio: 1970, campeao: true, desc: "Representante da técnica brasileira com versatilidade e sangue competitivo." }
+    ];
 
     const todosPilotosMapeados = [...pilotos2026, ...pilotosHistoricos];
-
     const tabelaPontos = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
 
     let currentGP = 0;
@@ -737,7 +734,6 @@ const pilotosHistoricos = [
         const motorTitle = document.getElementById('draft-motor-title');
         const pilotoTitle = document.getElementById('draft-piloto-title');
         
-        // FILTRO ABSOLUTO: Se for modo campeões, filtra o banco de dados permitindo APENAS quem tem campeao = true
         let universoPilotosFiltrados = getPilotosBase();
         if (modoJogo === 'champions') {
             badgeContainer.innerHTML = `<span class="mode-badge">🏆 Campeões Mundiais Apenas</span>`;
@@ -1043,11 +1039,9 @@ const pilotosHistoricos = [
     }
 
     function confirmDraftAndLaunch() {
-        if (!selectedDraft.chassis || !selectedDraft.motor || !selectedDraft.piloto1 || !selectedDraft.selectedDraft && !selectedDraft.piloto2) {
-            if(!selectedDraft.chassis || !selectedDraft.motor || !selectedDraft.piloto1 || !selectedDraft.piloto2) {
-                alert("Por favor, selecione todas as 4 opções de contrato para continuar.");
-                return;
-            }
+        if (!selectedDraft.chassis || !selectedDraft.motor || !selectedDraft.piloto1 || !selectedDraft.piloto2) {
+            alert("Por favor, selecione todas as 4 opções de contrato para continuar.");
+            return;
         }
         const previousTeamName = fixedTeamName;
         fixedTeamName = teamName.trim() || 'Sua Escuderia';
@@ -1075,7 +1069,6 @@ const pilotosHistoricos = [
         document.getElementById('fixed-p1').innerText = `${selectedDraft.piloto1.nome} (OVR ${selectedDraft.piloto1.ovr})`;
         document.getElementById('fixed-p2').innerText = `${selectedDraft.piloto2.nome} (OVR ${selectedDraft.piloto2.ovr})`;
 
-        // Se o Auto-Play estiver ativo, ele pula a intercessão imediatamente e inicia a corrida
         if (autoPlayAtivo) {
             setTimeout(() => {
                 startRaceSim();
@@ -1100,7 +1093,6 @@ const pilotosHistoricos = [
         const log = document.getElementById('race-log');
         log.innerHTML = `<div class="log-entry log-success">🟢 LUZES APAGADAS! Grid de campeões em movimento por ${maxLapsThisRace} voltas!</div>`;
 
-        // Se o Auto-Play estiver ativo, bota a simulação no talo (Rápido/Instantâneo) automaticamente
         if (autoPlayAtivo) {
             simSpeed = 50; 
             document.getElementById('btn-speed').innerText = "Rápido";
@@ -1246,7 +1238,6 @@ const pilotosHistoricos = [
             if (pontosConstrutores[carro.idEquipe] !== undefined) pontosConstrutores[carro.idEquipe] += pts;
         });
 
-        // Se o Auto-Play estiver ativo, ele clica para ver as tabelas instantaneamente após a bandeirada
         if (autoPlayAtivo) {
             setTimeout(() => {
                 showStandingsScreen();
@@ -1259,8 +1250,8 @@ const pilotosHistoricos = [
         const btn = document.getElementById('btn-toggle-autoplay');
         
         if (autoPlayAtivo) {
-            btnAp.classList.add('active-ap');
-            btnAp.innerText = "Auto-Play Ligado 🤖";
+            btn.classList.add('active-ap');
+            btn.innerText = "Auto-Play Ligado 🤖";
         } else {
             btn.classList.remove('active-ap');
             btn.innerText = "Ligar Auto-Play 🤖";
@@ -1271,7 +1262,7 @@ const pilotosHistoricos = [
 
     function iniciarContagemAutoPlay() {
         if(autoPlayTimer) clearTimeout(autoPlayTimer);
-        let tempoRestante = 4; // 4 segundos fixos para ler as tabelas confortavelmente
+        let tempoRestante = 4;
         
         function countdown() {
             if (!autoPlayAtivo) return;
@@ -1323,7 +1314,6 @@ const pilotosHistoricos = [
             nextBtn.innerText = "Avançar para a Próxima Rodada";
         }
 
-        // Se o Auto-Play ligou nesta tela, dispara o cronômetro visual de 4 segundos
         if (autoPlayAtivo) {
             iniciarContagemAutoPlay();
         }
