@@ -555,6 +555,11 @@
         { nome: "Alpine", ovr: 84, desc: "Projeto intermediário com picos eficientes." },
         { nome: "Haas", ovr: 78, desc: "Boa velocidade máxima em retas." },
         { nome: "Williams", ovr: 75, desc: "Chassis minimalista otimizado para arrasto reduzido." }
+        { nome: "Racing Bulls", ovr: 76, desc: "Equipe Junior, mais estavel em comparação a equipe A." },
+        { nome: "Audi", ovr: 83, desc: "Equipe remomada, com motores bons, mas aerodinamica a desejar." },
+        { nome: "Aston Martin", ovr: 70, desc: "Equipe dos sonhos, mas deu errado, motor ruim e chassi que prejudica o motor." },
+        { nome: "Cadillac", ovr: 71, desc: "Equipe Nova, motor Ferrari, tudo novo" },
+        
     ];
 
     const equipesCampeãs = [
@@ -601,30 +606,30 @@
     // O Universo Completo de Pilotos Mapeado
     const pilotos2026 = [
         // Campeões Mundiais (OVR >= 90)
-        { nome: "Max Verstappen", ovr: 97, inicio: 2015, campeao: true, desc: "Converte ritmo puro em domínio total e raramente desperdiça uma chance de vitória." },
-        { nome: "Lewis Hamilton", ovr: 98, inicio: 2007, campeao: true, desc: "Referência de consistência, leitura de corrida e velocidade de elite em qualquer cenário." },
-        { nome: "Fernando Alonso", ovr: 95, inicio: 2001, campeao: true, desc: "Veterano agressivo e inteligente, sempre perigoso em estratégia e no duelo direto." },
-
-        // Grid Atual 2026 (Baseado em desempenho e potencial)
-        { nome: "Lando Norris", ovr: 90, inicio: 2019, campeao: true, desc: "Rápido, leve nos pneus e muito forte quando a corrida pede coragem nas ultrapassagens." },
-        { nome: "Charles Leclerc", ovr: 89, inicio: 2018, campeao: false, desc: "Explosivo em volta lançada e preciso quando o carro responde ao limite." },
-        { nome: "George Russell", ovr: 88, inicio: 2019, campeao: false, desc: "Método, frieza e boa leitura tática para extrair resultados consistentes." },
-        { nome: "Oscar Piastri", ovr: 88, inicio: 2023, campeao: false, desc: "Jovem e calculista, combina maturidade de corrida com crescimento acelerado." },
-        { nome: "Carlos Sainz", ovr: 87, inicio: 2015, campeao: false, desc: "Piloto completo, técnico e confiável em qualquer tipo de pista." },
-        { nome: "Alexander Albon", ovr: 85, inicio: 2019, campeao: false, desc: "Evoluiu muito em ritmo e costuma brilhar em corridas de recuperação." },
-        { nome: "Pierre Gasly", ovr: 84, inicio: 2017, campeao: false, desc: "Bom em aproveitar oportunidades e perigoso quando o carro encaixa." },
-        { nome: "Nico Hülkenberg", ovr: 84, inicio: 2010, campeao: false, desc: "Experiente, sólido e sempre pronto para surpreender com eficiência." },
-        { nome: "Esteban Ocon", ovr: 83, inicio: 2016, campeao: false, desc: "Resistente em disputas apertadas e forte em corridas físicas e longas." },
-        { nome: "Valtteri Bottas", ovr: 82, inicio: 2013, campeao: false, desc: "Ritmo limpo, boa largada e postura confiável para pontuar com regularidade." },
-        { nome: "Sergio Pérez", ovr: 82, inicio: 2011, campeao: false, desc: "Especialista em pneus e em corridas de paciência, com talento no caos." },
-        { nome: "Lance Stroll", ovr: 80, inicio: 2017, campeao: false, desc: "Pode oscilar, mas às vezes entrega corridas muito fortes em condições difíceis." },
-        { nome: "Gabriel Bortoleto", ovr: 80, inicio: 2025, campeao: false, desc: "Promessa brasileira com crescimento rápido e mentalidade de aprendizado constante." },
-        { nome: "Liam Lawson", ovr: 79, inicio: 2023, campeao: false, desc: "Competitivo, agressivo e com perfil de quem aproveita bem uma chance grande." },
+        { nome: "Max Verstappen", ovr: 98, inicio: 2015, campeao: true, desc: "Converte ritmo puro em domínio total e raramente desperdiça uma chance de vitória." },
+        { nome: "Lewis Hamilton", ovr: 96, inicio: 2007, campeao: true, desc: "Referência de consistência, leitura de corrida e velocidade de elite em qualquer cenário." },
+        { nome: "Fernando Alonso", ovr: 95, inicio: 2001, campeao: true, desc: "Veterano agressivo, no prime e inteligente, sempre perigoso em estratégia e no duelo direto." },
+        { nome: "Lando Norris", ovr: 93, inicio: 2019, campeao: true, desc: "Rápido, leve nos pneus e muito forte quando a corrida pede coragem nas ultrapassagens." },
         { nome: "Andrea Kimi Antonelli", ovr: 79, inicio: 2025, campeao: false, desc: "Talento precoce com projeção alta e muita velocidade natural." },
-        { nome: "Oliver Bearman", ovr: 78, inicio: 2024, campeao: false, desc: "Jovem de resposta rápida, bom em adaptar o estilo ao que a corrida exige." },
-        { nome: "Franco Colapinto", ovr: 78, inicio: 2024, campeao: false, desc: "Briga forte, não se intimida e costuma crescer sob pressão." },
-        { nome: "Isack Hadjar", ovr: 77, inicio: 2026, campeao: false, desc: "Agressivo e técnico, com potencial para surpreender em ritmo de classificação." },
-        { nome: "Arvid Lindblad", ovr: 77, inicio: 2026, campeao: false, desc: "Nova geração com velocidade limpa e fome de evolução rápida." }
+        
+        // Grid Atual 2026 (Baseado em desempenho e potencial)
+        { nome: "Charles Leclerc", ovr: 89, inicio: 2018, campeao: false, desc: "Explosivo em volta lançada e preciso quando o carro responde ao limite." },
+        { nome: "George Russell", ovr: 89, inicio: 2019, campeao: false, desc: "Método, frieza e boa leitura tática para extrair resultados consistentes." },
+        { nome: "Oscar Piastri", ovr: 85, inicio: 2023, campeao: false, desc: "Jovem e calculista, combina maturidade de corrida com crescimento acelerado." },
+        { nome: "Carlos Sainz", ovr: 83, inicio: 2015, campeao: false, desc: "Piloto completo, técnico e confiável em qualquer tipo de pista." },
+        { nome: "Alexander Albon", ovr: 79, inicio: 2019, campeao: false, desc: "Evoluiu muito em ritmo e costuma brilhar em corridas de recuperação." },
+        { nome: "Pierre Gasly", ovr: 80, inicio: 2017, campeao: false, desc: "Bom em aproveitar oportunidades e perigoso quando o carro encaixa." },
+        { nome: "Nico Hülkenberg", ovr: 86, inicio: 2010, campeao: false, desc: "Experiente, sólido e sempre pronto para surpreender com eficiência." },
+        { nome: "Esteban Ocon", ovr: 69, inicio: 2016, campeao: false, desc: "Resistente em disputas apertadas e forte em corridas físicas e longas." },
+        { nome: "Valtteri Bottas", ovr: 77, inicio: 2013, campeao: false, desc: "Ritmo limpo, boa largada e postura confiável para pontuar com regularidade." },
+        { nome: "Sergio Pérez", ovr: 80, inicio: 2011, campeao: false, desc: "Especialista em pneus e em corridas de paciência, com talento no caos." },
+        { nome: "Lance Stroll", ovr: 70, inicio: 2017, campeao: false, desc: "Pode oscilar, mas às vezes entrega corridas muito fortes em condições difíceis." },
+        { nome: "Gabriel Bortoleto", ovr: 85, inicio: 2025, campeao: false, desc: "Promessa brasileira com crescimento rápido e mentalidade de aprendizado constante." },
+        { nome: "Liam Lawson", ovr: 82, inicio: 2023, campeao: false, desc: "Competitivo, agressivo e com perfil de quem aproveita bem uma chance grande." },
+        { nome: "Oliver Bearman", ovr: 82, inicio: 2024, campeao: false, desc: "Jovem de resposta rápida, bom em adaptar o estilo ao que a corrida exige." },
+        { nome: "Franco Colapinto", ovr: 80, inicio: 2024, campeao: false, desc: "Briga forte, não se intimida e costuma crescer sob pressão." },
+        { nome: "Isack Hadjar", ovr: 87, inicio: 2026, campeao: false, desc: "Agressivo e técnico, com potencial para surpreender em ritmo de classificação." },
+        { nome: "Arvid Lindblad", ovr: 79, inicio: 2026, campeao: false, desc: "Nova geração com velocidade limpa e fome de evolução rápida." }
     ];
 const pilotosHistoricos = [
     { nome: "Michael Schumacher", ovr: 99, inicio: 1991, campeao: true, desc: "Domínio cirúrgico, mentalidade vencedora e pressão constante sobre qualquer rival." },
