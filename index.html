@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>7x0: F1 Shift & Draft - Absolute Champions & AutoPlay</title>
+    <title>7x0: F1 Shift & Draft</title>
     <style>
         :root {
             --bg-color: #0b0c10;
@@ -14,6 +14,7 @@
             --success-green: #2ecc71;
             --warning-orange: #e67e22;
             --gold: #f1c40f;
+            --money-blue: #3498db;
         }
 
         body {
@@ -66,10 +67,11 @@
             transition: 0.2s;
             text-transform: uppercase;
         }
-        .btn:hover { opacity: 0.9; transform: scale(1.02); }
+        .btn:hover:not(:disabled) { opacity: 0.9; transform: scale(1.02); }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
         .btn-gold { background: var(--gold); color: #000; }
-        .btn-zica { background: var(--zica-red); color: white; }
         .btn-fast { background: var(--warning-orange); color: white; }
+        .btn-money { background: var(--money-blue); color: white; }
         .btn-autoplay { background: #8e44ad; color: white; }
         .btn-autoplay.active-ap { background: #2ecc71; color: black; animation: pulse 1.5s infinite; }
         
@@ -106,7 +108,7 @@
         }
         .btn-back:hover { border-color: var(--accent); color: var(--accent); }
 
-        .draft-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .draft-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 20px; }
         .pilot-section {
             margin-bottom: 16px;
             padding: 12px;
@@ -121,7 +123,7 @@
             text-transform: uppercase;
             letter-spacing: 0.04em;
         }
-        .pilot-section-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+        .pilot-section-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
         .card { background: rgba(0,0,0,0.4); padding: 14px; border-radius: 6px; border: 1px solid #444; cursor: pointer; transition: 0.15s; position: relative; }
         .card:hover { border-color: var(--accent); background: rgba(69, 243, 255, 0.05); }
         .card.selected { border-color: var(--success-green); background: rgba(46, 204, 113, 0.1); }
@@ -138,7 +140,6 @@
             border: 1px solid var(--accent);
             font-size: 0.85rem;
         }
-        .ovr-gold { color: var(--gold); border-color: var(--gold); }
         .rarity-badge {
             display: inline-block;
             margin-left: 8px;
@@ -169,7 +170,6 @@
             border: 1px solid #333;
         }
         .log-entry { margin-bottom: 8px; line-height: 1.4; border-left: 3px solid #555; padding-left: 8px; font-size: 0.9rem; }
-        .log-zica { color: var(--zica-red); font-weight: bold; border-left-color: var(--zica-red); }
         .log-success { color: var(--success-green); border-left-color: var(--success-green); }
 
         .table-container { background: #111; border: 1px solid #333; border-radius: 4px; height: 380px; overflow-y: auto; padding: 10px; }
@@ -177,12 +177,37 @@
         .main-table th { background: #000; color: var(--accent); padding: 8px; text-align: left; position: sticky; top: 0; }
         .main-table td { padding: 6px 8px; border-bottom: 1px solid #222; }
         .main-table tr.player-row { background: rgba(46, 204, 113, 0.15); font-weight: bold; color: #fff; }
-        .main-table tr.player-row td:first-child { border-left: 4px solid var(--success-green); }
-
+        
         .status-bar { display: flex; justify-content: space-between; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 4px; margin-bottom: 20px; font-weight: bold; }
         .summary-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #333; }
-        .mode-badge { background: var(--gold); color: #000; padding: 4px 8px; font-size: 0.8rem; font-weight: bold; border-radius: 4px; text-transform: uppercase; }
         
+        .manager-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .manager-card {
+            background: rgba(0,0,0,0.35);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .manager-card h4 {
+            margin-top: 0;
+            color: var(--gold);
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+
+        .neg-panel {
+            background: rgba(0,0,0,0.4);
+            border: 1px dashed var(--money-blue);
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
         #autoplay-countdown { color: var(--gold); font-weight: bold; font-size: 1.1rem; margin-top: 10px; text-align: center; min-height: 24px; }
         .page-credit {
             margin-top: 24px;
@@ -215,6 +240,53 @@
             height: 18px;
             accent-color: var(--accent);
         }
+
+        .market-list {
+            max-height: 250px;
+            overflow-y: auto;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 6px;
+        }
+        .market-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            border-bottom: 1px solid #222;
+            font-size: 0.85rem;
+        }
+
+        .xp-bar-container {
+            width: 100%;
+            background: #222;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .xp-bar-fill {
+            height: 100%;
+            background: var(--success-green);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .color-picker-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .color-picker-box input[type="color"] {
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: none;
+        }
     </style>
 </head>
 <body>
@@ -222,7 +294,7 @@
 <div class="container">
     <header>
         <h1>7x0: <span>F1 Shift & Draft</span></h1>
-        <p>Edição Histórica OVR - Modo Campeões Absolutos</p>
+        <p>Edição Histórica OVR - Com Cadillac F1 & Cores Oficiais</p>
     </header>
 
     <div id="screen-menu" class="screen active" style="text-align: center;">
@@ -230,7 +302,7 @@
         <p>Simule ou dispute campeonatos completos compostos por 24 circuitos clássicos.</p>
         <br>
         <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-            <button class="btn" onclick="startNewGame('normal')">Modo Carreira Atual</button>
+            <button class="btn" onclick="startNewGame('normal')">Modo Carreira Manager</button>
             <button class="btn btn-gold" onclick="startNewGame('champions')">🏆 Apenas Campeões Mundiais (1950-Atuais)</button>
         </div>
 
@@ -249,46 +321,168 @@
     <div id="screen-draft" class="screen">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <button class="btn-back" onclick="returnToMenuFromDraft()">← Voltar ao Menu</button>
-            <h2>Draft e Alinhamento Estrutural</h2>
+            <h2>Draft de Engenharia e Pilotos</h2>
             <div id="game-mode-indicator"></div>
         </div>
         
         <div style="background: rgba(230, 126, 34, 0.1); border: 1px solid var(--warning-orange); padding: 12px; border-radius: 6px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="color:var(--warning-orange); font-size: 0.9rem;">*Os contratos durarão todo o campeonato atual.</span>
+            <span style="color:var(--warning-orange); font-size: 0.9rem;">*Os contratos iniciais definem a estrutura da sua equipe.</span>
             <span style="font-weight: bold; color: #fff;">🔄 Rerolls: <span id="reroll-counter" style="color:var(--accent); font-size: 1.2rem;">3</span></span>
         </div>
         
         <div class="draft-header-inline">
-            <h3 id="draft-chassis-title">1. Escolha a Equipe Base</h3>
+            <h3 id="draft-chassis-title">Escolha a Equipe Base</h3>
             <button class="btn-reroll" id="reroll-chassis" onclick="triggerSingleReroll('chassis')">🔄 Reroll Chassis</button>
         </div>
         <div class="draft-options" id="pool-chassis"></div>
 
         <div class="draft-header-inline">
-            <h3 id="draft-motor-title">2. Escolha o Fornecedor de Motor</h3>
+            <h3 id="draft-motor-title">Escolha o Fornecedor de Motor</h3>
             <button class="btn-reroll" id="reroll-motor" onclick="triggerSingleReroll('motor')">🔄 Reroll Motor</button>
         </div>
         <div class="draft-options" id="pool-motor"></div>
 
         <div class="draft-header-inline">
-            <h3 id="draft-piloto-title">3. Escolha o Piloto 1</h3>
+            <h3 id="draft-piloto-title">Escolha o Piloto 1</h3>
             <button class="btn-reroll" id="reroll-piloto1" onclick="triggerSingleReroll('piloto1')">🔄 Reroll Piloto 1</button>
         </div>
         <div class="draft-options" id="pool-piloto1"></div>
 
         <div class="draft-header-inline">
-            <h3>4. Escolha o Piloto 2 (Sem duplicata)</h3>
+            <h3>Escolha o Piloto 2</h3>
             <button class="btn-reroll" id="reroll-piloto2" onclick="triggerSingleReroll('piloto2')">🔄 Reroll Piloto 2</button>
         </div>
         <div class="draft-options" id="pool-piloto2"></div>
 
         <div class="summary-box" style="border-color: var(--accent); margin-top: 18px;">
-            <h3>Nome da equipe (opcional)</h3>
-            <p style="margin-top: 0; color: #aaa;">Se deixar em branco, o jogo usa "Sua Escuderia".</p>
+            <h3>Personalização da sua Escuderia</h3>
+            <p style="margin-top: 0; color: #aaa;">Escolha o nome e a cor oficial que representará sua equipe no grid e nas tabelas.</p>
             <input id="team-name-input" type="text" placeholder="Ex: Team 7x0" oninput="updateTeamName()" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border-radius: 4px; border: 1px solid #444; background: #111; color: #fff; font-size: 1rem;">
+            
+            <div class="color-picker-box">
+                <label style="font-weight: bold; color: #fff;">Cor da Escuderia:</label>
+                <input id="team-color-input" type="color" value="#2ecc71" onchange="updateTeamColor()">
+                <span id="team-color-preview" style="font-weight: bold; color: #2ecc71;">#2ecc71</span>
+            </div>
         </div>
 
-        <button class="btn" id="btn-confirm-draft" onclick="confirmDraftAndLaunch()" style="width: 100%; margin-top: 20px;">Assinar e Ir para o Grid ✍️</button>
+        <button class="btn" id="btn-confirm-draft" onclick="confirmDraftAndLaunch()" style="width: 100%; margin-top: 20px;">Assinar e Ir para o Grid </button>
+    </div>
+
+    <!-- TELA DE GESTÃO E OPERAÇÕES DO QG A CADA 3 CORRIDAS -->
+    <div id="screen-manager-hq" class="screen">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2>🏢 Centro de Operações (QG da Escuderia)</h2>
+            <div style="font-size: 1.2rem; font-weight: bold; color: var(--success-green);">
+                Orçamento: <span id="hq-budget">R$ 0M</span>
+            </div>
+        </div>
+
+        <div class="summary-box">
+            <p>Ano Corrente: <b id="hq-season-year">Ano 1</b> | Temporada: <b><span id="hq-round-info">1 de 24</span></b></p>
+            <div class="color-picker-box" style="margin-top: 4px;">
+                <label style="font-size: 0.85rem; color: #aaa;">Cor da Equipe:</label>
+                <input id="hq-team-color-input" type="color" value="#2ecc71" onchange="updateTeamColorHQ(this.value)">
+            </div>
+        </div>
+
+        <!-- PAINEL DE RESPOSTAS DA VISTORIA -->
+        <div id="hq-notifications-box" class="summary-box" style="border-color: var(--gold); display: none;">
+            <h3 style="color: var(--gold); margin-top: 0;">Relatório da Vistoria do QG</h3>
+            <div id="hq-notifications-content"></div>
+        </div>
+
+        <div class="manager-grid">
+            <div class="manager-card">
+                <h4>🏎️ 1. Fábrica & Desenvolvimento Gradual</h4>
+                <p>Upgrades solicitados aqui são aplicados gradualmente nas próximas corridas.</p>
+                <div style="margin-bottom: 10px;">
+                    <span style="font-size: 0.9rem;">Chassis OVR: <b id="hq-chassis-ovr">0</b> <small style="color:var(--success-green)" id="hq-chassis-queue"></small></span><br>
+                    <button class="btn btn-money" onclick="requestUpgrade('chassis')" style="padding: 6px 10px; font-size: 0.8rem; margin-top: 4px;">Pedir Pacote Aéro (+3 OVR / R$ 18M)</button>
+                </div>
+                <div>
+                    <span style="font-size: 0.9rem;">Motor OVR: <b id="hq-motor-ovr">0</b> <small style="color:var(--success-green)" id="hq-motor-queue"></small></span><br>
+                    <button class="btn btn-money" onclick="requestUpgrade('motor')" style="padding: 6px 10px; font-size: 0.8rem; margin-top: 4px;">Pedir Bloco Térmico (+3 OVR / R$ 22M)</button>
+                </div>
+            </div>
+
+            <div class="manager-card">
+                <h4>📢 2. Estrutura Comercial</h4>
+                <p>Aumente a visibilidade para obter mais renda em cada GP.</p>
+                <p style="font-size: 0.9rem;">Bônus por GP: <b id="hq-sponsor-bonus">R$ 2M</b></p>
+                <button class="btn btn-gold" onclick="upgradeFacility('marketing')" style="padding: 8px 12px; font-size: 0.85rem; width: 100%;">Expandir Estrutura (R$ 25M)</button>
+            </div>
+
+            <div class="manager-card">
+                <h4>👥 3. Cockpit & Desenvolvimento dos Pilotos</h4>
+                <p>Veja o progresso de XP e o potencial de evolução dos seus pilotos.</p>
+                
+                <!-- PAINEL P1 -->
+                <div class="neg-panel">
+                    <p style="font-size: 0.85rem; margin: 0 0 4px 0;">P1: <b id="hq-p1-info">-</b> (<span id="hq-p1-contract">1 ano</span>)</p>
+                    <div style="font-size: 0.75rem; color: var(--gold); margin-bottom: 4px;">
+                        XP: <span id="hq-p1-xp">0/100</span> | Potencial Máx: <span id="hq-p1-pot">0</span>
+                        <div class="xp-bar-container"><div id="hq-p1-xp-bar" class="xp-bar-fill"></div></div>
+                    </div>
+                    <small style="color:#aaa;">Status: <span id="hq-p1-status" style="color:var(--gold)">Ativo</span></small><br>
+                    <div style="margin: 6px 0;">
+                        <label style="font-size: 0.8rem;">Duração: </label>
+                        <select id="p1-years-select" style="background:#111; color:#fff; border:1px solid #444; padding:2px 4px; border-radius:4px;">
+                            <option value="1">1 Ano</option>
+                            <option value="2">2 Anos</option>
+                            <option value="3">3 Anos</option>
+                        </select>
+                    </div>
+                    <div id="hq-p1-buttons" style="display:flex; gap:4px; margin-top:6px;">
+                        <button class="btn btn-fast btn-p1-neg" onclick="sendDriverProposal('p1', 'agressiva')" style="padding: 4px 6px; font-size: 0.7rem;">🔴 Agressiva (R$ 5M/ano)</button>
+                        <button class="btn btn-money btn-p1-neg" onclick="sendDriverProposal('p1', 'moderada')" style="padding: 4px 6px; font-size: 0.7rem;">🟡 Moderada (R$ 8M/ano)</button>
+                        <button class="btn btn-p1-neg" onclick="sendDriverProposal('p1', 'conservadora')" style="padding: 4px 6px; font-size: 0.7rem; background:var(--success-green); color:#000;">🟢 Conservadora (R$ 12M/ano)</button>
+                    </div>
+                </div>
+
+                <!-- PAINEL P2 -->
+                <div class="neg-panel">
+                    <p style="font-size: 0.85rem; margin: 0 0 4px 0;">P2: <b id="hq-p2-info">-</b> (<span id="hq-p2-contract">1 ano</span>)</p>
+                    <div style="font-size: 0.75rem; color: var(--gold); margin-bottom: 4px;">
+                        XP: <span id="hq-p2-xp">0/100</span> | Potencial Máx: <span id="hq-p2-pot">0</span>
+                        <div class="xp-bar-container"><div id="hq-p2-xp-bar" class="xp-bar-fill"></div></div>
+                    </div>
+                    <small style="color:#aaa;">Status: <span id="hq-p2-status" style="color:var(--gold)">Ativo</span></small><br>
+                    <div style="margin: 6px 0;">
+                        <label style="font-size: 0.8rem;">Duração: </label>
+                        <select id="p2-years-select" style="background:#111; color:#fff; border:1px solid #444; padding:2px 4px; border-radius:4px;">
+                            <option value="1">1 Ano</option>
+                            <option value="2">2 Anos</option>
+                            <option value="3">3 Anos</option>
+                        </select>
+                    </div>
+                    <div id="hq-p2-buttons" style="display:flex; gap:4px; margin-top:6px;">
+                        <button class="btn btn-fast btn-p2-neg" onclick="sendDriverProposal('p2', 'agressiva')" style="padding: 4px 6px; font-size: 0.7rem;">🔴 Agressiva (R$ 5M/ano)</button>
+                        <button class="btn btn-money btn-p2-neg" onclick="sendDriverProposal('p2', 'moderada')" style="padding: 4px 6px; font-size: 0.7rem;">🟡 Moderada (R$ 8M/ano)</button>
+                        <button class="btn btn-p2-neg" onclick="sendDriverProposal('p2', 'conservadora')" style="padding: 4px 6px; font-size: 0.7rem; background:var(--success-green); color:#000;">🟢 Conservadora (R$ 12M/ano)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TELA DO MERCADO DE PILOTOS -->
+        <div class="summary-box" style="border-color: var(--money-blue);">
+            <h3 style="color: var(--money-blue); margin-top: 0;">🌐 Mercado Global de Pilotos & Fórmula 2</h3>
+            <p style="font-size: 0.85rem; color: #aaa;">Monitore o tempo de contrato, OVR e potencial dos pilotos. As contratações entram em vigor na próxima temporada!</p>
+
+            <div class="race-grid">
+                <div>
+                    <h4>🏎️ Grid F1 (Contratos com Equipes)</h4>
+                    <div class="market-list" id="market-f1-list"></div>
+                </div>
+                <div>
+                    <h4>🎓 Opções da Fórmula 2 & Mercado Livre</h4>
+                    <div class="market-list" id="market-f2-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn" onclick="closeHQAndProceed()" style="width: 100%; margin-top: 10px;">Retornar às Corridas 🚦</button>
     </div>
 
     <div id="screen-pre-race" class="screen">
@@ -301,7 +495,7 @@
         </div>
         <div class="summary-box" style="border-color: var(--accent);">
             <h3>Sua Estrutura Escolhida</h3>
-            <p>🏁 <b>Equipe:</b> <span id="fixed-team">-</span></p>
+            <p>🏁 <b>Equipe:</b> <span id="fixed-team">-</span> | 💰 <b>Caixa:</b> <span id="fixed-budget" style="color:var(--success-green)">-</span></p>
             <p>🏎️ <b>Chassis:</b> <span id="fixed-chassis">-</span> | ⚡ <b>Motor:</b> <span id="fixed-motor">-</span></p>
             <p>👤 <b>P1:</b> <span id="fixed-p1">-</span> | 👤 <b>P2:</b> <span id="fixed-p2">-</span></p>
         </div>
@@ -318,11 +512,11 @@
 
         <div class="race-grid">
             <div>
-                <h3>Telemetria e Rádio</h3>
+                <h3>Telemetria e Rádio do Chefe de Equipe</h3>
                 <div id="race-log"></div>
             </div>
             <div>
-                <h3>Posições na Pista</h3>
+                <h3>Posições na Pista (Grid de 24 Carros)</h3>
                 <div class="table-container">
                     <table class="main-table">
                         <thead>
@@ -343,11 +537,6 @@
                 <span>Velocidade:</span>
                 <button class="btn" id="btn-speed" onclick="toggleSpeed()" style="padding: 6px 12px; font-size: 0.85rem; background: var(--text-main);">Normal</button>
                 <button class="btn btn-fast" onclick="skipRace()" style="padding: 6px 12px; font-size: 0.85rem;">⏩ Concluir Prova</button>
-            </div>
-            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                <button class="btn btn-zica" onclick="useZica('galvao')">🎙️ Zica do Galvão</button>
-                <button class="btn btn-zica" onclick="useZica('pitstop')">🔧 Sabotar Rivais</button>
-                <button class="btn btn-zica" onclick="useZica('ers')">⚡ Liberar ERS Extra</button>
             </div>
         </div>
         
@@ -399,48 +588,57 @@
         <button class="btn" id="btn-next-gp" onclick="goToNextGP()" style="width: 100%; margin-top: 10px;">Avançar Calendário</button>
     </div>
 
-    <div id="screen-silly-season" class="screen">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h2>Silly Season</h2>
-            <div class="mode-badge" style="background: var(--warning-orange); color: #000;">Apenas modo campeões</div>
-        </div>
-        <div class="summary-box">
-            <p>Escolha um piloto do seu time para trocar. Depois selecione o substituto entre os campeões disponíveis.</p>
-            <p id="silly-season-status" style="margin: 0; color: var(--accent); font-weight: bold;">Selecione o piloto a ser substituído.</p>
-        </div>
-
-        <div class="summary-box" style="border-color: var(--warning-orange);">
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
-                <div>
-                    <h3 style="margin-bottom: 4px;">3. Não trocar pilotos</h3>
-                    <small style="color:#aaa;">Mantém a dupla atual e pula a troca desta janela.</small>
-                </div>
-                <button class="btn btn-fast" onclick="skipSillySeason()">Manter minha dupla atual</button>
-            </div>
-        </div>
-
-        <div class="summary-box">
-            <h3>1. Seu piloto atual</h3>
-            <div class="draft-options" id="silly-current-driver-pool"></div>
-        </div>
-
-        <div class="summary-box">
-            <h3>2. Substitutos disponíveis</h3>
-            <div class="draft-options" id="silly-replacement-pool"></div>
-        </div>
-
-        <button class="btn" id="btn-continue-after-silly" onclick="continueAfterSillySeason()" style="width: 100%; margin-top: 10px;">Confirmar troca e seguir para a próxima corrida</button>
-    </div>
-
     <div class="page-credit">Feito por FelipeGamerbr48</div>
-    <div class="page-credit">Versão 1.2</div>
+    <div class="page-credit">Versão 2.0</div>
 </div>
 
 <script>
     let modoJogo = 'normal';
     let autoPlayAtivo = false;
     let autoPlayTimer = null;
-    //pistas de todos os modos
+
+    // Cores oficiais das equipes F1 2026 (Incluindo a Cadillac F1)
+    const coresEquipesOficiais = {
+        "Ferrari": "#D52E37",
+        "McLaren": "#FF8000",
+        "Mercedes": "#27F4D2",
+        "Red Bull": "#3671C6",
+        "Aston Martin": "#4B9774",
+        "Alpine": "#00A1E8",
+        "Racing Bulls": "#6692FF",
+        "Audi": "#EB4526",
+        "Williams": "#3267D4",
+        "Haas": "#DFE1E2",
+        "Cadillac": "#AAAAAD",
+        "Lotus": "#F1C40F",
+        "Cooper": "#2ECC71",
+        "Brabham": "#3498DB",
+        "Renault": "#F39C12",
+        "Vanwall": "#1ABC9C",
+        "BRM": "#9B59B6",
+        "Matra": "#2980B9",
+        "Tyrrell": "#34495E",
+        "Benetton": "#E67E22",
+        "Brawn GP": "#CDDC39"
+    };
+
+    let playerTeamColor = "#2ecc71"; // Cor padrão da escuderia do jogador
+
+    // Estrutura Financeira e Operacional do Manager
+    let temporadaAno = 2026;
+    let orcamentoEquipe = 45; 
+    let sponsorBonusPorCorrida = 2; 
+    let contratosPilotos = { p1: 1, p2: 1 }; 
+    
+    // Contratações pré-assinadas para vigência no próximo ano
+    let preContratoAnoSeguinte = { p1: null, p2: null };
+    let pilotosLivresRescindidos = []; 
+
+    // Trava de Propostas Pendentes e Respostas por Vistoria
+    let propostasPendentes = { p1: null, p2: null }; 
+    let respostasVistoria = []; 
+    let desenvolvimentoFila = { chassis: [], motor: [] }; 
+
     const gps = [
         { nome: "GP do Bahrein (Sakhir)", bioma: "Equilibrado", voltas: 31, desc: "Asfalto abrasivo pune tração traseira." },
         { nome: "GP da Arábia Saudita (Jeddah)", bioma: "Velocidade", voltas: 28, desc: "Muros colados a mais de 250 km/h." },
@@ -469,178 +667,251 @@
     ];
 
     const gpsCampeoes = [
-        { nome: "Adelaide", bioma: "Rua", voltas: 61, desc: "Clássica australiana de rua, rápida e traiçoeira nas disputas." },
-        { nome: "Aida", bioma: "Equilibrado", voltas: 50, desc: "Circuito técnico japonês com ritmo constante e pouco erro permitido." },
-        { nome: "Ain-Diab", bioma: "Confiabilidade", voltas: 48, desc: "Traçado antigo e exigente, com trecho rápido e desgaste alto." },
-        { nome: "Aintree", bioma: "Velocidade", voltas: 58, desc: "Layout britânico clássico que recompensa eficiência e velocidade de ponta." },
-        { nome: "Anderstorp", bioma: "Equilibrado", voltas: 55, desc: "Pista sueca de ritmo fluido e boa tração em saídas de curva." },
-        { nome: "Austin", bioma: "Equilibrado", voltas: 56, desc: "Circuito completo, com mudanças de direção rápidas e bom desgaste." },
-        { nome: "AVUS", bioma: "Velocidade", voltas: 45, desc: "Retas brutais e pouquíssima margem para errar em alta velocidade." },
-        { nome: "Bacu", bioma: "Rua", voltas: 51, desc: "Trecho estreito e reta gigantesca: equilíbrio perfeito é tudo." },
-        { nome: "Barcelona", bioma: "Equilibrado", voltas: 66, desc: "Boa pista para medir o pacote completo do carro." },
-        { nome: "Brands Hatch", bioma: "Velocidade", voltas: 60, desc: "Curvas rápidas e fluídas exigem coragem e carro muito bem acertado." },
-        { nome: "Bremgarten", bioma: "Confiabilidade", voltas: 54, desc: "Clássico antigo de alta velocidade e muita exigência mecânica." },
-        { nome: "Buenos Aires", bioma: "Equilibrado", voltas: 61, desc: "Pista argentina de luta constante e freadas pesadas." },
-        { nome: "Caesars Palace", bioma: "Rua", voltas: 50, desc: "Circuito de estacionamento com aderência baixa e pouca margem de erro." },
-        { nome: "Cidade do México", bioma: "Confiabilidade", voltas: 71, desc: "Altitude extrema que pune motor, freios e refrigeração." },
-        { nome: "Clermont-Ferrand", bioma: "Equilibrado", voltas: 52, desc: "Traçado técnico francês com curvas longas e ritmo metódico." },
-        { nome: "Dallas", bioma: "Confiabilidade", voltas: 47, desc: "Asfalto quente e alto desgaste exigem muito do conjunto mecânico." },
-        { nome: "Detroit", bioma: "Rua", voltas: 57, desc: "Bumpiness, muros e frenagens curtas tornam a corrida bem física." },
-        { nome: "Dijon-Prenois", bioma: "Velocidade", voltas: 53, desc: "Curvas rápidas e mudanças de direção premiam carros soltos." },
-        { nome: "Donington", bioma: "Velocidade", voltas: 64, desc: "Circuito britânico de fluidez alta e ritmo muito agressivo." },
-        { nome: "East London", bioma: "Equilibrado", voltas: 45, desc: "Traçado sul-africano de velha escola com trechos rápidos e técnicos." },
-        { nome: "Estoril", bioma: "Equilibrado", voltas: 59, desc: "Pista portuguesa versátil, boa para testar carro e piloto por inteiro." },
-        { nome: "Fuji", bioma: "Velocidade", voltas: 67, desc: "Retas longas e trecho técnico que pede boa entrega de potência." },
-        { nome: "Gidá", bioma: "Velocidade", voltas: 50, desc: "Muros próximos e altíssima velocidade punem qualquer erro." },
-        { nome: "Hockenheim", bioma: "Velocidade", voltas: 67, desc: "Mistura de retas longas e áreas técnicas de aceleração intensa." },
-        { nome: "Hungaroring", bioma: "Rua", voltas: 70, desc: "Travada, técnica e muito difícil de ultrapassar." },
-        { nome: "Imola", bioma: "Equilibrado", voltas: 63, desc: "Clássica, rápida e punitiva com zebras e limites de pista." },
-        { nome: "Indianapolis", bioma: "Velocidade", voltas: 73, desc: "Ritmo forte, curvas amplas e muita demanda de eficiência." },
-        { nome: "Interlagos", bioma: "Equilibrado", voltas: 71, desc: "Clima imprevisível e pista histórica de grandes viradas." },
-        { nome: "Istambul", bioma: "Equilibrado", voltas: 58, desc: "Mudanças de apoio e curvas longas desafiam o acerto ideal." },
-        { nome: "Jacarepagua", bioma: "Equilibrado", voltas: 61, desc: "Traçado brasileiro clássico com fluidez e trechos de alta pressão." },
-        { nome: "Jarama", bioma: "Rua", voltas: 54, desc: "Pista espanhola compacta, curta e com pouco espaço para escapar." },
-        { nome: "Jerez de la Frontera", bioma: "Equilibrado", voltas: 62, desc: "Boa para medir aderência e consistência em ritmo de corrida." },
-        { nome: "Kuala Lumpur", bioma: "Confiabilidade", voltas: 56, desc: "Calor e umidade castigam pneus, freios e sistema térmico." },
-        { nome: "Kyalami", bioma: "Velocidade", voltas: 69, desc: "Subidas e trechos rápidos fazem a diferença na potência pura." },
-        { nome: "Las Vegas", bioma: "Velocidade", voltas: 50, desc: "Noite fria, baixa aderência e muita precisão de aceleração." },
-        { nome: "Le Castellet", bioma: "Equilibrado", voltas: 53, desc: "Traçado de curvas amplas que premia estabilidade aerodinâmica." },
-        { nome: "Le Mans", bioma: "Velocidade", voltas: 60, desc: "Longas retas e zona rápida favorecem velocidade e consumo controlado." },
-        { nome: "Long Beach", bioma: "Rua", voltas: 59, desc: "Rua estreita, muro perto e corrida de precisão absoluta." },
-        { nome: "Lusail", bioma: "Equilibrado", voltas: 57, desc: "As curvas longas testam pneus e constância de ritmo." },
-        { nome: "Magny-Cours", bioma: "Equilibrado", voltas: 61, desc: "Circuito francês técnico e equilibrado, sem espaço para relaxar." },
-        { nome: "Melbourne", bioma: "Confiabilidade", voltas: 58, desc: "Abertura clássica que cobra consistência e adaptação imediata." },
-        { nome: "Miami", bioma: "Rua", voltas: 57, desc: "Semiurbana, rápida e cheia de armadilhas para o erro." },
-        { nome: "Monaco", bioma: "Rua", voltas: 78, desc: "Muros apertados onde classificar bem vale ouro puro." },
-        { nome: "Monsanto", bioma: "Velocidade", voltas: 46, desc: "Traçado português histórico de ritmo agressivo e boa coragem." },
-        { nome: "Mont-Tremblant", bioma: "Equilibrado", voltas: 64, desc: "Pista canadense de técnica e fluidez em terreno variado." },
-        { nome: "Montjuïc Park", bioma: "Rua", voltas: 53, desc: "Pista espanhola antiga com curvas de risco e pouca margem de erro." },
-        { nome: "Montreal", bioma: "Confiabilidade", voltas: 70, desc: "Frenagens fortes e o Muro dos Campeões sempre ameaçando." },
-        { nome: "Monza", bioma: "Velocidade", voltas: 53, desc: "O templo da velocidade pura e da eficiência aerodinâmica." },
-        { nome: "Mosport Park", bioma: "Velocidade", voltas: 62, desc: "Curvas rápidas e terreno fluido que favorecem coragem e controle." },
-        { nome: "Mugello", bioma: "Equilibrado", voltas: 59, desc: "Sequência de curvas rápidas e ritmo técnico muito forte." },
-        { nome: "Nivelles", bioma: "Confiabilidade", voltas: 48, desc: "Layout antigo e exigente, onde estabilidade é essencial." },
-        { nome: "Nova Deli", bioma: "Confiabilidade", voltas: 58, desc: "Calor e forte exigência mecânica em uma pista de ritmo pesado." },
-        { nome: "Nürburgring", bioma: "Equilibrado", voltas: 67, desc: "Traçado lendário de alta complexidade e adaptação constante." },
-        { nome: "Österreichring", bioma: "Velocidade", voltas: 54, desc: "Subidas rápidas e curvas longas valorizam potência e coragem." },
-        { nome: "Pedralbes", bioma: "Velocidade", voltas: 45, desc: "Antiga pista espanhola com velocidade alta e pouca tolerância a erros." },
-        { nome: "Pescara", bioma: "Velocidade", voltas: 52, desc: "Longo, rápido e clássico, exige compromisso máximo em alta velocidade." },
-        { nome: "Phoenix", bioma: "Confiabilidade", voltas: 51, desc: "Calor e desgaste cobram muito da parte mecânica do carro." },
-        { nome: "Portimão", bioma: "Equilibrado", voltas: 60, desc: "Ondulações e variação de altitude testam equilíbrio geral." },
-        { nome: "Porto", bioma: "Rua", voltas: 47, desc: "Trecho de rua apertado com curva curta e muita precisão." },
-        { nome: "Reims", bioma: "Velocidade", voltas: 55, desc: "Alta velocidade linear e traçado clássico de muito fluxo." },
-        { nome: "Riverside", bioma: "Velocidade", voltas: 68, desc: "Longo e rápido, favorece quem tem boa eficiência em retas." },
-        { nome: "Rouen-les-Essarts", bioma: "Equilibrado", voltas: 54, desc: "Trecho técnico e rápido em meio a mudanças de direção." },
-        { nome: "Sakhir", bioma: "Equilibrado", voltas: 31, desc: "O deserto exige tração limpa e leitura precisa dos pneus." },
-        { nome: "Sebring", bioma: "Confiabilidade", voltas: 49, desc: "Asfalto irregular e desgaste alto punem qualquer desequilíbrio." },
-        { nome: "Silverstone", bioma: "Velocidade", voltas: 52, desc: "Alta energia e curvas históricas de muito compromisso." },
-        { nome: "Singapura", bioma: "Rua", voltas: 62, desc: "Calor, umidade e corrida mental do começo ao fim." },
-        { nome: "Sóchi", bioma: "Equilibrado", voltas: 53, desc: "Misto de retas e curvas que pede acerto bem balanceado." },
-        { nome: "Spa-Francorchamps", bioma: "Velocidade", voltas: 44, desc: "Clima instável e a Eau Rouge cobram coragem total." },
-        { nome: "Spielberg", bioma: "Velocidade", voltas: 71, desc: "Subidas e freadas curtas favorecem potência e tração." },
-        { nome: "Suzuka", bioma: "Equilibrado", voltas: 53, desc: "O traçado em 8 premia equilíbrio e técnica cirúrgica." },
-        { nome: "Valência", bioma: "Rua", voltas: 57, desc: "Pista de rua técnica com pouca margem para erro de pilotagem." },
-        { nome: "Watkins Glen", bioma: "Equilibrado", voltas: 60, desc: "Clássica e fluida, exige confiança nas transições rápidas." },
-        { nome: "Xangai", bioma: "Velocidade", voltas: 56, desc: "A longa reta e o setor sinuoso testam motor e desgaste." },
-        { nome: "Yas Marina", bioma: "Decisão", voltas: 58, desc: "Final sob as luzes, onde estratégia pesa tanto quanto ritmo." },
-        { nome: "Yeongam", bioma: "Equilibrado", voltas: 55, desc: "Pista coreana com técnica, ritmo e disputa de acerto fino." },
-        { nome: "Zandvoort", bioma: "Equilibrado", voltas: 72, desc: "Curvas inclinadas e ritmo constante em alta pressão." },
-        { nome: "Zeltweg", bioma: "Velocidade", voltas: 49, desc: "Layout austríaco curto e veloz, com foco em tração e motor." },
-        { nome: "Zolder", bioma: "Equilibrado", voltas: 57, desc: "Circuito belga compacto e técnico, bom para corrida agressiva." }
+        { nome: "Adelaide", bioma: "Rua", voltas: 61, desc: "Clássica australiana de rua, rápida e traiçoeira." },
+        { nome: "Aida", bioma: "Equilibrado", voltas: 50, desc: "Circuito técnico japonês com ritmo constante." },
+        { nome: "Ain-Diab", bioma: "Confiabilidade", voltas: 48, desc: "Traçado antigo e exigente, com alto desgaste." },
+        { nome: "Aintree", bioma: "Velocidade", voltas: 58, desc: "Layout britânico clássico de alta velocidade." },
+        { nome: "Anderstorp", bioma: "Equilibrado", voltas: 55, desc: "Pista sueca de ritmo fluido e boa tração." },
+        { nome: "Austin", bioma: "Equilibrado", voltas: 56, desc: "Circuito completo com mudanças rápidas." },
+        { nome: "AVUS", bioma: "Velocidade", voltas: 45, desc: "Retas brutais em altíssima velocidade." },
+        { nome: "Bacu", bioma: "Rua", voltas: 51, desc: "Trecho estreito com reta gigantesca." },
+        { nome: "Barcelona", bioma: "Equilibrado", voltas: 66, desc: "Mede o pacote aerodinâmico completo." },
+        { nome: "Brands Hatch", bioma: "Velocidade", voltas: 60, desc: "Curvas rápidas e ritmo agressivo." },
+        { nome: "Bremgarten", bioma: "Confiabilidade", voltas: 54, desc: "Clássico antigo de alta velocidade." },
+        { nome: "Buenos Aires", bioma: "Equilibrado", voltas: 61, desc: "Pista argentina de freadas pesadas." },
+        { nome: "Caesars Palace", bioma: "Rua", voltas: 50, desc: "Aderência baixa em trecho urbano." },
+        { nome: "Cidade do México", bioma: "Confiabilidade", voltas: 71, desc: "Altitude extrema que exige do motor." },
+        { nome: "Clermont-Ferrand", bioma: "Equilibrado", voltas: 52, desc: "Traçado técnico com curvas longas." },
+        { nome: "Dallas", bioma: "Confiabilidade", voltas: 47, desc: "Asfalto quente e desgaste severo." },
+        { nome: "Detroit", bioma: "Rua", voltas: 57, desc: "Ondulações e muros bem próximos." },
+        { nome: "Dijon-Prenois", bioma: "Velocidade", voltas: 53, desc: "Curvas rápidas premiam carros soltos." },
+        { nome: "Donington", bioma: "Velocidade", voltas: 64, desc: "Fluidez alta e ritmo alucinante." },
+        { nome: "East London", bioma: "Equilibrado", voltas: 45, desc: "Velha escola com trechos técnicos." },
+        { nome: "Estoril", bioma: "Equilibrado", voltas: 59, desc: "Pista versátil para testar o equilíbrio." },
+        { nome: "Fuji", bioma: "Velocidade", voltas: 67, desc: "Retas longas com final técnico." },
+        { nome: "Gidá", bioma: "Velocidade", voltas: 50, desc: "Muros próximos em velocidade máxima." },
+        { nome: "Hockenheim", bioma: "Velocidade", voltas: 67, desc: "Retas longas e freadas fortes." },
+        { nome: "Hungaroring", bioma: "Rua", voltas: 70, desc: "Travada e difícil de ultrapassar." },
+        { nome: "Imola", bioma: "Equilibrado", voltas: 63, desc: "Zebras altas e limite de pista." },
+        { nome: "Indianapolis", bioma: "Velocidade", voltas: 73, desc: "Curvas amplas de alta aceleração." },
+        { nome: "Interlagos", bioma: "Equilibrado", voltas: 71, desc: "Clima imprevisível e pista mística." },
+        { nome: "Istambul", bioma: "Equilibrado", voltas: 58, desc: "Curvas em apoio exigem acerto ideal." },
+        { nome: "Jacarepagua", bioma: "Equilibrado", voltas: 61, desc: "Fluidez com trechos de tração limpa." },
+        { nome: "Jarama", bioma: "Rua", voltas: 54, desc: "Pista compacta e sem áreas de escape." },
+        { nome: "Jerez de la Frontera", bioma: "Equilibrado", voltas: 62, desc: "Mede consistência de ritmo." },
+        { nome: "Kuala Lumpur", bioma: "Confiabilidade", voltas: 56, desc: "Calor e umidade castigam o radiador." },
+        { nome: "Kyalami", bioma: "Velocidade", voltas: 69, desc: "Subidas valorizam potência pura." },
+        { nome: "Las Vegas", bioma: "Velocidade", voltas: 50, desc: "Noite fria com pouca aderência." },
+        { nome: "Le Castellet", bioma: "Equilibrado", voltas: 53, desc: "Curvas amplas de alta estabilidade." },
+        { nome: "Le Mans", bioma: "Velocidade", voltas: 60, desc: "Retas monumentais que exigem motor." },
+        { nome: "Long Beach", bioma: "Rua", voltas: 59, desc: "Muro perto e precisão milimétrica." },
+        { nome: "Lusail", bioma: "Equilibrado", voltas: 57, desc: "Curvas longas testam apoio dos pneus." },
+        { nome: "Magny-Cours", bioma: "Equilibrado", voltas: 61, desc: "Circuito técnico e constante." },
+        { nome: "Melbourne", bioma: "Confiabilidade", voltas: 58, desc: "Abertura que exige adaptação rápida." },
+        { nome: "Miami", bioma: "Rua", voltas: 57, desc: "Semiurbana e bastante punitiva." },
+        { nome: "Monaco", bioma: "Rua", voltas: 78, desc: "Classificação vale praticamente tudo." },
+        { nome: "Monsanto", bioma: "Velocidade", voltas: 46, desc: "Traçado histórico de coragem pura." },
+        { nome: "Mont-Tremblant", bioma: "Equilibrado", voltas: 64, desc: "Técnica em relevo acentuado." },
+        { nome: "Montjuïc Park", bioma: "Rua", voltas: 53, desc: "Curvas de risco máximo." },
+        { nome: "Montreal", bioma: "Confiabilidade", voltas: 70, desc: "Muro dos Campeões sempre à espreita." },
+        { nome: "Monza", bioma: "Velocidade", voltas: 53, desc: "Templo sagrado da velocidade de ponta." },
+        { nome: "Mosport Park", bioma: "Velocidade", voltas: 62, desc: "Terreno fluido em alta velocidade." },
+        { nome: "Mugello", bioma: "Equilibrado", voltas: 59, desc: "Sequência rápida de aceleração." },
+        { nome: "Nivelles", bioma: "Confiabilidade", voltas: 48, desc: "Exige estabilidade mecânica limpa." },
+        { nome: "Nova Deli", bioma: "Confiabilidade", voltas: 58, desc: "Calor forte em circuito de ritmo." },
+        { nome: "Nürburgring", bioma: "Equilibrado", voltas: 67, desc: "Complexidade e adaptação." },
+        { nome: "Österreichring", bioma: "Velocidade", voltas: 54, desc: "Subidas velozes em alta rotação." },
+        { nome: "Pedralbes", bioma: "Velocidade", voltas: 45, desc: "Velocidade alta sem margem a erros." },
+        { nome: "Pescara", bioma: "Velocidade", voltas: 52, desc: "Longo, veloz e desafiador." },
+        { nome: "Phoenix", bioma: "Confiabilidade", voltas: 51, desc: "Exigência mecânica contínua." },
+        { nome: "Portimão", bioma: "Equilibrado", voltas: 60, desc: "Ondulações contínuas no relevo." },
+        { nome: "Porto", bioma: "Rua", voltas: 47, desc: "Rua travada de muita atenção." },
+        { nome: "Reims", bioma: "Velocidade", voltas: 55, desc: "Alta velocidade linear clássica." },
+        { nome: "Riverside", bioma: "Velocidade", voltas: 68, desc: "Favorece a eficiência de reta." },
+        { nome: "Rouen-les-Essarts", bioma: "Equilibrado", voltas: 54, desc: "Mudanças rápidas de apoio." },
+        { nome: "Sakhir", bioma: "Equilibrado", voltas: 31, desc: "Tração precisa nas saídas." },
+        { nome: "Sebring", bioma: "Confiabilidade", voltas: 49, desc: "Asfalto irregular castiga o chassis." },
+        { nome: "Silverstone", bioma: "Velocidade", voltas: 52, desc: "Curvas de altíssima energia." },
+        { nome: "Singapura", bioma: "Rua", voltas: 62, desc: "Calor e desgaste mental extremo." },
+        { nome: "Sóchi", bioma: "Equilibrado", voltas: 53, desc: "Balanceamento em setor sinuoso." },
+        { nome: "Spa-Francorchamps", bioma: "Velocidade", voltas: 44, desc: "Eau Rouge e tempo instável." },
+        { nome: "Spielberg", bioma: "Velocidade", voltas: 71, desc: "Subidas curtas de tração rápida." },
+        { nome: "Suzuka", bioma: "Equilibrado", voltas: 53, desc: "Precisão cirúrgica em curvas rápidas." },
+        { nome: "Valência", bioma: "Rua", voltas: 57, desc: "Muros e freadas de rua." },
+        { nome: "Watkins Glen", bioma: "Equilibrado", voltas: 60, desc: "Fluidez contínua em transições." },
+        { nome: "Xangai", bioma: "Velocidade", voltas: 56, desc: "Reta monumental e setor lento." },
+        { nome: "Yas Marina", bioma: "Decisão", voltas: 58, desc: "Final de campeonato sob holofotes." },
+        { nome: "Yeongam", bioma: "Equilibrado", voltas: 55, desc: "Disputa de acerto de alta precisão." },
+        { nome: "Zandvoort", bioma: "Equilibrado", voltas: 72, desc: "Curvas inclinadas com banked." },
+        { nome: "Zeltweg", bioma: "Velocidade", voltas: 49, desc: "Curto, rápido e potente." },
+        { nome: "Zolder", bioma: "Equilibrado", voltas: 57, desc: "Técnico e travado na Bélgica." }
     ];
 
     const equipesNormais = [
-        { nome: "Mercedes", ovr: 98, desc: "Eficiência aerodinâmica perfeita e excelente estabilidade." },
-        { nome: "Ferrari", ovr: 95, desc: "Mecânica refinada com tração incomparável." },
-        { nome: "McLaren", ovr: 94, desc: "Chassis equilibrado, muito gentil com os pneus." },
-        { nome: "Red Bull", ovr: 95, desc: "Excelente eficiência de arrasto aerodinâmico." },
-        { nome: "Alpine", ovr: 82, desc: "Projeto intermediário com picos eficientes." },
-        { nome: "Haas", ovr: 80, desc: "Boa velocidade máxima em retas." },
-        { nome: "Williams", ovr: 73, desc: "Chassis minimalista otimizado para arrasto reduzido." },
-        { nome: "Racing Bulls", ovr: 83, desc: "Equipe Junior, mais estavel em comparação a equipe A." },
-        { nome: "Audi", ovr: 83, desc: "Equipe remomada, com motores bons, mas aerodinamica a desejar." },
-        { nome: "Aston Martin", ovr: 69, desc: "Equipe dos sonhos, mas deu errado, motor ruim e chassi que prejudica o motor." },
-        { nome: "Cadillac", ovr: 72, desc: "Equipe Nova, motor Ferrari, tudo novo" }
+        { nome: "Mercedes", ovr: 98, desc: "Eficiência aerodinâmica perfeita." },
+        { nome: "Ferrari", ovr: 95, desc: "Mecânica refinada com tração forte." },
+        { nome: "McLaren", ovr: 94, desc: "Gentil com os pneus traseiros." },
+        { nome: "Red Bull", ovr: 95, desc: "Eficiência de arrasto em velocidade de ponta." },
+        { nome: "Alpine", ovr: 82, desc: "Projeto intermediário." },
+        { nome: "Haas", ovr: 80, desc: "Boa velocidade máxima em reta." },
+        { nome: "Williams", ovr: 73, desc: "Chassis minimalista leve." },
+        { nome: "Racing Bulls", ovr: 83, desc: "Projeto equilibrado da equipe B." },
+        { nome: "Audi", ovr: 83, desc: "Motor forte com aéro em lapidação." },
+        { nome: "Aston Martin", ovr: 69, desc: "Motor com arrasto no chassis." },
+        { nome: "Cadillac", ovr: 81, desc: "Estrutura americana inédita estreante." }
     ];
 
     const equipesCampeãs = [
-        { nome: "Ferrari", ovr: 99, titulos: 16, desc: "Maior campeã da F1, com tradição absoluta e presença em todas as eras." },
-        { nome: "McLaren", ovr: 97, titulos: 10, desc: "Referência de eficiência, inovação e vitórias em múltiplas gerações." },
-        { nome: "Williams", ovr: 95, titulos: 9, desc: "Potência britânica clássica, forte em engenharia e consistência histórica." },
-        { nome: "Mercedes", ovr: 94, titulos: 8, desc: "Dominante na era moderna, com combinação de força e refinamento técnico." },
-        { nome: "Lotus", ovr: 92, titulos: 7, desc: "Inovação lendária e leveza técnica que marcaram época na categoria." },
-        { nome: "Red Bull", ovr: 91, titulos: 6, desc: "Aerodinâmica agressiva e performance de ponta na era contemporânea." },
-        { nome: "Cooper", ovr: 84, titulos: 2, desc: "Pioneira em soluções simples e eficientes, com forte legado histórico." },
-        { nome: "Brabham", ovr: 83, titulos: 2, desc: "Equipe clássica britânica, lembrada pela competitividade e inovação." },
-        { nome: "Renault", ovr: 82, titulos: 2, desc: "Projeto francês técnico e eficiente, importante em várias fases da F1." },
-        { nome: "Vanwall", ovr: 81, titulos: 1, desc: "Nome histórico que ajudou a construir a base competitiva da categoria." },
-        { nome: "BRM", ovr: 80, titulos: 1, desc: "Marca britânica tradicional, símbolo de perseverança e engenharia clássica." },
-        { nome: "Matra", ovr: 79, titulos: 1, desc: "Equipe francesa com identidade forte e passagem marcante pela F1." },
-        { nome: "Tyrrell", ovr: 78, titulos: 1, desc: "Equipe icônica, associada a soluções criativas e muita personalidade." },
-        { nome: "Benetton", ovr: 77, titulos: 1, desc: "Equipe de era moderna, competitiva e importante na história recente da F1." },
-        { nome: "Brawn GP", ovr: 96, titulos: 1, desc: "O maior conto de fadas da F1, campeã em uma temporada histórica." }
+        { nome: "Ferrari", ovr: 99, titulos: 16, desc: "Maior campeã da história da F1." },
+        { nome: "McLaren", ovr: 97, titulos: 10, desc: "Referência de inovação técnica." },
+        { nome: "Williams", ovr: 95, titulos: 9, desc: "Potência britânica clássica." },
+        { nome: "Mercedes", ovr: 94, titulos: 8, desc: "Domínio absoluto na era moderna." },
+        { nome: "Lotus", ovr: 92, titulos: 7, desc: "Leveza e soluções geniais." },
+        { nome: "Red Bull", ovr: 91, titulos: 6, desc: "Aerodinâmica agressiva contemporânea." },
+        { nome: "Cooper", ovr: 84, titulos: 2, desc: "Pioneira dos motores traseiros." },
+        { nome: "Brabham", ovr: 83, titulos: 2, desc: "Competitividade britânica vitoriosa." },
+        { nome: "Renault", ovr: 82, titulos: 2, desc: "Projeto técnico francês de peso." },
+        { nome: "Vanwall", ovr: 81, titulos: 1, desc: "Pioneira vitoriosa dos construtores." },
+        { nome: "BRM", ovr: 80, titulos: 1, desc: "Engenharia clássica tradicional." },
+        { nome: "Matra", ovr: 79, titulos: 1, desc: "Equipe francesa icônica." },
+        { nome: "Tyrrell", ovr: 78, titulos: 1, desc: "Criatividade e inovação pura." },
+        { nome: "Benetton", ovr: 77, titulos: 1, desc: "Vitoriosa nos anos 90." },
+        { nome: "Brawn GP", ovr: 96, titulos: 1, desc: "Conto de fadas e título histórico." }
     ];
 
     const motoresNormais = [
-        { nome: "Mercedes Híbrido", ovr: 94, desc: "A referência em potência e eficiência do grid de 2026." },
-        { nome: "Ferrari Power Unit", ovr: 92, desc: "Tecnologia de Maranello com torque e performance de ponta." },
-        { nome: "Red Bull-Ford Powertrains", ovr: 97, desc: "A nova força da Red Bull com suporte técnico da Ford." },
-        { nome: "Honda Híbrido", ovr: 70, desc: "Excelência japonesa com foco em durabilidade e energia." },
-        { nome: "Audi Power Unit", ovr: 92, desc: "A estreia histórica da marca alemã na categoria." }
+        { nome: "Mercedes Híbrido", ovr: 94, desc: "Referência em eficiência." },
+        { nome: "Ferrari Power Unit", ovr: 92, desc: "Torque e aceleração de ponta." },
+        { nome: "Red Bull-Ford Powertrains", ovr: 97, desc: "Nova força com apoio técnico da Ford." },
+        { nome: "Honda Híbrido", ovr: 70, desc: "Confiabilidade e entrega contínua." },
+        { nome: "Audi Power Unit", ovr: 92, desc: "Estrutura inédita alemã." },
+        { nome: "Cadillac GM Power", ovr: 85, desc: "Bloco novato desenvolvido nos EUA." }
     ];
 
     const motoresCampeões = [
-        { nome: "Ferrari", ovr: 99, titulos: 16, desc: "O motor mais vitorioso da história, símbolo máximo de tradição e potência." },
-        { nome: "Mercedes", ovr: 98, titulos: 13, desc: "Referência de eficiência híbrida e força técnica em múltiplas eras." },
-        { nome: "Renault", ovr: 96, titulos: 12, desc: "Engenharia francesa decisiva em vários ciclos vencedores da categoria." },
-        { nome: "Ford Cosworth", ovr: 95, titulos: 10, desc: "O bloco clássico que moldou a F1 moderna com equilíbrio e robustez." },
-        { nome: "Honda", ovr: 93, titulos: 6, desc: "Potência japonesa precisa, forte em desempenho e confiabilidade." },
-        { nome: "Climax", ovr: 91, titulos: 4, desc: "Motor clássico britânico que marcou o início da era vitoriosa dos independentes." },
-        { nome: "Repco", ovr: 89, titulos: 2, desc: "Unidade australiana histórica, simples, leve e muito eficaz na época certa." },
-        { nome: "TAG Porsche", ovr: 88, titulos: 2, desc: "Projeto alemão de alta eficiência, lembrado pela força e consistência." },
-        { nome: "Vanwall", ovr: 86, titulos: 1, desc: "Um dos pioneiros vencedores da F1, com identidade técnica muito própria." },
-        { nome: "BRM", ovr: 85, titulos: 1, desc: "Projeto britânico clássico, importante na evolução técnica da categoria." },
-        { nome: "RBPT", ovr: 94, titulos: 1, desc: "A força moderna da Red Bull, agressiva e competitiva na era atual." },
-        { nome: "Honda RBPT", ovr: 98, titulos: 1, desc: "Combinação moderna de engenharia japonesa e operação de ponta no grid." }
+        { nome: "Ferrari", ovr: 99, titulos: 16, desc: "O motor mais vencedor da categoria." },
+        { nome: "Mercedes", ovr: 98, titulos: 13, desc: "Eficiência técnica em várias eras." },
+        { nome: "Renault", ovr: 96, titulos: 12, desc: "Força francesa decisiva." },
+        { nome: "Ford Cosworth", ovr: 95, titulos: 10, desc: "O bloco clássico e lendário da F1." },
+        { nome: "Honda", ovr: 93, titulos: 6, desc: "Potência japonesa precisa." },
+        { nome: "Climax", ovr: 91, titulos: 4, desc: "Início vitorioso dos garagistas." },
+        { nome: "Repco", ovr: 89, titulos: 2, desc: "Leve e eficiente em sua época." },
+        { nome: "TAG Porsche", ovr: 88, titulos: 2, desc: "Força alemã turbo de referência." },
+        { nome: "Vanwall", ovr: 86, titulos: 1, desc: "Primeiro motor vitorioso da era moderna." },
+        { nome: "BRM", ovr: 85, titulos: 1, desc: "Projeto clássico histórico." },
+        { nome: "RBPT", ovr: 94, titulos: 1, desc: "Agressividade moderna Red Bull." },
+        { nome: "Honda RBPT", ovr: 98, titulos: 1, desc: "Combinação campeã recente." }
     ];
 
     const pilotos2026 = [
-        { nome: "Max Verstappen", ovr: 98, inicio: 2015, campeao: true, desc: "Converte ritmo puro em domínio total e raramente desperdiça uma chance de vitória." },
-        { nome: "Lewis Hamilton", ovr: 96, inicio: 2007, campeao: true, desc: "Referência de consistência, leitura de corrida e velocidade de elite em qualquer cenário." },
-        { nome: "Fernando Alonso", ovr: 95, inicio: 2001, campeao: true, desc: "Veterano agressivo, no prime e inteligente, sempre perigoso em estratégia e no duelo direto." },
-        { nome: "Lando Norris", ovr: 93, inicio: 2019, campeao: true, desc: "Rápido, leve nos pneus e muito forte quando a corrida pede coragem nas ultrapassagens." },
-        { nome: "Andrea Kimi Antonelli", ovr: 79, inicio: 2025, campeao: true, desc: "Talento precoce com projeção alta e muita velocidade natural." },
-        
-        { nome: "Charles Leclerc", ovr: 89, inicio: 2018, campeao: false, desc: "Explosivo em volta lançada e preciso quando o carro responde ao limite." },
-        { nome: "George Russell", ovr: 89, inicio: 2019, campeao: false, desc: "Método, frieza e boa leitura tática para extrair resultados consistentes." },
-        { nome: "Oscar Piastri", ovr: 85, inicio: 2023, campeao: false, desc: "Jovem e calculista, combina maturidade de corrida com crescimento acelerado." },
-        { nome: "Carlos Sainz", ovr: 83, inicio: 2015, campeao: false, desc: "Piloto completo, técnico e confiável em qualquer tipo de pista." },
-        { nome: "Alexander Albon", ovr: 79, inicio: 2019, campeao: false, desc: "Evoluiu muito em ritmo e costuma brilhar em corridas de recuperação." },
-        { nome: "Pierre Gasly", ovr: 80, inicio: 2017, campeao: false, desc: "Bom em aproveitar oportunidades e perigoso quando o carro encaixa." },
-        { nome: "Nico Hülkenberg", ovr: 86, inicio: 2010, campeao: false, desc: "Experiente, sólido e sempre pronto para surpreender com eficiência." },
-        { nome: "Esteban Ocon", ovr: 69, inicio: 2016, campeao: false, desc: "Resistente em disputas apertadas e forte em corridas físicas e longas." },
-        { nome: "Valtteri Bottas", ovr: 77, inicio: 2013, campeao: false, desc: "Ritmo limpo, boa largada e postura confiável para pontuar com regularidade." },
-        { nome: "Sergio Pérez", ovr: 80, inicio: 2011, campeao: false, desc: "Especialista em pneus e em corridas de paciência, com talento no caos." },
-        { nome: "Lance Stroll", ovr: 70, inicio: 2017, campeao: false, desc: "Pode oscilar, mas às vezes entrega corridas muito fortes em condições difíceis." },
-        { nome: "Gabriel Bortoleto", ovr: 85, inicio: 2025, campeao: false, desc: "Promessa brasileira com crescimento rápido e mentalidade de aprendizado constante." },
-        { nome: "Liam Lawson", ovr: 82, inicio: 2023, campeao: false, desc: "Competitivo, agressivo e com perfil de quem aproveita bem uma chance grande." },
-        { nome: "Oliver Bearman", ovr: 82, inicio: 2024, campeao: false, desc: "Jovem de resposta rápida, bom em adaptar o estilo ao que a corrida exige." },
-        { nome: "Franco Colapinto", ovr: 80, inicio: 2024, campeao: false, desc: "Briga forte, não se intimida e costuma crescer sob pressão." },
-        { nome: "Isack Hadjar", ovr: 87, inicio: 2026, campeao: false, desc: "Agressivo e técnico, com potencial para surpreender em ritmo de classificação." },
-        { nome: "Arvid Lindblad", ovr: 79, inicio: 2026, campeao: false, desc: "Nova geração com velocidade limpa e fome de evolução rápida." }
+        { nome: "Max Verstappen", ovr: 98, pot: 99, xp: 0, inicio: 2015, campeao: false, desc: "Ritmo puro e pressão cirúrgica constante.", anosContratoF1: 4 },
+        { nome: "Lewis Hamilton", ovr: 96, pot: 97, xp: 0, inicio: 2007, campeao: false, desc: "Leitura de corrida e consistência impecável.", anosContratoF1: 1 },
+        { nome: "Fernando Alonso", ovr: 95, pot: 96, xp: 0, inicio: 2001, campeao: false, desc: "Veterano agressivo no duelo direto.", anosContratoF1: 1 },
+        { nome: "Lando Norris", ovr: 93, pot: 96, xp: 0, inicio: 2019, campeao: false, desc: "Coragem nas ultrapassagens e preservação de pneus.", anosContratoF1: 4 },
+        { nome: "Andrea Kimi Antonelli", ovr: 88, pot: 96, xp: 0, inicio: 2025, campeao: false, desc: "Talento precoce de velocidade natural.", anosContratoF1: 1 },
+        { nome: "Charles Leclerc", ovr: 89, pot: 95, xp: 0, inicio: 2018, campeao: false, desc: "Explosivo e veloz em volta lançada.", anosContratoF1: 4 },
+        { nome: "George Russell", ovr: 89, pot: 94, xp: 0, inicio: 2019, campeao: false, desc: "Frieza e método tático refinado.", anosContratoF1: 1 },
+        { nome: "Oscar Piastri", ovr: 85, pot: 95, xp: 0, inicio: 2023, campeao: false, desc: "Calculista de ritmo maduro.", anosContratoF1: 2 },
+        { nome: "Carlos Sainz", ovr: 83, pot: 90, xp: 0, inicio: 2015, campeao: false, desc: "Piloto completo e extremamente técnico.", anosContratoF1: 2 },
+        { nome: "Alexander Albon", ovr: 79, pot: 88, xp: 0, inicio: 2019, campeao: false, desc: "Brilha em corridas de recuperação.", anosContratoF1: 2 },
+        { nome: "Pierre Gasly", ovr: 80, pot: 87, xp: 0, inicio: 2017, campeao: false, desc: "Aproveita bem janelas estratégicas.", anosContratoF1: 1 },
+        { nome: "Nico Hülkenberg", ovr: 86, pot: 87, xp: 0, inicio: 2010, campeao: false, desc: "Sólido e muito experiente no grid.", anosContratoF1: 1 },
+        { nome: "Esteban Ocon", ovr: 69, pot: 83, xp: 0, inicio: 2016, campeao: false, desc: "Resistente na defesa de posição.", anosContratoF1: 2 },
+        { nome: "Valtteri Bottas", ovr: 77, pot: 84, xp: 0, inicio: 2013, campeao: false, desc: "Ritmo limpo e constância na Cadillac F1.", anosContratoF1: 1 },
+        { nome: "Sergio Pérez", ovr: 80, pot: 85, xp: 0, inicio: 2011, campeao: false, desc: "Especialista em corridas táticas da Cadillac F1.", anosContratoF1: 1 },
+        { nome: "Lance Stroll", ovr: 70, pot: 78, xp: 0, inicio: 2017, campeao: false, desc: "Entrega surpresas em piso molhado.", anosContratoF1: 1 },
+        { nome: "Gabriel Bortoleto", ovr: 85, pot: 95, xp: 0, inicio: 2025, campeao: false, desc: "Promessa brasileira de ritmo forte.", anosContratoF1: 2 },
+        { nome: "Liam Lawson", ovr: 82, pot: 91, xp: 0, inicio: 2023, campeao: false, desc: "Agressivo nas disputas roda a roda.", anosContratoF1: 1 },
+        { nome: "Oliver Bearman", ovr: 82, pot: 92, xp: 0, inicio: 2024, campeao: false, desc: "Adaptação rápida ao acerto do carro.", anosContratoF1: 2 },
+        { nome: "Franco Colapinto", ovr: 80, pot: 89, xp: 0, inicio: 2024, campeao: false, desc: "Briga com firmeza sob alta pressão.", anosContratoF1: 1 },
+        { nome: "Isack Hadjar", ovr: 87, pot: 93, xp: 0, inicio: 2026, campeao: false, desc: "Agressivo em voltas voadoras.", anosContratoF1: 1 },
+        { nome: "Arvid Lindblad", ovr: 79, pot: 90, xp: 0, inicio: 2026, campeao: false, desc: "Fome de evolução e velocidade limpa.", anosContratoF1: 1 }
     ];
+
+    // ESTRUTURA OFICIAL E FIXA DAS 11 EQUIPES DA F1 2026 (INCLUINDO A CADILLAC)
+    const gridOficialF12026 = [
+        { equipe: "Red Bull", p1: "Max Verstappen", p2: "Liam Lawson" },
+        { equipe: "Ferrari", p1: "Lewis Hamilton", p2: "Charles Leclerc" },
+        { equipe: "McLaren", p1: "Lando Norris", p2: "Oscar Piastri" },
+        { equipe: "Mercedes", p1: "George Russell", p2: "Andrea Kimi Antonelli" },
+        { equipe: "Aston Martin", p1: "Fernando Alonso", p2: "Lance Stroll" },
+        { equipe: "Alpine", p1: "Pierre Gasly", p2: "Franco Colapinto" },
+        { equipe: "Haas", p1: "Esteban Ocon", p2: "Oliver Bearman" },
+        { equipe: "Racing Bulls", p1: "Isack Hadjar", p2: "Arvid Lindblad" },
+        { equipe: "Williams", p1: "Carlos Sainz", p2: "Alexander Albon" },
+        { equipe: "Audi", p1: "Nico Hülkenberg", p2: "Gabriel Bortoleto" },
+        { equipe: "Cadillac", p1: "Sergio Pérez", p2: "Valtteri Bottas" }
+    ];
+
+    // MAPA DE ACADEMIAS PARA SUBSTITUIÇÃO LÓGICA DE VAGAS
+    const mapaSubstitutosAcademia = {
+        "Lewis Hamilton": { promovido: "Oliver Bearman", equipePromovido: "Haas", substitutoBase: "Rafael Câmara" },
+        "Charles Leclerc": { promovido: "Oliver Bearman", equipePromovido: "Haas", substitutoBase: "Rafael Câmara" },
+        "Oliver Bearman": { promovido: "Rafael Câmara", equipePromovido: null, substitutoBase: null },
+        "Esteban Ocon": { promovido: "Rafael Câmara", equipePromovido: null, substitutoBase: null },
+        "Max Verstappen": { promovido: "Isack Hadjar", equipePromovido: "Racing Bulls", substitutoBase: "Ayumu Iwasa" },
+        "Liam Lawson": { promovido: "Isack Hadjar", equipePromovido: "Racing Bulls", substitutoBase: "Ayumu Iwasa" },
+        "Isack Hadjar": { promovido: "Ayumu Iwasa", equipePromovido: null, substitutoBase: null },
+        "Arvid Lindblad": { promovido: "Ayumu Iwasa", equipePromovido: null, substitutoBase: null },
+        "George Russell": { promovido: "Andrea Kimi Antonelli", equipePromovido: null, substitutoBase: "Frederik Vesti" },
+        "Andrea Kimi Antonelli": { promovido: "Frederik Vesti", equipePromovido: null, substitutoBase: null },
+        "Lando Norris": { promovido: "Gabriel Bortoleto", equipePromovido: "Audi", substitutoBase: "Alex Dunne" },
+        "Oscar Piastri": { promovido: "Alex Dunne", equipePromovido: null, substitutoBase: null },
+        "Gabriel Bortoleto": { promovido: "Alex Dunne", equipePromovido: null, substitutoBase: null },
+        "Nico Hülkenberg": { promovido: "Zane Maloney", equipePromovido: null, substitutoBase: null },
+        "Fernando Alonso": { promovido: "Felipe Drugovich", equipePromovido: null, substitutoBase: null },
+        "Lance Stroll": { promovido: "Felipe Drugovich", equipePromovido: null, substitutoBase: null },
+        "Pierre Gasly": { promovido: "Victor Martins", equipePromovido: null, substitutoBase: null },
+        "Franco Colapinto": { promovido: "Victor Martins", equipePromovido: null, substitutoBase: null },
+        "Carlos Sainz": { promovido: "Zak O'Sullivan", equipePromovido: null, substitutoBase: null },
+        "Alexander Albon": { promovido: "Luke Browning", equipePromovido: null, substitutoBase: null },
+        "Sergio Pérez": { promovido: "Colton Herta", equipePromovido: null, substitutoBase: null },
+        "Valtteri Bottas": { promovido: "Colton Herta", equipePromovido: null, substitutoBase: null }
+    };
 
     const pilotosHistoricos = [
-        { nome: "Michael Schumacher", ovr: 99, inicio: 1991, campeao: true, desc: "Domínio cirúrgico, mentalidade vencedora e pressão constante sobre qualquer rival." },
-        { nome: "Ayrton Senna", ovr: 99, inicio: 1984, campeao: true, desc: "Intensidade máxima, precisão absurda e velocidade que mudava corridas sozinho." },
-        { nome: "Juan Manuel Fangio", ovr: 98, inicio: 1950, campeao: true, desc: "Elegância, controle e uma taxa de aproveitamento quase lendária para sua era." },
-        { nome: "Jim Clark", ovr: 96, inicio: 1960, campeao: true, desc: "Naturalidade impressionante ao volante, com calma e ritmo acima da média." },
-        { nome: "Niki Lauda", ovr: 95, inicio: 1971, campeao: true, desc: "Racional, preciso e extremamente forte na leitura técnica da corrida." },
-        { nome: "Jackie Stewart", ovr: 94, inicio: 1965, campeao: true, desc: "Pioneiro na consistência e um dos grandes nomes da inteligência de corrida." },
-        { nome: "Emerson Fittipaldi", ovr: 92, inicio: 1970, campeao: true, desc: "Representante da técnica brasileira com versatilidade e sangue competitivo." }
+        { nome: "Michael Schumacher", ovr: 99, pot: 99, xp: 0, inicio: 1991, campeao: true, desc: "Domínio cirúrgico e mentalidade vencedora." },
+        { nome: "Ayrton Senna", ovr: 99, pot: 99, xp: 0, inicio: 1984, campeao: true, desc: "Precisão absurda e velocidade histórica." },
+        { nome: "Juan Manuel Fangio", ovr: 98, pot: 98, xp: 0, inicio: 1950, campeao: true, desc: "Taxa de aproveitamento lendária." },
+        { nome: "Jim Clark", ovr: 96, pot: 97, xp: 0, inicio: 1960, campeao: true, desc: "Naturalidade e ritmo limpo ao volante." },
+        { nome: "Niki Lauda", ovr: 95, pot: 96, xp: 0, inicio: 1971, campeao: true, desc: "Racional e especialista técnico." },
+        { nome: "Jackie Stewart", ovr: 94, pot: 95, xp: 0, inicio: 1965, campeao: true, desc: "Mestre da inteligência de corrida." },
+        { nome: "Emerson Fittipaldi", ovr: 92, pot: 94, xp: 0, inicio: 1970, campeao: true, desc: "Versatilidade e sangue competitivo." }
     ];
 
-    const todosPilotosMapeados = [...pilotos2026, ...pilotosHistoricos];
+    const pilotosF2 = [
+        { nome: "Gabriele Minì", ovr: 75, pot: 89, xp: 0, inicio: 2025, campeao: false, desc: "Forte em corridas de recuperação." },
+        { nome: "Colton Herta", ovr: 75, pot: 91, xp: 0, inicio: 2025, campeao: false, desc: "Velocidade bruta excepcional e piloto de testes Cadillac." },
+        { nome: "Rafael Câmara", ovr: 74, pot: 93, xp: 0, inicio: 2025, campeao: false, desc: "Promessa brasileira da Ferrari Driver Academy." },
+        { nome: "Dino Beganovic", ovr: 74, pot: 88, xp: 0, inicio: 2025, campeao: false, desc: "Técnico e consciente na gestão de pneus." },
+        { nome: "Alex Dunne", ovr: 74, pot: 90, xp: 0, inicio: 2025, campeao: false, desc: "Pilotagem arrojada e arriscada." },
+        { nome: "Nikola Tsolov", ovr: 72, pot: 87, xp: 0, inicio: 2025, campeao: false, desc: "Agressivo na defesa de posição." },
+        { nome: "Kush Maini", ovr: 72, pot: 84, xp: 0, inicio: 2024, campeao: false, desc: "Experiente e constante em ritmo." },
+        { nome: "Joshua Dürksen", ovr: 72, pot: 86, xp: 0, inicio: 2024, campeao: false, desc: "Frio e seguro sob forte pressão." },
+        { nome: "Martinius Stenshorne", ovr: 71, pot: 86, xp: 0, inicio: 2025, campeao: false, desc: "Ritmo fluido em traçados lentos." },
+        { nome: "Laurens van Hoepen", ovr: 71, pot: 85, xp: 0, inicio: 2025, campeao: false, desc: "Muito pouca tendência a erros." },
+        { nome: "Oliver Goethe", ovr: 71, pot: 85, xp: 0, inicio: 2024, campeao: false, desc: "Boa aceleração em saídas de curva." },
+        { nome: "Sebastián Montoya", ovr: 70, pot: 85, xp: 0, inicio: 2025, campeao: false, desc: "Ultra-agressivo nas freadas de curva." },
+        { nome: "Ritomo Miyata", ovr: 70, pot: 82, xp: 0, inicio: 2024, campeao: false, desc: "Refinado mecanicamente." },
+        { nome: "Nicolás Varrone", ovr: 70, pot: 83, xp: 0, inicio: 2025, campeao: false, desc: "Excelente no cuidado do motor." },
+        { nome: "Mari Boya", ovr: 69, pot: 82, xp: 0, inicio: 2025, campeao: false, desc: "Constante em stints longos." },
+        { nome: "Noel León", ovr: 68, pot: 81, xp: 0, inicio: 2025, campeao: false, desc: "Destaca-se na chuva." },
+        { nome: "Roman Bilinski", ovr: 67, pot: 80, xp: 0, inicio: 2025, campeao: false, desc: "Buscando espaço no automobilismo." },
+        { nome: "Rafael Villagómez", ovr: 67, pot: 79, xp: 0, inicio: 2024, campeao: false, desc: "Traz o carro inteiro até o fim." },
+        { nome: "Tasanapol Inthraphuvasak", ovr: 66, pot: 79, xp: 0, inicio: 2025, campeao: false, desc: "Talento asiático em evolução." },
+        { nome: "Emerson Fittipaldi Jr.", ovr: 65, pot: 88, xp: 0, inicio: 2025, campeao: false, desc: "Nome clássico em desenvolvimento." },
+        { nome: "John Bennett", ovr: 64, pot: 78, xp: 0, inicio: 2025, campeao: false, desc: "Ganhando bagagem europeia." },
+        { nome: "Cian Shields", ovr: 63, pot: 76, xp: 0, inicio: 2024, campeao: false, desc: "Buscando ritmo de corrida constante." },
+        { nome: "Ayumu Iwasa", ovr: 74, pot: 88, xp: 0, inicio: 2025, campeao: false, desc: "Piloto reserva da Red Bull/RB." },
+        { nome: "Frederik Vesti", ovr: 74, pot: 87, xp: 0, inicio: 2025, campeao: false, desc: "Piloto reserva da Mercedes." },
+        { nome: "Felipe Drugovich", ovr: 76, pot: 91, xp: 0, inicio: 2024, campeao: false, desc: "Campeão da F2 e reserva da Aston Martin." },
+        { nome: "Victor Martins", ovr: 73, pot: 87, xp: 0, inicio: 2025, campeao: false, desc: "Academia Alpine." },
+        { nome: "Zak O'Sullivan", ovr: 71, pot: 86, xp: 0, inicio: 2025, campeao: false, desc: "Academia Williams." },
+        { nome: "Luke Browning", ovr: 71, pot: 85, xp: 0, inicio: 2025, campeao: false, desc: "Academia Williams." },
+        { nome: "Zane Maloney", ovr: 73, pot: 88, xp: 0, inicio: 2025, campeao: false, desc: "Reserva da Audi/Sauber." }
+    ];
+
+    const todosPilotosMapeados = [...pilotos2026, ...pilotosHistoricos, ...pilotosF2];
     const tabelaPontos = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
 
     let currentGP = 0;
@@ -648,21 +919,34 @@
     let laps = 0;
     let maxLapsThisRace = 0;
     let raceInterval;
-    let zicaUsed = false;
     let simSpeed = 2000;
     let gridCorrida = [];
+    let rivaisFixosGrid = [];
     let rerollsRestantes = 3;
-    let sillySeasonDriverSlot = null;
-    let sillySeasonReplacement = null;
-    let sillySeasonCount = 0;
     let teamName = '';
     let fixedTeamName = 'Sua Escuderia';
-    let gameSettings = {
-        autoplayAlwaysOn: true
-    };
+    let gameSettings = { autoplayAlwaysOn: true };
 
     let pontosPilotos = {};
     let pontosConstrutores = {};
+
+    function getTeamColor(teamName) {
+        if (teamName === fixedTeamName) return playerTeamColor;
+        return coresEquipesOficiais[teamName] || '#777777';
+    }
+
+    function updateTeamColor() {
+        playerTeamColor = document.getElementById('team-color-input').value;
+        document.getElementById('team-color-preview').innerText = playerTeamColor;
+        document.getElementById('team-color-preview').style.color = playerTeamColor;
+    }
+
+    function updateTeamColorHQ(colorHex) {
+        playerTeamColor = colorHex;
+        document.getElementById('team-color-input').value = colorHex;
+        document.getElementById('team-color-preview').innerText = colorHex;
+        document.getElementById('team-color-preview').style.color = colorHex;
+    }
 
     function getRandomSubarray(arr, size) {
         let shuffled = arr.slice(0), i = arr.length, temp, index;
@@ -672,24 +956,14 @@
             shuffled[index] = shuffled[i];
             shuffled[i] = temp;
         }
-        return shuffled.slice(0, size);
+        return shuffled.slice(0, Math.min(size, arr.length));
     }
 
-    function getCurrentGpList() {
-        return (modoJogo === 'champions') ? gpsCampeoes : gps;
-    }
+    function getCurrentGpList() { return (modoJogo === 'champions') ? gpsCampeoes : gps; }
 
-    function getTeamDisplayName() {
-        return fixedTeamName;
-    }
+    function getRemainingRacesCount() { return Math.max(0, getCurrentGpList().length - currentGP - 1); }
 
-    function getRemainingRacesCount() {
-        return Math.max(0, getCurrentGpList().length - currentGP - 1);
-    }
-
-    function updateTeamName() {
-        teamName = document.getElementById('team-name-input').value;
-    }
+    function updateTeamName() { teamName = document.getElementById('team-name-input').value; }
 
     function getRarityFromOvr(ovr) {
         if (ovr >= 98) return { label: 'Mítico', className: 'rarity-mythic' };
@@ -704,58 +978,31 @@
         document.getElementById(id).classList.add('active');
     }
 
-    function updateGameSettings() {
-        gameSettings.autoplayAlwaysOn = document.getElementById('setting-autoplay').checked;
-    }
+    function updateGameSettings() { gameSettings.autoplayAlwaysOn = document.getElementById('setting-autoplay').checked; }
 
     function startNewGame(modo) {
         modoJogo = modo;
         currentGP = 0;
         rerollsRestantes = 3;
-        sillySeasonCount = 0;
+        temporadaAno = 2026;
+        orcamentoEquipe = 45;
+        sponsorBonusPorCorrida = 2;
+        contratosPilotos = { p1: 1, p2: 1 };
+        preContratoAnoSeguinte = { p1: null, p2: null };
+        pilotosLivresRescindidos = [];
+        propostasPendentes = { p1: null, p2: null };
+        respostasVistoria = [];
+        desenvolvimentoFila = { chassis: [], motor: [] };
+        rivaisFixosGrid = [];
         teamName = '';
         fixedTeamName = 'Sua Escuderia';
         autoPlayAtivo = gameSettings.autoplayAlwaysOn;
-        if(autoPlayTimer) clearTimeout(autoPlayTimer);
-        document.getElementById('autoplay-countdown').innerText = "";
-        
+
         const btnAp = document.getElementById('btn-toggle-autoplay');
-        if (autoPlayAtivo) {
-            btnAp.classList.add('active-ap');
-            btnAp.innerText = "Auto-Play Ligado 🤖";
-        } else {
-            btnAp.classList.remove('active-ap');
-            btnAp.innerText = "Ligar Auto-Play 🤖";
-        }
+        if (autoPlayAtivo) { btnAp.classList.add('active-ap'); btnAp.innerText = "Auto-Play Ligado 🤖"; }
+        else { btnAp.classList.remove('active-ap'); btnAp.innerText = "Ligar Auto-Play 🤖"; }
 
         document.getElementById('reroll-counter').innerText = rerollsRestantes;
-        
-        const badgeContainer = document.getElementById('game-mode-indicator');
-        const chassisTitle = document.getElementById('draft-chassis-title');
-        const motorTitle = document.getElementById('draft-motor-title');
-        const pilotoTitle = document.getElementById('draft-piloto-title');
-        
-        let universoPilotosFiltrados = getPilotosBase();
-        if (modoJogo === 'champions') {
-            badgeContainer.innerHTML = `<span class="mode-badge">🏆 Campeões Mundiais Apenas</span>`;
-            chassisTitle.innerText = "1. Escolha a Equipe Base (Mundiais Históricos)";
-            motorTitle.innerText = "2. Escolha o Motor (Títulos de Construtores)";
-            pilotoTitle.innerText = "3. Escolha o Piloto (Apenas Campeões da F1)";
-        } else {
-            badgeContainer.innerHTML = `<span class="mode-badge" style="background:#555; color:#fff">Carreira Normal</span>`;
-            chassisTitle.innerText = "1. Escolha a Equipe Base (Chassis Atual)";
-            motorTitle.innerText = "2. Escolha o Fornecedor de Motor Atual";
-            pilotoTitle.innerText = "3. Escolha o Piloto Atual";
-        }
-
-        pontosPilotos = {};
-        universoPilotosFiltrados.forEach(p => { pontosPilotos[p.nome] = 0; });
-        
-        pontosConstrutores = {};
-        const listaEquipesUniverso = (modoJogo === 'champions') ? equipesCampeãs : equipesNormais;
-        listaEquipesUniverso.forEach(e => { pontosConstrutores[e.nome] = 0; });
-        pontosConstrutores[fixedTeamName] = 0;
-
         updateRerollButtons();
         triggerInitialDraft();
     }
@@ -763,168 +1010,48 @@
     function triggerInitialDraft() {
         showScreen('screen-draft');
         selectedDraft = { chassis: null, motor: null, piloto1: null, piloto2: null };
-        const teamInput = document.getElementById('team-name-input');
-        if (teamInput) teamInput.value = teamName;
-
         generatePool('chassis');
         generatePool('motor');
         generatePool('piloto1');
         generatePool('piloto2');
     }
 
-    function returnToMenuFromDraft() {
-        selectedDraft = { chassis: null, motor: null, piloto1: null, piloto2: null };
-        showScreen('screen-menu');
-    }
-
-    function openSillySeasonScreen() {
-        sillySeasonCount++;
-        sillySeasonDriverSlot = null;
-        sillySeasonReplacement = null;
-        showScreen('screen-silly-season');
-        renderSillySeasonScreen();
-    }
-
-    function renderSillySeasonScreen() {
-        const currentPool = document.getElementById('silly-current-driver-pool');
-        const replacementPool = document.getElementById('silly-replacement-pool');
-        const status = document.getElementById('silly-season-status');
-        const continueBtn = document.getElementById('btn-continue-after-silly');
-        const mythicsLiberados = sillySeasonCount >= 3 || modoJogo !== 'champions';
-
-        currentPool.innerHTML = '';
-        replacementPool.innerHTML = '';
-        status.innerText = mythicsLiberados
-            ? 'Selecione o piloto a ser substituído.'
-            : 'Pilotos Míticos serão liberados a partir da 3ª Silly Season.';
-        continueBtn.disabled = true;
-        continueBtn.style.opacity = '0.5';
-
-        const currentDrivers = [
-            { slot: 'piloto1', piloto: selectedDraft.piloto1 },
-            { slot: 'piloto2', piloto: selectedDraft.piloto2 }
-        ];
-
-        currentDrivers.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <div class="ovr-badge">OVR ${item.piloto.ovr}</div>
-                <strong>${item.piloto.nome}</strong><br>
-                <small style="display:block; margin-top:8px; color:#aaa; font-size:0.8rem;">Seu ${item.slot === 'piloto1' ? 'P1' : 'P2'}</small>
-            `;
-            card.onclick = () => {
-                sillySeasonDriverSlot = item.slot;
-                sillySeasonReplacement = null;
-                document.querySelectorAll('#silly-current-driver-pool .card').forEach(c => c.classList.remove('selected'));
-                document.querySelectorAll('#silly-replacement-pool .card').forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-                status.innerText = `Troca selecionada: ${item.piloto.nome}. Agora escolha o substituto.`;
-            };
-            currentPool.appendChild(card);
-        });
-
-        const campeoesDisponiveis = todosPilotosMapeados
-            .filter(p => p.campeao === true && p.nome !== selectedDraft.piloto1.nome && p.nome !== selectedDraft.piloto2.nome)
-            .filter(p => mythicsLiberados || p.ovr < 98)
-            .sort((a, b) => b.ovr - a.ovr);
-
-        campeoesDisponiveis.slice(0, 8).forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            const rarity = getRarityFromOvr(item.ovr);
-            card.innerHTML = `
-                <div class="ovr-badge ovr-gold">OVR ${item.ovr} <span class="rarity-badge ${rarity.className}">${rarity.label}</span></div>
-                <strong>${item.nome}</strong><br>
-                <small style="display:block; margin-top:8px; color:#aaa; font-size:0.8rem;">${item.desc}</small>
-            `;
-            card.onclick = () => {
-                if (!sillySeasonDriverSlot) {
-                    status.innerText = 'Primeiro escolha um piloto do seu time para trocar.';
-                    return;
-                }
-                sillySeasonReplacement = item;
-                document.querySelectorAll('#silly-replacement-pool .card').forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-                status.innerText = `Troca pronta: ${selectedDraft[sillySeasonDriverSlot].nome} por ${item.nome}.`;
-                continueBtn.disabled = false;
-                continueBtn.style.opacity = '1';
-            };
-            replacementPool.appendChild(card);
-        });
-    }
-
-    function continueAfterSillySeason() {
-        if (!sillySeasonDriverSlot || !sillySeasonReplacement) {
-            alert('Selecione um piloto do seu time e um substituto antes de continuar.');
-            return;
-        }
-
-        selectedDraft[sillySeasonDriverSlot] = sillySeasonReplacement;
-        sillySeasonDriverSlot = null;
-        sillySeasonReplacement = null;
-        currentGP++;
-        openPreRaceScreen();
-    }
-
-    function skipSillySeason() {
-        sillySeasonDriverSlot = null;
-        sillySeasonReplacement = null;
-        currentGP++;
-        openPreRaceScreen();
-    }
-
-    function getPilotosBase() {
-        if (modoJogo === 'champions') {
-            return todosPilotosMapeados.filter(p => p.campeao === true);
-        }
-
-        return pilotos2026.filter(p => p.campeao === false);
-    }
+    function returnToMenuFromDraft() { showScreen('screen-menu'); }
 
     function getPilotosPorCategoria() {
         if (modoJogo === 'champions') {
             return [
-                {
-                    titulo: 'Pilotos históricos',
-                    itens: getRandomSubarray(pilotosHistoricos, 4)
-                },
-                {
-                    titulo: 'Campeões de 2026',
-                    itens: getRandomSubarray(pilotos2026.filter(p => p.campeao === true), 4)
-                }
+                { titulo: 'Pilotos Históricos', itens: getRandomSubarray(pilotosHistoricos, 4) },
+                { titulo: 'Campeões Mundiais Atuais', itens: getRandomSubarray(pilotos2026, 4) }
             ];
         }
 
+        let gridF1 = getRandomSubarray(pilotos2026, 4);
+        let novatosF2 = getRandomSubarray(pilotosF2, 4); 
+
         return [
-            {
-                titulo: 'F1 2026',
-                itens: getRandomSubarray(getPilotosBase(), 5)
-            }
+            { titulo: '🏎️ Grid F1 2026', itens: gridF1 },
+            { titulo: '🎓 Fórmula 2 & Novatos', itens: novatosF2 }
         ];
     }
 
     function generatePool(type) {
         if (type === 'chassis') {
-            const listaOrigem = (modoJogo === 'champions') ? equipesCampeãs : equipesNormais;
-            const pool = getRandomSubarray(listaOrigem, 4);
+            const pool = getRandomSubarray((modoJogo === 'champions') ? equipesCampeãs : equipesNormais, 4);
             renderOptions('pool-chassis', pool, 'chassis');
         } else if (type === 'motor') {
-            const listaOrigemMotores = (modoJogo === 'champions') ? motoresCampeões : motoresNormais;
-            const pool = getRandomSubarray(listaOrigemMotores, 3);
+            const pool = getRandomSubarray((modoJogo === 'champions') ? motoresCampeões : motoresNormais, 4);
             renderOptions('pool-motor', pool, 'motor');
-        } else if (type === 'piloto1') {
-            renderPilotoPorCategoria('pool-piloto1', 'piloto1');
-        } else if (type === 'piloto2') {
-            renderPilotoPorCategoria('pool-piloto2', 'piloto2');
+        } else if (type === 'piloto1' || type === 'piloto2') {
+            renderPilotoPorCategoria(`pool-${type}`, type);
         }
     }
 
     function renderPilotoPorCategoria(elementId, type) {
         const container = document.getElementById(elementId);
         container.innerHTML = '';
-
         const categorias = getPilotosPorCategoria();
+
         categorias.forEach(categoria => {
             const itensFiltrados = categoria.itens.filter(item => !selectedDraft.piloto1 || item.nome !== selectedDraft.piloto1.nome || type === 'piloto1');
             if (!itensFiltrados.length) return;
@@ -937,65 +1064,40 @@
             itensFiltrados.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'card';
-
-                let badges = '';
-                let customOvrClass = '';
                 const rarity = getRarityFromOvr(item.ovr);
-                if (item.campeao) {
-                    badges += ` <span style="color:var(--zica-red); font-weight:bold; font-size:0.75rem;">🏆 CAMPEÃO MUNDIAL</span>`;
-                    customOvrClass = 'ovr-gold';
-                } else if (item.titulos) {
-                    badges += ` <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">🏆 ${item.titulos}x Histórico</span>`;
-                    customOvrClass = 'ovr-gold';
-                }
-
-                const extraInfo = item.inicio ? `<br><small style="color:var(--accent)">Estreia Oficial: ${item.inicio}</small>` : '';
-
                 div.innerHTML = `
-                    <div class="ovr-badge ${customOvrClass}">OVR ${item.ovr} <span class="rarity-badge ${rarity.className}">${rarity.label}</span></div>
-                    <strong>${item.nome}</strong>${badges}${extraInfo}<br>
-                    <small style="display:block; margin-top:8px; color:#aaa; font-size:0.8rem; line-height:1.2;">${item.desc}</small>
+                    <div class="ovr-badge">OVR ${item.ovr} <span class="rarity-badge ${rarity.className}">${rarity.label}</span></div>
+                    <strong>${item.nome}</strong> <small style="color:var(--gold)">(POT: ${item.pot || item.ovr})</small><br>
+                    <small style="display:block; margin-top:8px; color:#aaa; font-size:0.8rem;">${item.desc}</small>
                 `;
-
                 div.onclick = () => {
                     document.querySelectorAll(`#${elementId} .card`).forEach(c => c.classList.remove('selected'));
                     div.classList.add('selected');
                     selectedDraft[type] = item;
-
                     if (type === 'piloto1') {
                         selectedDraft.piloto2 = null;
                         renderPilotoPorCategoria('pool-piloto2', 'piloto2');
                     }
                 };
-
                 grid.appendChild(div);
             });
-
             container.appendChild(secao);
         });
     }
 
     function triggerSingleReroll(type) {
         if (rerollsRestantes <= 0) return;
-        
         rerollsRestantes--;
         document.getElementById('reroll-counter').innerText = rerollsRestantes;
-        
         selectedDraft[type] = null; 
         generatePool(type);
         updateRerollButtons();
     }
 
     function updateRerollButtons() {
-        const botoes = ['chassis', 'motor', 'piloto1', 'piloto2'];
-        botoes.forEach(b => {
+        ['chassis', 'motor', 'piloto1', 'piloto2'].forEach(b => {
             const btn = document.getElementById(`reroll-${b}`);
-            if (rerollsRestantes <= 0) {
-                btn.disabled = true;
-                btn.innerText = "Esgotado";
-            } else {
-                btn.disabled = false;
-            }
+            if (rerollsRestantes <= 0) { btn.disabled = true; btn.innerText = "Esgotado"; }
         });
     }
 
@@ -1005,79 +1107,430 @@
         items.forEach(item => {
             const div = document.createElement('div');
             div.className = 'card';
-            
-            let badges = '';
-            let customOvrClass = '';
             const rarity = getRarityFromOvr(item.ovr);
-            if (item.campeao) {
-                badges += ` <span style="color:var(--zica-red); font-weight:bold; font-size:0.75rem;">🏆 CAMPEÃO MUNDIAL</span>`;
-                customOvrClass = 'ovr-gold';
-            } else if (item.titulos) {
-                badges += ` <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">🏆 ${item.titulos}x Histórico</span>`;
-                customOvrClass = 'ovr-gold';
-            }
-
-            let extraInfo = item.inicio ? `<br><small style="color:var(--accent)">Estreia Oficial: ${item.inicio}</small>` : '';
-
             div.innerHTML = `
-                <div class="ovr-badge ${customOvrClass}">OVR ${item.ovr} <span class="rarity-badge ${rarity.className}">${rarity.label}</span></div>
-                <strong>${item.nome}</strong>${badges}${extraInfo}<br>
-                <small style="display:block; margin-top:8px; color:#aaa; font-size:0.8rem; line-height:1.2;">${item.desc}</small>
+                <div class="ovr-badge">OVR ${item.ovr} <span class="rarity-badge ${rarity.className}">${rarity.label}</span></div>
+                <strong>${item.nome}</strong><br>
+                <small style="display:block; margin-top:8px; color:#aaa; font-size:0.8rem;">${item.desc}</small>
             `;
-            
             div.onclick = () => {
                 document.querySelectorAll(`#${elementId} .card`).forEach(c => c.classList.remove('selected'));
                 div.classList.add('selected');
                 selectedDraft[type] = item;
-                
-                if (type === 'piloto1') {
-                    selectedDraft.piloto2 = null;
-                    generatePool('piloto2');
-                }
             };
             container.appendChild(div);
         });
     }
 
+    // MONTAGEM DO GRID DE 24 PILOTOS COM SUBSTITUIÇÕES INTELIGENTES DE ACADEMIA E CADILLAC
     function confirmDraftAndLaunch() {
         if (!selectedDraft.chassis || !selectedDraft.motor || !selectedDraft.piloto1 || !selectedDraft.piloto2) {
-            alert("Por favor, selecione todas as 4 opções de contrato para continuar.");
+            alert("Por favor, selecione todas as opções para assinar o contrato.");
             return;
         }
-        const previousTeamName = fixedTeamName;
         fixedTeamName = teamName.trim() || 'Sua Escuderia';
-        if (previousTeamName !== fixedTeamName && pontosConstrutores[previousTeamName] !== undefined) {
-            pontosConstrutores[fixedTeamName] = pontosConstrutores[previousTeamName];
-            delete pontosConstrutores[previousTeamName];
+
+        pontosPilotos = {};
+        pontosPilotos[selectedDraft.piloto1.nome] = 0;
+        pontosPilotos[selectedDraft.piloto2.nome] = 0;
+
+        pontosConstrutores = {};
+        pontosConstrutores[fixedTeamName] = 0;
+
+        let escolhidosPeloPlayer = [selectedDraft.piloto1.nome, selectedDraft.piloto2.nome];
+
+        if (modoJogo === 'champions') {
+            const listaEquipesUniverso = equipesCampeãs;
+            listaEquipesUniverso.forEach(e => { pontosConstrutores[e.nome] = 0; });
+            let listaPilotosUniverso = todosPilotosMapeados.filter(p => p.campeao === true);
+            let pilotosDisponiveis = listaPilotosUniverso.filter(p => !escolhidosPeloPlayer.includes(p.nome));
+            let selecionados = getRandomSubarray(pilotosDisponiveis, 22);
+
+            rivaisFixosGrid = selecionados.map(p => {
+                let eqObj = listaEquipesUniverso[Math.floor(Math.random() * listaEquipesUniverso.length)];
+                pontosPilotos[p.nome] = 0;
+                return { nome: p.nome, equipe: eqObj.nome, ovr: p.ovr, eqOvr: eqObj.ovr };
+            });
+        } else {
+            // MODO CARREIRA: Montar Grid Fixo de 2026 com 11 Equipes Oficiais (22 Carros da F1) + Ajuste Lógico
+            let gridMontado = JSON.parse(JSON.stringify(gridOficialF12026));
+
+            // Aplicar substituições para cada piloto que o jogador escolheu
+            escolhidosPeloPlayer.forEach(nomePilotoDraft => {
+                gridMontado.forEach(eq => {
+                    if (eq.p1 === nomePilotoDraft || eq.p2 === nomePilotoDraft) {
+                        let subInfo = mapaSubstitutosAcademia[nomePilotoDraft] || { promovido: "Gabriele Minì", equipePromovido: null, substitutoBase: null };
+                        
+                        if (eq.p1 === nomePilotoDraft) eq.p1 = subInfo.promovido;
+                        else eq.p2 = subInfo.promovido;
+
+                        if (subInfo.equipePromovido && subInfo.substitutoBase) {
+                            gridMontado.forEach(eqOrigem => {
+                                if (eqOrigem.equipe === subInfo.equipePromovido) {
+                                    if (eqOrigem.p1 === subInfo.promovido) eqOrigem.p1 = subInfo.substitutoBase;
+                                    if (eqOrigem.p2 === subInfo.promovido) eqOrigem.p2 = subInfo.substitutoBase;
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+
+            // Converte a estrutura das 11 equipes em 22 carros para o Grid
+            rivaisFixosGrid = [];
+            gridMontado.forEach(eq => {
+                pontosConstrutores[eq.equipe] = 0;
+                [eq.p1, eq.p2].forEach(nomeP => {
+                    let pObj = todosPilotosMapeados.find(p => p.nome === nomeP) || { nome: nomeP, ovr: 75 };
+                    let eqObj = equipesNormais.find(e => e.nome === eq.equipe) || { nome: eq.equipe, ovr: 83 };
+                    pontosPilotos[pObj.nome] = 0;
+                    rivaisFixosGrid.push({ nome: pObj.nome, equipe: eqObj.nome, ovr: pObj.ovr, eqOvr: eqObj.ovr });
+                });
+            });
+
+            // Adiciona 2 novatos da F2 para completar exatamente 24 carros no grid total
+            let disponiveisF2 = pilotosF2.filter(p => !pontosPilotos[p.nome] && !escolhidosPeloPlayer.includes(p.nome));
+            let adicionais2 = getRandomSubarray(disponiveisF2, 2);
+            adicionais2.forEach(p => {
+                let eqObj = equipesNormais[Math.floor(Math.random() * equipesNormais.length)];
+                pontosPilotos[p.nome] = 0;
+                rivaisFixosGrid.push({ nome: p.nome, equipe: eqObj.nome, ovr: p.ovr, eqOvr: eqObj.ovr });
+            });
         }
+
+        openPreRaceScreen();
+    }
+
+    // GESTÃO HQ OPERACIONAL & NEGOCIAÇÕES
+    function openHQManagerScreen() {
+        showScreen('screen-manager-hq');
+        document.getElementById('hq-budget').innerText = `R$ ${orcamentoEquipe}M`;
+        document.getElementById('hq-season-year').innerText = `Ano ${temporadaAno}`;
+        document.getElementById('hq-round-info').innerText = `${currentGP + 1} de ${getCurrentGpList().length}`;
+        document.getElementById('hq-team-color-input').value = playerTeamColor;
+
+        document.getElementById('hq-chassis-ovr').innerText = selectedDraft.chassis.ovr;
+        let chassisQCount = desenvolvimentoFila.chassis.length;
+        document.getElementById('hq-chassis-queue').innerText = chassisQCount > 0 ? `(Em testes: +${chassisQCount} OVR pendente)` : '';
+
+        document.getElementById('hq-motor-ovr').innerText = selectedDraft.motor.ovr;
+        let motorQCount = desenvolvimentoFila.motor.length;
+        document.getElementById('hq-motor-queue').innerText = motorQCount > 0 ? `(Em testes: +${motorQCount} OVR pendente)` : '';
+
+        document.getElementById('hq-sponsor-bonus').innerText = `R$ ${sponsorBonusPorCorrida}M`;
+
+        // P1 Status, XP e Potencial
+        let p1 = selectedDraft.piloto1;
+        document.getElementById('hq-p1-info').innerText = `${p1.nome} (OVR ${p1.ovr})`;
+        document.getElementById('hq-p1-contract').innerText = `${contratosPilotos.p1} ano(s)`;
+        document.getElementById('hq-p1-xp').innerText = `${p1.xp || 0}/100`;
+        document.getElementById('hq-p1-pot').innerText = `${p1.pot || p1.ovr}`;
+        document.getElementById('hq-p1-xp-bar').style.width = `${Math.min(100, p1.xp || 0)}%`;
+        
+        let p1Bloqueado = propostasPendentes.p1 !== null || contratosPilotos.p1 > 1 || preContratoAnoSeguinte.p1 !== null;
+        document.querySelectorAll('.btn-p1-neg').forEach(b => b.disabled = p1Bloqueado);
+        document.getElementById('p1-years-select').disabled = p1Bloqueado;
+        
+        if (preContratoAnoSeguinte.p1) {
+            document.getElementById('hq-p1-status').innerText = `Pré-contrato com ${preContratoAnoSeguinte.p1.nome} assinado para ${temporadaAno + 1}`;
+            document.getElementById('hq-p1-status').style.color = 'var(--money-blue)';
+        } else if (propostasPendentes.p1) {
+            document.getElementById('hq-p1-status').innerText = `Proposta de ${propostasPendentes.p1.anos} ano(s) (${propostasPendentes.p1.tipo.toUpperCase()}) enviada`;
+            document.getElementById('hq-p1-status').style.color = 'var(--gold)';
+        } else if (contratosPilotos.p1 > 1) {
+            document.getElementById('hq-p1-status').innerText = `Contrato Ativo (Liberado no último ano)`;
+            document.getElementById('hq-p1-status').style.color = 'var(--success-green)';
+        } else {
+            document.getElementById('hq-p1-status').innerText = `Último ano de contrato (Renovação Liberada)`;
+            document.getElementById('hq-p1-status').style.color = 'var(--warning-orange)';
+        }
+
+        // P2 Status, XP e Potencial
+        let p2 = selectedDraft.piloto2;
+        document.getElementById('hq-p2-info').innerText = `${p2.nome} (OVR ${p2.ovr})`;
+        document.getElementById('hq-p2-contract').innerText = `${contratosPilotos.p2} ano(s)`;
+        document.getElementById('hq-p2-xp').innerText = `${p2.xp || 0}/100`;
+        document.getElementById('hq-p2-pot').innerText = `${p2.pot || p2.ovr}`;
+        document.getElementById('hq-p2-xp-bar').style.width = `${Math.min(100, p2.xp || 0)}%`;
+        
+        let p2Bloqueado = propostasPendentes.p2 !== null || contratosPilotos.p2 > 1 || preContratoAnoSeguinte.p2 !== null;
+        document.querySelectorAll('.btn-p2-neg').forEach(b => b.disabled = p2Bloqueado);
+        document.getElementById('p2-years-select').disabled = p2Bloqueado;
+
+        if (preContratoAnoSeguinte.p2) {
+            document.getElementById('hq-p2-status').innerText = `Pré-contrato com ${preContratoAnoSeguinte.p2.nome} assinado para ${temporadaAno + 1}`;
+            document.getElementById('hq-p2-status').style.color = 'var(--money-blue)';
+        } else if (propostasPendentes.p2) {
+            document.getElementById('hq-p2-status').innerText = `Proposta de ${propostasPendentes.p2.anos} ano(s) (${propostasPendentes.p2.tipo.toUpperCase()}) enviada`;
+            document.getElementById('hq-p2-status').style.color = 'var(--gold)';
+        } else if (contratosPilotos.p2 > 1) {
+            document.getElementById('hq-p2-status').innerText = `Contrato Ativo (Liberado no último ano)`;
+            document.getElementById('hq-p2-status').style.color = 'var(--success-green)';
+        } else {
+            document.getElementById('hq-p2-status').innerText = `Último ano de contrato (Renovação Liberada)`;
+            document.getElementById('hq-p2-status').style.color = 'var(--warning-orange)';
+        }
+
+        // Exibir Notificações/Contrapropostas caso existam
+        const notifBox = document.getElementById('hq-notifications-box');
+        const notifContent = document.getElementById('hq-notifications-content');
+        if (respostasVistoria.length > 0) {
+            notifBox.style.display = 'block';
+            notifContent.innerHTML = respostasVistoria.map(r => `<p style="margin:4px 0; font-size:0.9rem; border-bottom:1px solid #444; padding-bottom:4px;">${r}</p>`).join('');
+            respostasVistoria = []; 
+        } else {
+            notifBox.style.display = 'none';
+        }
+
+        renderMarketLists();
+    }
+
+    function renderMarketLists() {
+        const f1Container = document.getElementById('market-f1-list');
+        const f2Container = document.getElementById('market-f2-list');
+        f1Container.innerHTML = '';
+        f2Container.innerHTML = '';
+
+        // Lista F1 (11 Equipes)
+        gridOficialF12026.forEach(eq => {
+            [eq.p1, eq.p2].forEach(nomeP => {
+                let pObj = todosPilotosMapeados.find(p => p.nome === nomeP) || { nome: nomeP, ovr: 75, pot: 80, anosContratoF1: 1 };
+                let ehMeuPiloto = (selectedDraft.piloto1.nome === nomeP || selectedDraft.piloto2.nome === nomeP);
+                let ehPreContratado = (preContratoAnoSeguinte.p1 && preContratoAnoSeguinte.p1.nome === nomeP) || (preContratoAnoSeguinte.p2 && preContratoAnoSeguinte.p2.nome === nomeP);
+                let corEq = getTeamColor(eq.equipe);
+
+                const div = document.createElement('div');
+                div.className = 'market-item';
+                div.style.borderLeft = `4px solid ${corEq}`;
+                div.innerHTML = `
+                    <div>
+                        <strong>${pObj.nome}</strong> (<span style="color:${corEq}; font-weight:bold;">${eq.equipe}</span>) <span style="color:var(--gold)">OVR ${pObj.ovr}</span> <small style="color:#aaa;">(POT ${pObj.pot || pObj.ovr})</small><br>
+                        <small style="color:#aaa;">Contrato: ${ehMeuPiloto ? 'Sua Equipe' : `${pObj.anosContratoF1 || 1} ano(s)`}</small>
+                    </div>
+                    <div>
+                        ${ehMeuPiloto ? '<span style="color:var(--success-green); font-size:0.75rem;">Titular</span>' : 
+                          ehPreContratado ? '<span style="color:var(--money-blue); font-size:0.75rem;">Assinado p/ 2027</span>' :
+                          `<button class="btn btn-money" onclick="hireMarketDriver('${pObj.nome}', 'P1')" style="padding:2px 5px; font-size:0.65rem;">Assinar P1 (2027)</button>
+                           <button class="btn btn-money" onclick="hireMarketDriver('${pObj.nome}', 'P2')" style="padding:2px 5px; font-size:0.65rem;">Assinar P2 (2027)</button>`}
+                    </div>
+                `;
+                f1Container.appendChild(div);
+            });
+        });
+
+        // Lista F2 e Livres
+        pilotosF2.forEach(pObj => {
+            let ehMeuPiloto = (selectedDraft.piloto1.nome === pObj.nome || selectedDraft.piloto2.nome === pObj.nome);
+            let ehRescindido = pilotosLivresRescindidos.includes(pObj.nome);
+            let ehPreContratado = (preContratoAnoSeguinte.p1 && preContratoAnoSeguinte.p1.nome === pObj.nome) || (preContratoAnoSeguinte.p2 && preContratoAnoSeguinte.p2.nome === pObj.nome);
+
+            const div = document.createElement('div');
+            div.className = 'market-item';
+            div.innerHTML = `
+                <div>
+                    <strong>${pObj.nome}</strong> <span style="color:var(--gold)">OVR ${pObj.ovr}</span> <small style="color:#aaa;">(POT ${pObj.pot})</small><br>
+                    <small style="color:${ehRescindido ? 'var(--warning-orange)' : '#aaa'};">${ehRescindido ? 'Livre (Não Recontratável)' : 'Fórmula 2'}</small>
+                </div>
+                <div>
+                    ${ehMeuPiloto ? '<span style="color:var(--success-green); font-size:0.75rem;">Titular</span>' : 
+                      ehRescindido ? '<span style="color:#777; font-size:0.75rem;">Indisponível</span>' :
+                      ehPreContratado ? '<span style="color:var(--money-blue); font-size:0.75rem;">Assinado p/ 2027</span>' :
+                      `<button class="btn btn-gold" onclick="hireMarketDriver('${pObj.nome}', 'P1')" style="padding:2px 5px; font-size:0.65rem;">Assinar P1 (2027)</button>
+                       <button class="btn btn-gold" onclick="hireMarketDriver('${pObj.nome}', 'P2')" style="padding:2px 5px; font-size:0.65rem;">Assinar P2 (2027)</button>`}
+                </div>
+            `;
+            f2Container.appendChild(div);
+        });
+    }
+
+    function hireMarketDriver(nomePiloto, slotAlvo) {
+        let slotKey = slotAlvo.toLowerCase(); 
+
+        if (pilotosLivresRescindidos.includes(nomePiloto)) {
+            alert("Este piloto foi dispensado pela sua equipe e não pode ser recontratado!");
+            return;
+        }
+
+        if (orcamentoEquipe < 15) {
+            alert("Caixa insuficiente para pagar a luva de assinatura de pré-contrato de mercado (Custo: R$ 15M).");
+            return;
+        }
+
+        let pilotoObj = todosPilotosMapeados.find(p => p.nome === nomePiloto);
+        if (!pilotoObj) return;
+
+        orcamentoEquipe -= 15;
+        preContratoAnoSeguinte[slotKey] = pilotoObj;
+
+        alert(`✍️ Pré-contrato assinado com ${nomePiloto} para a vaga de ${slotAlvo}! Ele assumirá o cockpit na próxima temporada (${temporadaAno + 1}).`);
+        openHQManagerScreen();
+    }
+
+    function requestUpgrade(type) {
+        if (type === 'chassis') {
+            if (orcamentoEquipe < 18) { alert("Caixa insuficiente para encomendar atualização de Chassis (R$ 18M)."); return; }
+            orcamentoEquipe -= 18;
+            desenvolvimentoFila.chassis.push(1, 1, 1);
+            alert("🛠️ Pacote Aerodinâmico encomendado! O ganho de performance será aplicado nas próximas 3 corridas.");
+        } else if (type === 'motor') {
+            if (orcamentoEquipe < 22) { alert("Caixa insuficiente para encomendar atualização de Motor (R$ 22M)."); return; }
+            orcamentoEquipe -= 22;
+            desenvolvimentoFila.motor.push(1, 1, 1);
+            alert("⚡ Bloco Térmico encomendado! Evoluções de rotação serão instaladas gradualmente.");
+        }
+        openHQManagerScreen();
+    }
+
+    function upgradeFacility(type) {
+        if (type === 'marketing' && orcamentoEquipe >= 25) {
+            orcamentoEquipe -= 25;
+            sponsorBonusPorCorrida += 2;
+            openHQManagerScreen();
+        } else {
+            alert("Orçamento insuficiente para expandir a estrutura de Marketing!");
+        }
+    }
+
+    function sendDriverProposal(slot, postura) {
+        if (contratosPilotos[slot] > 1) {
+            alert("Este piloto já possui um contrato ativo estendido. A renovação só abre no último ano do vínculo.");
+            return;
+        }
+
+        const selectElement = document.getElementById(`${slot}-years-select`);
+        let anosPedida = parseInt(selectElement.value) || 1;
+
+        let custoBasePorAno = (postura === 'agressiva') ? 5 : (postura === 'moderada') ? 8 : 12;
+        let custoTotal = custoBasePorAno * anosPedida;
+
+        if (orcamentoEquipe < custoTotal) {
+            alert(`Caixa insuficiente para propor contrato de ${anosPedida} ano(s) no modo ${postura.toUpperCase()} (Custo total: R$ ${custoTotal}M).`);
+            return;
+        }
+
+        orcamentoEquipe -= custoTotal;
+        propostasPendentes[slot] = { tipo: postura, valorPago: custoTotal, anos: anosPedida };
+        alert(`📄 Proposta de ${anosPedida} ano(s) (${postura.toUpperCase()}) enviada para o ${slot.toUpperCase()}! As opções foram travadas.`);
+        openHQManagerScreen();
+    }
+
+    function processPendingNegotiations() {
+        ['p1', 'p2'].forEach(slot => {
+            if (propostasPendentes[slot]) {
+                let prop = propostasPendentes[slot];
+                let pilotoObj = (slot === 'p1') ? selectedDraft.piloto1 : selectedDraft.piloto2;
+                let aceitou = false;
+                let anosPropostos = prop.anos;
+
+                let penalidadeAnos = (anosPropostos === 2) ? 0.10 : (anosPropostos === 3) ? 0.20 : 0;
+
+                if (prop.tipo === 'conservadora') {
+                    aceitou = true; 
+                    contratosPilotos[slot] += anosPropostos;
+                    respostasVistoria.push(`🟢 <b>${pilotoObj.nome} (${slot.toUpperCase()})</b> ACEITOU a proposta Conservadora! Contrato estendido por +${anosPropostos} ano(s).`);
+                } else if (prop.tipo === 'moderada') {
+                    let chanceFinal = 0.75 - penalidadeAnos;
+                    aceitou = Math.random() < chanceFinal;
+                    if (aceitou) {
+                        contratosPilotos[slot] += anosPropostos;
+                        respostasVistoria.push(`🟡 <b>${pilotoObj.nome} (${slot.toUpperCase()})</b> ACEITOU a proposta Moderada! Contrato estendido por +${anosPropostos} ano(s).`);
+                    } else {
+                        let reembolso = Math.floor(prop.valorPago * 0.4);
+                        orcamentoEquipe += reembolso;
+                        respostasVistoria.push(`⚠️ <b>${pilotoObj.nome} (${slot.toUpperCase()})</b> RECUSOU o contrato de ${anosPropostos} ano(s) na proposta Moderada! (Reembolso de R$ ${reembolso}M feito ao caixa).`);
+                    }
+                } else if (prop.tipo === 'agressiva') {
+                    let chanceFinal = 0.40 - penalidadeAnos;
+                    aceitou = Math.random() < chanceFinal;
+                    if (aceitou) {
+                        contratosPilotos[slot] += anosPropostos;
+                        respostasVistoria.push(`🔴 <b>${pilotoObj.nome} (${slot.toUpperCase()})</b> ACEITOU a proposta Agressiva! Contrato estendido por +${anosPropostos} ano(s).`);
+                    } else {
+                        respostasVistoria.push(`❌ <b>${pilotoObj.nome} (${slot.toUpperCase()})</b> REJEITOU a proposta Agressiva de ${anosPropostos} ano(s) e recusou a assinatura.`);
+                    }
+                }
+
+                propostasPendentes[slot] = null;
+            }
+        });
+    }
+
+    function applyGradualDevelopment() {
+        if (desenvolvimentoFila.chassis.length > 0) {
+            let ganhoChassis = desenvolvimentoFila.chassis.shift();
+            selectedDraft.chassis.ovr += ganhoChassis;
+        }
+        if (desenvolvimentoFila.motor.length > 0) {
+            let ganhoMotor = desenvolvimentoFila.motor.shift();
+            selectedDraft.motor.ovr += ganhoMotor;
+        }
+    }
+
+    function processDriverXPAndEvolution(carro, posFinal) {
+        let pilotoObj = todosPilotosMapeados.find(p => p.nome === carro.idPiloto);
+        if (!pilotoObj) return;
+
+        if (!pilotoObj.xp) pilotoObj.xp = 0;
+        if (!pilotoObj.pot) pilotoObj.pot = Math.min(99, pilotoObj.ovr + 5);
+
+        let ganhoXP = 15;
+        if (posFinal <= 3) ganhoXP += 20; 
+        else if (posFinal <= 10) ganhoXP += 10; 
+
+        pilotoObj.xp += ganhoXP;
+
+        if (pilotoObj.xp >= 100) {
+            pilotoObj.xp -= 100;
+            if (pilotoObj.ovr < pilotoObj.pot) {
+                pilotoObj.ovr += 1;
+                if (carro.isPlayer) {
+                    respostasVistoria.push(`📈 <b>EVOLUÇÃO DE PILOTO!</b> ${pilotoObj.nome} subiu para <b>OVR ${pilotoObj.ovr}</b> após excelente evolução de corrida!`);
+                }
+            }
+        }
+    }
+
+    function applySmoothAgeDeclines() {
+        todosPilotosMapeados.forEach(p => {
+            let idadeExperiencia = temporadaAno - p.inicio;
+            if (idadeExperiencia > 18 && p.ovr > 85) {
+                if (Math.random() < 0.25) { 
+                    p.ovr -= 1;
+                }
+            }
+        });
+    }
+
+    function closeHQAndProceed() {
         openPreRaceScreen();
     }
 
     function openPreRaceScreen() {
         showScreen('screen-pre-race');
         const gp = getCurrentGpList()[currentGP];
-        const totalGps = getCurrentGpList().length;
         
-        document.getElementById('pre-race-round').innerText = `${currentGP + 1} de ${totalGps}`;
+        document.getElementById('pre-race-round').innerText = `${currentGP + 1} de ${getCurrentGpList().length}`;
         document.getElementById('pre-race-laps').innerText = `${gp.voltas} Voltas`;
         document.getElementById('pre-race-bioma').innerText = gp.bioma;
         document.getElementById('pre-race-desc').innerText = gp.desc;
         document.getElementById('pre-race-title').innerText = `Próxima Corrida: ${gp.nome}`;
 
         document.getElementById('fixed-team').innerText = fixedTeamName;
+        document.getElementById('fixed-team').style.color = playerTeamColor;
+        document.getElementById('fixed-budget').innerText = `R$ ${orcamentoEquipe}M`;
         document.getElementById('fixed-chassis').innerText = `${selectedDraft.chassis.nome} (OVR ${selectedDraft.chassis.ovr})`;
         document.getElementById('fixed-motor').innerText = `${selectedDraft.motor.nome} (OVR ${selectedDraft.motor.ovr})`;
         document.getElementById('fixed-p1').innerText = `${selectedDraft.piloto1.nome} (OVR ${selectedDraft.piloto1.ovr})`;
         document.getElementById('fixed-p2').innerText = `${selectedDraft.piloto2.nome} (OVR ${selectedDraft.piloto2.ovr})`;
 
         if (autoPlayAtivo) {
-            setTimeout(() => {
-                startRaceSim();
-            }, 400);
+            setTimeout(() => { startRaceSim(); }, 400);
         }
     }
 
     function startRaceSim() {
+        applyGradualDevelopment();
+
         showScreen('screen-race');
         const gp = getCurrentGpList()[currentGP];
         document.getElementById('race-title').innerText = gp.nome;
@@ -1088,51 +1541,29 @@
         laps = gp.voltas;
         document.getElementById('race-lap').innerText = laps;
         document.getElementById('race-remaining').innerText = getRemainingRacesCount();
-        zicaUsed = false;
 
         buildFixedGrid();
         const log = document.getElementById('race-log');
-        log.innerHTML = `<div class="log-entry log-success">🟢 LUZES APAGADAS! Grid de campeões em movimento por ${maxLapsThisRace} voltas!</div>`;
+        log.innerHTML = `<div class="log-entry log-success">🟢 LUZES APAGADAS! Grid de 24 carros na pista! Pacotes aéreos atualizados integrados ao ritmo.</div>`;
 
-        if (autoPlayAtivo) {
-            simSpeed = 50; 
-            document.getElementById('btn-speed').innerText = "Rápido";
-            document.getElementById('btn-speed').style.background = "var(--success-green)";
-        } else {
-            simSpeed = 2000;
-            document.getElementById('btn-speed').innerText = "Normal";
-            document.getElementById('btn-speed').style.background = "var(--text-main)";
-        }
+        simSpeed = autoPlayAtivo ? 50 : 2000;
+        document.getElementById('btn-speed').innerText = autoPlayAtivo ? "Rápido" : "Normal";
+        document.getElementById('btn-speed').style.background = autoPlayAtivo ? "var(--success-green)" : "var(--text-main)";
 
         runSimulationLoop();
     }
 
     function buildFixedGrid() {
         gridCorrida = [];
-        const teamDisplayName = fixedTeamName;
         let p1RitmoBase = (selectedDraft.chassis.ovr + selectedDraft.motor.ovr + selectedDraft.piloto1.ovr) / 90;
         let p2RitmoBase = (selectedDraft.chassis.ovr + selectedDraft.motor.ovr + selectedDraft.piloto2.ovr) / 90;
 
-        gridCorrida.push({
-            nome: `★ ${selectedDraft.piloto1.nome}`, equipe: teamDisplayName, isPlayer: true, isP1: true, idPiloto: selectedDraft.piloto1.nome, idEquipe: teamDisplayName, pontuacaoRitmo: p1RitmoBase, scoreAleatorio: Math.random() * 8
-        });
+        gridCorrida.push({ nome: `★ ${selectedDraft.piloto1.nome}`, equipe: fixedTeamName, isPlayer: true, isP1: true, idPiloto: selectedDraft.piloto1.nome, idEquipe: fixedTeamName, pontuacaoRitmo: p1RitmoBase, scoreAleatorio: Math.random() * 8 });
+        gridCorrida.push({ nome: `★ ${selectedDraft.piloto2.nome}`, equipe: fixedTeamName, isPlayer: true, isP1: false, idPiloto: selectedDraft.piloto2.nome, idEquipe: fixedTeamName, pontuacaoRitmo: p2RitmoBase, scoreAleatorio: Math.random() * 8 });
 
-        gridCorrida.push({
-            nome: `★ ${selectedDraft.piloto2.nome}`, equipe: teamDisplayName, isPlayer: true, isP1: false, idPiloto: selectedDraft.piloto2.nome, idEquipe: teamDisplayName, pontuacaoRitmo: p2RitmoBase, scoreAleatorio: Math.random() * 8
-        });
-
-        const listaEquipesUniverso = (modoJogo === 'champions') ? equipesCampeãs : equipesNormais;
-        let listaPilotosUniverso = getPilotosBase();
-
-        listaPilotosUniverso.forEach(p => {
-            if (p.nome !== selectedDraft.piloto1.nome && p.nome !== selectedDraft.piloto2.nome) {
-                let eqObj = listaEquipesUniverso[Math.floor(Math.random() * listaEquipesUniverso.length)];
-                let rivalRitmoBase = (eqObj.ovr + 94 + p.ovr) / 90; 
-
-                gridCorrida.push({
-                    nome: p.nome, equipe: eqObj.nome, isPlayer: false, isP1: false, idPiloto: p.nome, idEquipe: eqObj.nome, pontuacaoRitmo: rivalRitmoBase, scoreAleatorio: Math.random() * 7
-                });
-            }
+        rivaisFixosGrid.forEach(p => {
+            let rivalRitmoBase = (p.eqOvr + 94 + p.ovr) / 90; 
+            gridCorrida.push({ nome: p.nome, equipe: p.equipe, isPlayer: false, isP1: false, idPiloto: p.nome, idEquipe: p.equipe, pontuacaoRitmo: rivalRitmoBase, scoreAleatorio: Math.random() * 7 });
         });
 
         reordenarEAtualizarUI();
@@ -1142,17 +1573,20 @@
         gridCorrida.sort((a, b) => b.scoreAleatorio - a.scoreAleatorio);
         const tbody = document.getElementById('leaderboard-body');
         tbody.innerHTML = '';
-
         let p1Pos = "-", p2Pos = "-";
 
         gridCorrida.forEach((carro, idx) => {
             const tr = document.createElement('tr');
+            let corEq = getTeamColor(carro.equipe);
+
             if(carro.isPlayer) {
                 tr.className = "player-row";
                 if(carro.isP1) p1Pos = `${idx + 1}º`;
                 else p2Pos = `${idx + 1}º`;
             }
-            tr.innerHTML = `<td>${idx + 1}º</td><td>${carro.nome}</td><td>${carro.equipe}</td>`;
+
+            tr.style.borderLeft = `4px solid ${corEq}`;
+            tr.innerHTML = `<td>${idx + 1}º</td><td>${carro.nome}</td><td style="color:${corEq}; font-weight:bold;">${carro.equipe}</td>`;
             tbody.appendChild(tr);
         });
 
@@ -1167,22 +1601,12 @@
 
     function toggleSpeed() {
         const btn = document.getElementById('btn-speed');
-        if (simSpeed === 2000) {
-            simSpeed = 100; 
-            btn.innerText = "Rápido";
-            btn.style.background = "var(--success-green)";
-        } else {
-            simSpeed = 2000;
-            btn.innerText = "Normal";
-            btn.style.background = "var(--text-main)";
-        }
+        if (simSpeed === 2000) { simSpeed = 100; btn.innerText = "Rápido"; btn.style.background = "var(--success-green)"; }
+        else { simSpeed = 2000; btn.innerText = "Normal"; btn.style.background = "var(--text-main)"; }
         if (laps > 0) runSimulationLoop();
     }
 
-    function skipRace() {
-        simSpeed = 1;
-        if (laps > 0) runSimulationLoop();
-    }
+    function skipRace() { simSpeed = 1; if (laps > 0) runSimulationLoop(); }
 
     function simulateLap() {
         laps--;
@@ -1199,33 +1623,12 @@
 
         if (currentLapNumber % 4 === 0 || laps === 0) {
             const log = document.getElementById('race-log');
-            let radios = ["Batalhas intensas por espaço nas curvas de alta.", "Gerenciamento de energia térmica dos pneus em andamento.", "Janela tática aberta."];
-            log.innerHTML += `<div class="log-entry">🏎️ <b>Volta ${currentLapNumber}:</b> ${radios[Math.floor(Math.random() * radios.length)]}</div>`;
+            log.innerHTML += `<div class="log-entry">🏎️ <b>Volta ${currentLapNumber}:</b> Telemetria em tempo real verificada nos setores.</div>`;
             log.scrollTop = log.scrollHeight;
         }
 
         reordenarEAtualizarUI();
-
         if (laps <= 0) endRace();
-    }
-
-    function useZica(tipo) {
-        if (zicaUsed) return;
-        zicaUsed = true;
-        const log = document.getElementById('race-log');
-
-        if (tipo === 'galvao') {
-            let count = 0;
-            gridCorrida.forEach(c => { if(!c.isPlayer && count < 3) { c.scoreAleatorio -= 6; count++; } });
-            log.innerHTML += `<div class="log-entry log-zica">🎙️ RÁDIO: Líderes perdem tração momentânea!</div>`;
-        } else if (tipo === 'pitstop') {
-            gridCorrida.forEach(c => { if(!c.isPlayer) c.scoreAleatorio -= 4; });
-            log.innerHTML += `<div class="log-entry log-zica">🔧 BOXES: Erro mecânico atrasa carros adversários.</div>`;
-        } else if (tipo === 'ers') {
-            gridCorrida.forEach(c => { if(c.isPlayer) c.scoreAleatorio += 7; });
-            log.innerHTML += `<div class="log-entry log-success">⚡ OVERCLOCK: Baterias liberadas para potência linear total!</div>`;
-        }
-        reordenarEAtualizarUI();
     }
 
     function endRace() {
@@ -1233,23 +1636,28 @@
         document.getElementById('action-zone').style.display = 'none';
         document.getElementById('post-race-zone').style.display = 'block';
 
+        orcamentoEquipe += sponsorBonusPorCorrida;
+
         gridCorrida.forEach((carro, index) => {
             let pts = tabelaPontos[index] || 0;
             if (pontosPilotos[carro.idPiloto] !== undefined) pontosPilotos[carro.idPiloto] += pts;
             if (pontosConstrutores[carro.idEquipe] !== undefined) pontosConstrutores[carro.idEquipe] += pts;
+            
+            if (carro.isPlayer && index < 3) {
+                orcamentoEquipe += (3 - index) * 3;
+            }
+
+            processDriverXPAndEvolution(carro, index + 1);
         });
 
         if (autoPlayAtivo) {
-            setTimeout(() => {
-                showStandingsScreen();
-            }, 600);
+            setTimeout(() => { showStandingsScreen(); }, 600);
         }
     }
 
     function toggleAutoPlay() {
         autoPlayAtivo = !autoPlayAtivo;
         const btn = document.getElementById('btn-toggle-autoplay');
-        
         if (autoPlayAtivo) {
             btn.classList.add('active-ap');
             btn.innerText = "Auto-Play Ligado 🤖";
@@ -1263,12 +1671,11 @@
 
     function iniciarContagemAutoPlay() {
         if(autoPlayTimer) clearTimeout(autoPlayTimer);
-        let tempoRestante = 4;
-        
+        let tempoRestante = 3;
         function countdown() {
             if (!autoPlayAtivo) return;
             if (tempoRestante > 0) {
-                document.getElementById('autoplay-countdown').innerText = `🤖 Auto-Play ativo: Mudando de pista em ${tempoRestante}s...`;
+                document.getElementById('autoplay-countdown').innerText = `🤖 Auto-Play ativo: Avançando em ${tempoRestante}s...`;
                 tempoRestante--;
                 autoPlayTimer = setTimeout(countdown, 1000);
             } else {
@@ -1290,7 +1697,18 @@
         dBody.innerHTML = '';
         wdc.forEach((item, idx) => {
             const tr = document.createElement('tr');
-            if(item.nome === selectedDraft.piloto1.nome || item.nome === selectedDraft.piloto2.nome) tr.className = "player-row";
+            let pilotoObj = todosPilotosMapeados.find(p => p.nome === item.nome.replace('★ ', ''));
+            let equipeNome = fixedTeamName;
+
+            if (item.nome === selectedDraft.piloto1.nome || item.nome === selectedDraft.piloto2.nome) {
+                tr.className = "player-row";
+            } else {
+                let rivalObj = rivaisFixosGrid.find(r => r.nome === item.nome);
+                if (rivalObj) equipeNome = rivalObj.equipe;
+            }
+
+            let corEq = getTeamColor(equipeNome);
+            tr.style.borderLeft = `4px solid ${corEq}`;
             tr.innerHTML = `<td>${idx + 1}º</td><td>${item.nome}</td><td>${item.pts}</td>`;
             dBody.appendChild(tr);
         });
@@ -1303,42 +1721,67 @@
         cBody.innerHTML = '';
         wcc.forEach((item, idx) => {
             const tr = document.createElement('tr');
+            let corEq = getTeamColor(item.nome);
+
             if(item.nome === fixedTeamName) tr.className = "player-row";
-            tr.innerHTML = `<td>${idx + 1}º</td><td>${item.nome}</td><td>${item.pts}</td>`;
+
+            tr.style.borderLeft = `4px solid ${corEq}`;
+            tr.innerHTML = `<td>${idx + 1}º</td><td style="color:${corEq}; font-weight:bold;">${item.nome}</td><td>${item.pts}</td>`;
             cBody.appendChild(tr);
         });
 
         const nextBtn = document.getElementById('btn-next-gp');
         if (currentGP >= getCurrentGpList().length - 1) {
-            nextBtn.innerText = "🏆 Finalizar Temporada Absoluta! 🏆";
+            nextBtn.innerText = "🏆 Finalizar Temporada & Ir para o Próximo Ano! 🏆";
         } else {
-            nextBtn.innerText = "Avançar para a Próxima Rodada";
+            nextBtn.innerText = "Avançar Calendário";
         }
 
-        if (autoPlayAtivo) {
-            iniciarContagemAutoPlay();
-        }
+        if (autoPlayAtivo) iniciarContagemAutoPlay();
     }
 
     function goToNextGP() {
         if(autoPlayTimer) clearTimeout(autoPlayTimer);
         document.getElementById('autoplay-countdown').innerText = "";
 
-        if (modoJogo === 'champions' && (currentGP + 1) % 20 === 0 && currentGP < getCurrentGpList().length - 1) {
-            openSillySeasonScreen();
+        if (currentGP >= getCurrentGpList().length - 1) {
+            temporadaAno++;
+            contratosPilotos.p1--;
+            contratosPilotos.p2--;
+
+            processPendingNegotiations();
+            applySmoothAgeDeclines();
+
+            ['p1', 'p2'].forEach(slot => {
+                if (preContratoAnoSeguinte[slot]) {
+                    let pilotoAntigo = selectedDraft[slot === 'p1' ? 'piloto1' : 'piloto2'];
+                    pilotosLivresRescindidos.push(pilotoAntigo.nome); 
+
+                    selectedDraft[slot === 'p1' ? 'piloto1' : 'piloto2'] = preContratoAnoSeguinte[slot];
+                    contratosPilotos[slot] = 2; 
+                    preContratoAnoSeguinte[slot] = null;
+                }
+            });
+
+            let expMsg = `🏁 TEMPORADA ENCERRADA!\nBem-vindo ao Ano de ${temporadaAno}.\n\nSeu orçamento acumulado: R$ ${orcamentoEquipe}M`;
+            if (contratosPilotos.p1 <= 0 || contratosPilotos.p2 <= 0) {
+                expMsg += `\n⚠️ Alerta: O contrato de um dos seus pilotos expirou. Você precisará negociar a renovação ou assinar com um substituto no QG!`;
+                if(contratosPilotos.p1 <= 0) contratosPilotos.p1 = 1;
+                if(contratosPilotos.p2 <= 0) contratosPilotos.p2 = 1;
+            }
+
+            alert(expMsg);
+            currentGP = 0;
+            openHQManagerScreen();
             return;
         }
 
-        if (currentGP >= getCurrentGpList().length - 1) {
-            let finalWdc = [];
-            for (let p in pontosPilotos) finalWdc.push({ nome: p, pts: pontosPilotos[p] });
-            finalWdc.sort((a,b) => b.pts - a.pts);
+        currentGP++;
 
-            alert(`🏆 CAMPEONATO ABSOLUTO ENCERRADO 🏆\n\n🥇 Campeão de Pilotos: ${finalWdc[0].nome} (${finalWdc[0].pts} pts)`);
-            autoPlayAtivo = false;
-            showScreen('screen-menu');
+        if (currentGP % 3 === 0) {
+            processPendingNegotiations();
+            openHQManagerScreen();
         } else {
-            currentGP++;
             openPreRaceScreen();
         }
     }
