@@ -72,6 +72,8 @@
         .btn-gold { background: var(--gold); color: #000; }
         .btn-fast { background: var(--warning-orange); color: white; }
         .btn-money { background: var(--money-blue); color: white; }
+        .btn-save { background: #27ae60; color: white; }
+        .btn-load { background: #8e44ad; color: white; }
         .btn-autoplay { background: #8e44ad; color: white; }
         .btn-autoplay.active-ap { background: #2ecc71; color: black; animation: pulse 1.5s infinite; }
         
@@ -287,6 +289,49 @@
             cursor: pointer;
             background: none;
         }
+
+        .racer-news-box {
+            background: #fff;
+            color: #111;
+            padding: 16px;
+            border-radius: 6px;
+            border-top: 4px solid var(--accent);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+        }
+        .racer-news-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #111;
+            padding-bottom: 6px;
+            margin-bottom: 10px;
+        }
+        .racer-news-title {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #000;
+        }
+        .racer-news-date {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .racer-headline {
+            font-size: 1.15rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin: 6px 0;
+            color: #b00000;
+        }
+        .racer-news-body {
+            font-size: 0.88rem;
+            color: #333;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -294,16 +339,18 @@
 <div class="container">
     <header>
         <h1>7x0: <span>F1 Shift & Draft</span></h1>
-        <p>Edição Histórica OVR - Com Cadillac F1 & Cores Oficiais</p>
+        <p>Edição Histórica OVR - Com Cadillac F1, Trava de Equipes & Jornal The Racer</p>
     </header>
 
     <div id="screen-menu" class="screen active" style="text-align: center;">
         <h2>Escolha o seu Modo de Jogo</h2>
         <p>Simule ou dispute campeonatos completos compostos por 24 circuitos clássicos.</p>
         <br>
-        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
             <button class="btn" onclick="startNewGame('normal')">Modo Carreira Manager</button>
             <button class="btn btn-gold" onclick="startNewGame('champions')">🏆 Apenas Campeões Mundiais (1950-Atuais)</button>
+            <button class="btn btn-load" onclick="triggerFileInput()">📂 Carregar Jogo Salvo (.txt)</button>
+            <input type="file" id="load-file-input" accept=".txt" style="display: none;" onchange="importSaveFile(event)">
         </div>
 
         <div class="settings-panel">
@@ -373,9 +420,22 @@
     <div id="screen-manager-hq" class="screen">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h2>🏢 Centro de Operações (QG da Escuderia)</h2>
-            <div style="font-size: 1.2rem; font-weight: bold; color: var(--success-green);">
-                Orçamento: <span id="hq-budget">R$ 0M</span>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="btn btn-save" onclick="exportSaveFile()" style="padding: 6px 14px; font-size: 0.85rem;">💾 Salvar Progresso (.txt)</button>
+                <div style="font-size: 1.2rem; font-weight: bold; color: var(--success-green);">
+                    Orçamento: <span id="hq-budget">R$ 0M</span>
+                </div>
             </div>
+        </div>
+
+        <!-- JORNAL THE RACER -->
+        <div class="racer-news-box">
+            <div class="racer-news-header">
+                <span class="racer-news-title">📰 THE RACER NEWS</span>
+                <span class="racer-news-date" id="racer-date">EDIÇÃO ESPECIAL DE PADDOCK</span>
+            </div>
+            <div class="racer-headline" id="racer-headline">"TEMPORADA F1 2026 COMEÇA COM DISPUTA INTENSA PELO TÍTULO"</div>
+            <div class="racer-news-body" id="racer-body">As equipes continuam refinando a aerodinâmica dos carros para os próximos circuitos da temporada.</div>
         </div>
 
         <div class="summary-box">
@@ -472,7 +532,7 @@
 
             <div class="race-grid">
                 <div>
-                    <h4>🏎️ Grid F1 (Contratos com Equipes)</h4>
+                    <h4>🏎️ Grid F1 (Contratos com Equipes - Máx 2 Pilotos)</h4>
                     <div class="market-list" id="market-f1-list"></div>
                 </div>
                 <div>
@@ -589,7 +649,7 @@
     </div>
 
     <div class="page-credit">Feito por FelipeGamerbr48</div>
-    <div class="page-credit">Versão 2.0</div>
+    <div class="page-credit">Versão 2.1 - Com Save & Load por Arquivo TXT</div>
 </div>
 
 <script>
@@ -597,7 +657,6 @@
     let autoPlayAtivo = false;
     let autoPlayTimer = null;
 
-    // Cores oficiais das equipes F1 2026 (Incluindo a Cadillac F1)
     const coresEquipesOficiais = {
         "Ferrari": "#D52E37",
         "McLaren": "#FF8000",
@@ -622,19 +681,16 @@
         "Brawn GP": "#CDDC39"
     };
 
-    let playerTeamColor = "#2ecc71"; // Cor padrão da escuderia do jogador
+    let playerTeamColor = "#2ecc71"; 
 
-    // Estrutura Financeira e Operacional do Manager
     let temporadaAno = 2026;
     let orcamentoEquipe = 45; 
     let sponsorBonusPorCorrida = 2; 
     let contratosPilotos = { p1: 1, p2: 1 }; 
     
-    // Contratações pré-assinadas para vigência no próximo ano
     let preContratoAnoSeguinte = { p1: null, p2: null };
     let pilotosLivresRescindidos = []; 
 
-    // Trava de Propostas Pendentes e Respostas por Vistoria
     let propostasPendentes = { p1: null, p2: null }; 
     let respostasVistoria = []; 
     let desenvolvimentoFila = { chassis: [], motor: [] }; 
@@ -828,30 +884,28 @@
         { nome: "Arvid Lindblad", ovr: 79, pot: 90, xp: 0, inicio: 2026, campeao: false, desc: "Fome de evolução e velocidade limpa.", anosContratoF1: 1 }
     ];
 
-    // ESTRUTURA OFICIAL E FIXA DAS 11 EQUIPES DA F1 2026 (INCLUINDO A CADILLAC)
     const gridOficialF12026 = [
-        { equipe: "Red Bull", p1: "Max Verstappen", p2: "Liam Lawson" },
+        { equipe: "Red Bull", p1: "Max Verstappen", p2: "Isack Hadjar" },
         { equipe: "Ferrari", p1: "Lewis Hamilton", p2: "Charles Leclerc" },
         { equipe: "McLaren", p1: "Lando Norris", p2: "Oscar Piastri" },
         { equipe: "Mercedes", p1: "George Russell", p2: "Andrea Kimi Antonelli" },
         { equipe: "Aston Martin", p1: "Fernando Alonso", p2: "Lance Stroll" },
         { equipe: "Alpine", p1: "Pierre Gasly", p2: "Franco Colapinto" },
         { equipe: "Haas", p1: "Esteban Ocon", p2: "Oliver Bearman" },
-        { equipe: "Racing Bulls", p1: "Isack Hadjar", p2: "Arvid Lindblad" },
+        { equipe: "Racing Bulls", p1: "Liam Lawson", p2: "Arvid Lindblad" },
         { equipe: "Williams", p1: "Carlos Sainz", p2: "Alexander Albon" },
         { equipe: "Audi", p1: "Nico Hülkenberg", p2: "Gabriel Bortoleto" },
         { equipe: "Cadillac", p1: "Sergio Pérez", p2: "Valtteri Bottas" }
     ];
 
-    // MAPA DE ACADEMIAS PARA SUBSTITUIÇÃO LÓGICA DE VAGAS
     const mapaSubstitutosAcademia = {
         "Lewis Hamilton": { promovido: "Oliver Bearman", equipePromovido: "Haas", substitutoBase: "Rafael Câmara" },
         "Charles Leclerc": { promovido: "Oliver Bearman", equipePromovido: "Haas", substitutoBase: "Rafael Câmara" },
         "Oliver Bearman": { promovido: "Rafael Câmara", equipePromovido: null, substitutoBase: null },
         "Esteban Ocon": { promovido: "Rafael Câmara", equipePromovido: null, substitutoBase: null },
-        "Max Verstappen": { promovido: "Isack Hadjar", equipePromovido: "Racing Bulls", substitutoBase: "Ayumu Iwasa" },
-        "Liam Lawson": { promovido: "Isack Hadjar", equipePromovido: "Racing Bulls", substitutoBase: "Ayumu Iwasa" },
+        "Max Verstappen": { promovido: "Liam Lawson", equipePromovido: "Racing Bulls", substitutoBase: "Ayumu Iwasa" },
         "Isack Hadjar": { promovido: "Ayumu Iwasa", equipePromovido: null, substitutoBase: null },
+        "Liam Lawson": { promovido: "Ayumu Iwasa", equipePromovido: null, substitutoBase: null },
         "Arvid Lindblad": { promovido: "Ayumu Iwasa", equipePromovido: null, substitutoBase: null },
         "George Russell": { promovido: "Andrea Kimi Antonelli", equipePromovido: null, substitutoBase: "Frederik Vesti" },
         "Andrea Kimi Antonelli": { promovido: "Frederik Vesti", equipePromovido: null, substitutoBase: null },
@@ -929,6 +983,91 @@
 
     let pontosPilotos = {};
     let pontosConstrutores = {};
+
+    /* --- SISTEMA DE SAVE E LOAD (.TXT BASE64) --- */
+    function exportSaveFile() {
+        const gameState = {
+            modoJogo: modoJogo,
+            temporadaAno: temporadaAno,
+            orcamentoEquipe: orcamentoEquipe,
+            sponsorBonusPorCorrida: sponsorBonusPorCorrida,
+            contratosPilotos: contratosPilotos,
+            preContratoAnoSeguinte: preContratoAnoSeguinte,
+            pilotosLivresRescindidos: pilotosLivresRescindidos,
+            propostasPendentes: propostasPendentes,
+            desenvolvimentoFila: desenvolvimentoFila,
+            currentGP: currentGP,
+            selectedDraft: selectedDraft,
+            rivaisFixosGrid: rivaisFixosGrid,
+            teamName: teamName,
+            fixedTeamName: fixedTeamName,
+            playerTeamColor: playerTeamColor,
+            pontosPilotos: pontosPilotos,
+            pontosConstrutores: pontosConstrutores
+        };
+
+        const jsonString = JSON.stringify(gameState);
+        const encodedData = btoa(unescape(encodeURIComponent(jsonString)));
+
+        const blob = new Blob([encodedData], { type: "text/plain;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        const sanitizeTeam = fixedTeamName.toLowerCase().replace(/\s+/g, '_');
+        link.download = `save_f1_${sanitizeTeam}_ano${temporadaAno}_gp${currentGP + 1}.txt`;
+        link.click();
+    }
+
+    function triggerFileInput() {
+        document.getElementById('load-file-input').click();
+    }
+
+    function importSaveFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const encodedContent = e.target.result.trim();
+                const decodedJson = decodeURIComponent(escape(atob(encodedContent)));
+                const loadedState = JSON.parse(decodedJson);
+
+                modoJogo = loadedState.modoJogo || 'normal';
+                temporadaAno = loadedState.temporadaAno;
+                orcamentoEquipe = loadedState.orcamentoEquipe;
+                sponsorBonusPorCorrida = loadedState.sponsorBonusPorCorrida;
+                contratosPilotos = loadedState.contratosPilotos;
+                preContratoAnoSeguinte = loadedState.preContratoAnoSeguinte;
+                pilotosLivresRescindidos = loadedState.pilotosLivresRescindidos || [];
+                propostasPendentes = loadedState.propostasPendentes;
+                desenvolvimentoFila = loadedState.desenvolvimentoFila;
+                currentGP = loadedState.currentGP;
+                selectedDraft = loadedState.selectedDraft;
+                rivaisFixosGrid = loadedState.rivaisFixosGrid;
+                teamName = loadedState.teamName;
+                fixedTeamName = loadedState.fixedTeamName;
+                playerTeamColor = loadedState.playerTeamColor;
+                pontosPilotos = loadedState.pontosPilotos;
+                pontosConstrutores = loadedState.pontosConstrutores;
+
+                alert(`✅ Jogo Carregado com Sucesso!\nEscuderia: ${fixedTeamName}\nAno: ${temporadaAno} | GP: ${currentGP + 1}`);
+                openHQManagerScreen();
+            } catch (err) {
+                alert("❌ Ocorreu um erro ao carregar o arquivo de save. Certifique-se de que é um arquivo .txt válido do jogo.");
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    function resetStandingsPoints() {
+        for (let p in pontosPilotos) {
+            pontosPilotos[p] = 0;
+        }
+        for (let c in pontosConstrutores) {
+            pontosConstrutores[c] = 0;
+        }
+    }
 
     function getTeamColor(teamName) {
         if (teamName === fixedTeamName) return playerTeamColor;
@@ -1122,7 +1261,6 @@
         });
     }
 
-    // MONTAGEM DO GRID DE 24 PILOTOS COM SUBSTITUIÇÕES INTELIGENTES DE ACADEMIA E CADILLAC
     function confirmDraftAndLaunch() {
         if (!selectedDraft.chassis || !selectedDraft.motor || !selectedDraft.piloto1 || !selectedDraft.piloto2) {
             alert("Por favor, selecione todas as opções para assinar o contrato.");
@@ -1146,16 +1284,23 @@
             let pilotosDisponiveis = listaPilotosUniverso.filter(p => !escolhidosPeloPlayer.includes(p.nome));
             let selecionados = getRandomSubarray(pilotosDisponiveis, 22);
 
-            rivaisFixosGrid = selecionados.map(p => {
-                let eqObj = listaEquipesUniverso[Math.floor(Math.random() * listaEquipesUniverso.length)];
-                pontosPilotos[p.nome] = 0;
-                return { nome: p.nome, equipe: eqObj.nome, ovr: p.ovr, eqOvr: eqObj.ovr };
-            });
+            let equipesAleatorias = getRandomSubarray(listaEquipesUniverso, 11);
+            rivaisFixosGrid = [];
+            
+            for (let i = 0; i < 11; i++) {
+                let eqObj = equipesAleatorias[i];
+                let p1 = selecionados[i * 2];
+                let p2 = selecionados[i * 2 + 1];
+
+                pontosPilotos[p1.nome] = 0;
+                pontosPilotos[p2.nome] = 0;
+
+                rivaisFixosGrid.push({ nome: p1.nome, equipe: eqObj.nome, ovr: p1.ovr, eqOvr: eqObj.ovr });
+                rivaisFixosGrid.push({ nome: p2.nome, equipe: eqObj.nome, ovr: p2.ovr, eqOvr: eqObj.ovr });
+            }
         } else {
-            // MODO CARREIRA: Montar Grid Fixo de 2026 com 11 Equipes Oficiais (22 Carros da F1) + Ajuste Lógico
             let gridMontado = JSON.parse(JSON.stringify(gridOficialF12026));
 
-            // Aplicar substituições para cada piloto que o jogador escolheu
             escolhidosPeloPlayer.forEach(nomePilotoDraft => {
                 gridMontado.forEach(eq => {
                     if (eq.p1 === nomePilotoDraft || eq.p2 === nomePilotoDraft) {
@@ -1176,7 +1321,6 @@
                 });
             });
 
-            // Converte a estrutura das 11 equipes em 22 carros para o Grid
             rivaisFixosGrid = [];
             gridMontado.forEach(eq => {
                 pontosConstrutores[eq.equipe] = 0;
@@ -1187,27 +1331,71 @@
                     rivaisFixosGrid.push({ nome: pObj.nome, equipe: eqObj.nome, ovr: pObj.ovr, eqOvr: eqObj.ovr });
                 });
             });
-
-            // Adiciona 2 novatos da F2 para completar exatamente 24 carros no grid total
-            let disponiveisF2 = pilotosF2.filter(p => !pontosPilotos[p.nome] && !escolhidosPeloPlayer.includes(p.nome));
-            let adicionais2 = getRandomSubarray(disponiveisF2, 2);
-            adicionais2.forEach(p => {
-                let eqObj = equipesNormais[Math.floor(Math.random() * equipesNormais.length)];
-                pontosPilotos[p.nome] = 0;
-                rivaisFixosGrid.push({ nome: p.nome, equipe: eqObj.nome, ovr: p.ovr, eqOvr: eqObj.ovr });
-            });
         }
 
         openPreRaceScreen();
     }
 
-    // GESTÃO HQ OPERACIONAL & NEGOCIAÇÕES
+    function updateTheRacerNews() {
+        const dateElem = document.getElementById('racer-date');
+        const headlineElem = document.getElementById('racer-headline');
+        const bodyElem = document.getElementById('racer-body');
+
+        dateElem.innerText = `ANO ${temporadaAno} • GP ${currentGP + 1} DE ${getCurrentGpList().length}`;
+
+        let p1 = selectedDraft.piloto1;
+        let p2 = selectedDraft.piloto2;
+        let ptsP1 = pontosPilotos[p1.nome] || 0;
+        let ptsP2 = pontosPilotos[p2.nome] || 0;
+
+        let noticiasPossiveis = [
+            {
+                headline: `"${fixedTeamName.toUpperCase()} INVESTE PESADO EM ATUALIZAÇÕES PARA O CHASSIS"`,
+                body: `Engenheiros do Paddock afirmam que os pacotes aerodinâmicos encomendados por ${fixedTeamName} podem mudar a hierarquia de forças no grid.`
+            },
+            {
+                headline: `"${p1.nome.toUpperCase()} E ${p2.nome.toUpperCase()} TRAVAM BATALHA INTERNA DE RITMO"`,
+                body: `Analistas do The Racer destacam o equilíbrio entre a dupla da ${fixedTeamName}. A telemetria mostra tempos de volta quase idênticos.`
+            },
+            {
+                headline: `"CADILLAC F1 IMPRESSIONA PADDOCK COM EVOLUÇÃO CONSTANTE"`,
+                body: `A nova escuderia americana continua ganhando terreno no grid e incomodando equipes tradicionais da Fórmula 1.`
+            },
+            {
+                headline: `"MERCADO DE PILOTOS: MERCADO LIVRE DA F2 EM EBULIÇÃO"`,
+                body: `Com o avanço da temporada, promessas da Fórmula 2 como Rafael Câmara e Gabriele Minì atraem o interesse de chefes de equipe.`
+            }
+        ];
+
+        if (preContratoAnoSeguinte.p1 || preContratoAnoSeguinte.p2) {
+            let assinado = preContratoAnoSeguinte.p1 ? preContratoAnoSeguinte.p1.nome : preContratoAnoSeguinte.p2.nome;
+            noticiasPossiveis.unshift({
+                headline: `"BOMBA NO MERCADO: ${assinado.toUpperCase()} FECHA PRÉ-CONTRATO PARA ${temporadaAno + 1}"`,
+                body: `A movimentação de bastidores de ${fixedTeamName} agitou o Paddock. Rumores indicam contrato milionário assinado!`
+            });
+        }
+
+        if (ptsP1 > 40 || ptsP2 > 40) {
+            let lider = ptsP1 >= ptsP2 ? p1.nome : p2.nome;
+            noticiasPossiveis.unshift({
+                headline: `"${lider.toUpperCase()} ENTRA NA BRIGA DIRETA PELO TÍTULO DE PILOTOS"`,
+                body: `Com desempenhos sólidos em sequência, a ${fixedTeamName} consolida sua candidatura aos Mundiais deste ano.`
+            });
+        }
+
+        let noticiaSorteada = noticiasPossiveis[Math.floor(Math.random() * noticiasPossiveis.length)];
+        headlineElem.innerText = noticiaSorteada.headline;
+        bodyElem.innerText = noticiaSorteada.body;
+    }
+
     function openHQManagerScreen() {
         showScreen('screen-manager-hq');
         document.getElementById('hq-budget').innerText = `R$ ${orcamentoEquipe}M`;
         document.getElementById('hq-season-year').innerText = `Ano ${temporadaAno}`;
         document.getElementById('hq-round-info').innerText = `${currentGP + 1} de ${getCurrentGpList().length}`;
         document.getElementById('hq-team-color-input').value = playerTeamColor;
+
+        updateTheRacerNews();
 
         document.getElementById('hq-chassis-ovr').innerText = selectedDraft.chassis.ovr;
         let chassisQCount = desenvolvimentoFila.chassis.length;
@@ -1219,7 +1407,7 @@
 
         document.getElementById('hq-sponsor-bonus').innerText = `R$ ${sponsorBonusPorCorrida}M`;
 
-        // P1 Status, XP e Potencial
+        // P1 Status
         let p1 = selectedDraft.piloto1;
         document.getElementById('hq-p1-info').innerText = `${p1.nome} (OVR ${p1.ovr})`;
         document.getElementById('hq-p1-contract').innerText = `${contratosPilotos.p1} ano(s)`;
@@ -1245,7 +1433,7 @@
             document.getElementById('hq-p1-status').style.color = 'var(--warning-orange)';
         }
 
-        // P2 Status, XP e Potencial
+        // P2 Status
         let p2 = selectedDraft.piloto2;
         document.getElementById('hq-p2-info').innerText = `${p2.nome} (OVR ${p2.ovr})`;
         document.getElementById('hq-p2-contract').innerText = `${contratosPilotos.p2} ano(s)`;
@@ -1271,7 +1459,6 @@
             document.getElementById('hq-p2-status').style.color = 'var(--warning-orange)';
         }
 
-        // Exibir Notificações/Contrapropostas caso existam
         const notifBox = document.getElementById('hq-notifications-box');
         const notifContent = document.getElementById('hq-notifications-content');
         if (respostasVistoria.length > 0) {
@@ -1291,7 +1478,6 @@
         f1Container.innerHTML = '';
         f2Container.innerHTML = '';
 
-        // Lista F1 (11 Equipes)
         gridOficialF12026.forEach(eq => {
             [eq.p1, eq.p2].forEach(nomeP => {
                 let pObj = todosPilotosMapeados.find(p => p.nome === nomeP) || { nome: nomeP, ovr: 75, pot: 80, anosContratoF1: 1 };
@@ -1318,7 +1504,6 @@
             });
         });
 
-        // Lista F2 e Livres
         pilotosF2.forEach(pObj => {
             let ehMeuPiloto = (selectedDraft.piloto1.nome === pObj.nome || selectedDraft.piloto2.nome === pObj.nome);
             let ehRescindido = pilotosLivresRescindidos.includes(pObj.nome);
@@ -1732,7 +1917,7 @@
 
         const nextBtn = document.getElementById('btn-next-gp');
         if (currentGP >= getCurrentGpList().length - 1) {
-            nextBtn.innerText = "🏆 Finalizar Temporada & Ir para o Próximo Ano! 🏆";
+            nextBtn.innerText = "🏆 Finalizar Temporada & Resetar Pontos para o Próximo Ano! 🏆";
         } else {
             nextBtn.innerText = "Avançar Calendário";
         }
@@ -1752,6 +1937,8 @@
             processPendingNegotiations();
             applySmoothAgeDeclines();
 
+            resetStandingsPoints();
+
             ['p1', 'p2'].forEach(slot => {
                 if (preContratoAnoSeguinte[slot]) {
                     let pilotoAntigo = selectedDraft[slot === 'p1' ? 'piloto1' : 'piloto2'];
@@ -1763,7 +1950,7 @@
                 }
             });
 
-            let expMsg = `🏁 TEMPORADA ENCERRADA!\nBem-vindo ao Ano de ${temporadaAno}.\n\nSeu orçamento acumulado: R$ ${orcamentoEquipe}M`;
+            let expMsg = `🏁 TEMPORADA ENCERRADA!\nOs pontos dos Mundiais foram resetados para 0.\nBem-vindo ao Ano de ${temporadaAno}.\n\nSeu orçamento acumulado: R$ ${orcamentoEquipe}M`;
             if (contratosPilotos.p1 <= 0 || contratosPilotos.p2 <= 0) {
                 expMsg += `\n⚠️ Alerta: O contrato de um dos seus pilotos expirou. Você precisará negociar a renovação ou assinar com um substituto no QG!`;
                 if(contratosPilotos.p1 <= 0) contratosPilotos.p1 = 1;
