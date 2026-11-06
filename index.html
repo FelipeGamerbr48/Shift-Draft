@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>7x0: F1 Shift & Draft</title>
-    <style> 
+    <style>
         :root {
             --bg-color: #0b0c10;
             --card-bg: #1f2833;
@@ -15,6 +15,7 @@
             --warning-orange: #e67e22;
             --gold: #f1c40f;
             --money-blue: #3498db;
+            --fe-cyan: #00e5ff;
         }
 
         body {
@@ -73,7 +74,7 @@
             color: #000;
         }
 
-        /* CONTROLE FLUTUANTE DE TEMA (CANTO INFERIOR DIREITO) */
+        /* Controle Do Tema*/
         .theme-switcher-box {
             position: fixed;
             bottom: 15px;
@@ -156,6 +157,7 @@
         .btn-gold { background: var(--gold); color: #000; }
         .btn-fast { background: var(--warning-orange); color: white; }
         .btn-money { background: var(--money-blue); color: white; }
+        .btn-fe { background: var(--fe-cyan); color: #000; }
         .btn-save { background: #27ae60; color: white; }
         .btn-load { background: #8e44ad; color: white; }
         .btn-autoplay { background: #8e44ad; color: white; }
@@ -347,7 +349,7 @@
         }
 
         .market-list {
-            max-height: 350px;
+            max-height: 380px;
             overflow-y: auto;
             background: #111;
             border: 1px solid #333;
@@ -373,6 +375,18 @@
             padding: 8px;
             border-radius: 4px;
             margin-top: 8px;
+        }
+
+        .category-tag-fe {
+            display: inline-block;
+            background: rgba(0, 229, 255, 0.15);
+            color: var(--fe-cyan);
+            border: 1px solid var(--fe-cyan);
+            border-radius: 3px;
+            padding: 1px 4px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            margin-left: 4px;
         }
 
         .xp-bar-container {
@@ -527,7 +541,7 @@
 <div class="container">
     <header>
         <h1>7x0: <span>F1 Shift & Draft</span></h1>
-        <p>Atualização 3.0 — Aerodinâmica, Patrocínios Dinâmicos, Evolução Rival e QG Atualizado</p>
+        <p>Atualização 3.1 — Grid Fórmula E no Mercado de Pilotos & Desenvolvimento Global</p>
     </header>
 
     <div id="screen-menu" class="screen active" style="text-align: center;">
@@ -736,11 +750,11 @@
         </div>
 
         <div class="summary-box" style="border-color: var(--money-blue);">
-            <h3 style="color: var(--money-blue); margin-top: 0;">🌐 Mercado Global de Pilotos & Fórmula 2</h3>
+            <h3 style="color: var(--money-blue); margin-top: 0;">🌐 Mercado Global de Pilotos</h3>
             <div id="market-locked-banner" style="display:none; background:rgba(46, 204, 113, 0.15); border:1px solid var(--success-green); padding:10px; border-radius:6px; margin-bottom:10px; color:var(--success-green); font-weight:bold;">
                 🔒 MERCADO TRANCADO: Ambos os cockpits titulares possuem contratos válidos garantidos para a próxima temporada!
             </div>
-            <p style="font-size: 0.85rem; color: #aaa;">Monitore contratos e proponha acordos. As respostas dos pilotos chegam na próxima visita ao QG!</p>
+            <p style="font-size: 0.85rem; color: #aaa;">Monitore contratos da F1 ou contrate talentos da Fórmula E e Fórmula 2. As respostas dos empresários chegam na próxima visita ao QG!</p>
 
             <div class="race-grid">
                 <div>
@@ -748,7 +762,7 @@
                     <div class="market-list" id="market-f1-list"></div>
                 </div>
                 <div>
-                    <h4>🎓 Opções da Fórmula 2 & Mercado Livre</h4>
+                    <h4>⚡ Categorias Alternativas: Fórmula E & Fórmula 2</h4>
                     <div class="market-list" id="market-f2-list"></div>
                 </div>
             </div>
@@ -891,7 +905,7 @@
     </div>
 
     <div class="page-credit">Feito por FelipeGamerbr48</div>
-    <div class="page-credit">Versão 3.0</div>
+    <div class="page-credit">Versão 3.1</div>
 </div>
 
 <!-- SELETOR DE TEMA FLUTUANTE (CANTO INFERIOR DIREITO) -->
@@ -985,10 +999,9 @@
         } else if (opcaoSalva === 'normal') {
             document.body.classList.remove('gp-brasil-theme');
         } else {
-            // Lógica Automática: Dias 6, 7 e 8 de Novembro
             const hoje = new Date();
             const dia = hoje.getDate();
-            const mes = hoje.getMonth(); // 10 = Novembro (Janeiro é 0)
+            const mes = hoje.getMonth(); 
 
             if (mes === 10 && (dia === 6 || dia === 7 || dia === 8)) {
                 document.body.classList.add('gp-brasil-theme');
@@ -1005,9 +1018,7 @@
 
     window.addEventListener('DOMContentLoaded', atualizarTemaAplicado);
 
-    /* ========================================================
-       CÓDIGO PRINCIPAL DO JOGO
-       ======================================================== */
+    /* Código primario*/
     let modoJogo = 'normal';
     let autoPlayAtivo = false;
     let autoPlayTimer = null;
@@ -1177,17 +1188,17 @@
     ];
 
     const equipesNormais = [
-        { nome: "Mercedes", ovr: 98, desc: "Eficiência aerodinâmica perfeita." },
-        { nome: "Ferrari", ovr: 95, desc: "Mecânica refinada com tração forte." },
-        { nome: "McLaren", ovr: 94, desc: "Gentil com os pneus traseiros." },
-        { nome: "Red Bull", ovr: 95, desc: "Eficiência de arrasto em velocidade de ponta." },
-        { nome: "Alpine", ovr: 82, desc: "Projeto intermediário." },
-        { nome: "Haas", ovr: 80, desc: "Boa velocidade máxima em reta." },
-        { nome: "Williams", ovr: 73, desc: "Chassis minimalista leve." },
+        { nome: "Mercedes", ovr: 97, desc: "Eficiência aerodinâmica perfeita." },
+        { nome: "Ferrari", ovr: 96, desc: "Mecânica refinada com tração forte." },
+        { nome: "McLaren", ovr: 95, desc: "Gentil com os pneus traseiros." },
+        { nome: "Red Bull", ovr: 96, desc: "Eficiência de arrasto em velocidade de ponta." },
+        { nome: "Alpine", ovr: 85, desc: "Projeto intermediário." },
+        { nome: "Haas", ovr: 79, desc: "Boa velocidade máxima em reta." },
+        { nome: "Williams", ovr: 72, desc: "Chassis minimalista leve." },
         { nome: "Racing Bulls", ovr: 83, desc: "Projeto equilibrado da equipe B." },
-        { nome: "Audi", ovr: 83, desc: "Motor forte com aéro em lapidação." },
-        { nome: "Aston Martin", ovr: 69, desc: "Motor com arrasto no chassis." },
-        { nome: "Cadillac", ovr: 81, desc: "Estrutura americana inédita estreante." }
+        { nome: "Audi", ovr: 85, desc: "Motor forte com aéro em lapidação." },
+        { nome: "Aston Martin", ovr: 67, desc: "Motor com arrasto no chassis." },
+        { nome: "Cadillac", ovr: 75, desc: "Estrutura americana inédita estreante." }
     ];
 
     const equipesCampeãs = [
@@ -1237,7 +1248,7 @@
         { nome: "Lewis Hamilton", ovr: 96, pot: 100, xp: 0, inicio: 2007, campeao: true, titulos: 7, desc: "Leitura de corrida e consistência impecável.", anosContratoF1: 1 },
         { nome: "Fernando Alonso", ovr: 95, pot: 99, xp: 0, inicio: 2001, campeao: true, titulos: 2, desc: "Veterano agressivo no duelo direto.", anosContratoF1: 1 },
         { nome: "Lando Norris", ovr: 93, pot: 96, xp: 0, inicio: 2019, campeao: true, titulos: 1, desc: "Coragem nas ultrapassagens e preservação de pneus.", anosContratoF1: 4 },
-        { nome: "Andrea Kimi Antonelli", ovr: 90, pot: 96, xp: 0, inicio: 2025, campeao: true, titulos: 1, desc: "Talento precoce de velocidade natural.", anosContratoF1: 1 },
+        { nome: "Andrea Kimi Antonelli", ovr: 88, pot: 100, xp: 0, inicio: 2025, campeao: true, titulos: 1, desc: "Talento precoce de velocidade natural.", anosContratoF1: 1 },
         { nome: "Charles Leclerc", ovr: 88, pot: 95, xp: 0, inicio: 2018, campeao: false, titulos: 0, desc: "Explosivo e veloz em volta lançada.", anosContratoF1: 4 },
         { nome: "George Russell", ovr: 88, pot: 94, xp: 0, inicio: 2019, campeao: false, titulos: 0, desc: "Frieza e método tático refinado.", anosContratoF1: 1 },
         { nome: "Oscar Piastri", ovr: 87, pot: 95, xp: 0, inicio: 2023, campeao: false, titulos: 0, desc: "Calculista de ritmo maduro.", anosContratoF1: 2 },
@@ -1307,38 +1318,71 @@
     ];
 
     const pilotosF2 = [
-        { nome: "Gabriele Minì", ovr: 75, pot: 89, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Forte em corridas de recuperação." },
-        { nome: "Colton Herta", ovr: 75, pot: 91, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Velocidade bruta excepcional e piloto de testes Cadillac." },
-        { nome: "Rafael Câmara", ovr: 74, pot: 97, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Promessa brasileira da Ferrari Driver Academy." },
-        { nome: "Dino Beganovic", ovr: 74, pot: 88, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Técnico e consciente na gestão de pneus." },
-        { nome: "Alex Dunne", ovr: 74, pot: 90, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Pilotagem arrojada e arriscada." },
-        { nome: "Nikola Tsolov", ovr: 72, pot: 87, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Agressivo na defesa de posição." },
-        { nome: "Kush Maini", ovr: 72, pot: 84, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Experiente e constante em ritmo." },
-        { nome: "Joshua Dürksen", ovr: 72, pot: 86, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Frio e seguro sob forte pressão." },
-        { nome: "Martinius Stenshorne", ovr: 71, pot: 86, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Ritmo fluido em traçados lentos." },
-        { nome: "Laurens van Hoepen", ovr: 71, pot: 85, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Muito pouca tendência a erros." },
-        { nome: "Oliver Goethe", ovr: 71, pot: 85, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Boa aceleração em saídas de curva." },
-        { nome: "Sebastián Montoya", ovr: 70, pot: 85, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Ultra-agressivo nas freadas de curva." },
-        { nome: "Ritomo Miyata", ovr: 70, pot: 82, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Refinado mecanicamente." },
-        { nome: "Nicolás Varrone", ovr: 70, pot: 83, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Excelente no cuidado do motor." },
-        { nome: "Mari Boya", ovr: 69, pot: 82, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Constante em stints longos." },
-        { nome: "Noel León", ovr: 68, pot: 81, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Destaca-se na chuva." },
-        { nome: "Roman Bilinski", ovr: 67, pot: 80, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Buscando espaço no automobilismo." },
-        { nome: "Rafael Villagómez", ovr: 67, pot: 79, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Traz o carro inteiro até o fim." },
-        { nome: "Tasanapol Inthraphuvasak", ovr: 66, pot: 79, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Talento asiático em evolução." },
-        { nome: "Emerson Fittipaldi Jr.", ovr: 65, pot: 88, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Nome clássico em desenvolvimento." },
-        { nome: "John Bennett", ovr: 64, pot: 78, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Ganhando bagagem europeia." },
-        { nome: "Cian Shields", ovr: 63, pot: 76, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Buscando ritmo de corrida constante." },
-        { nome: "Ayumu Iwasa", ovr: 74, pot: 88, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Piloto reserva da Red Bull/RB." },
-        { nome: "Frederik Vesti", ovr: 74, pot: 87, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Piloto reserva da Mercedes." },
-        { nome: "Felipe Drugovich", ovr: 78, pot: 91, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Campeão da F2 e Piloto da Andretti na Formula E." },
-        { nome: "Victor Martins", ovr: 73, pot: 87, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Academia Alpine." },
-        { nome: "Zak O'Sullivan", ovr: 71, pot: 86, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Academia Williams." },
-        { nome: "Luke Browning", ovr: 71, pot: 85, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Academia Williams." },
-        { nome: "Zane Maloney", ovr: 73, pot: 88, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Reserva da Audi/Sauber." }
+        { nome: "Gabriele Minì", ovr: 75, pot: 89, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Forte em corridas de recuperação.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Colton Herta", ovr: 75, pot: 91, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Velocidade bruta excepcional e piloto de testes Cadillac.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Rafael Câmara", ovr: 74, pot: 97, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Promessa brasileira da Ferrari Driver Academy.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Dino Beganovic", ovr: 74, pot: 88, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Técnico e consciente na gestão de pneus.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Alex Dunne", ovr: 74, pot: 90, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Pilotagem arrojada e arriscada.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Nikola Tsolov", ovr: 72, pot: 87, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Agressivo na defesa de posição.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Kush Maini", ovr: 72, pot: 84, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Experiente e constante em ritmo.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Joshua Dürksen", ovr: 72, pot: 86, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Frio e seguro sob forte pressão.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Martinius Stenshorne", ovr: 71, pot: 86, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Ritmo fluido em traçados lentos.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Laurens van Hoepen", ovr: 71, pot: 85, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Muito pouca tendência a erros.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Oliver Goethe", ovr: 71, pot: 85, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Boa aceleração em saídas de curva.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Sebastián Montoya", ovr: 70, pot: 85, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Ultra-agressivo nas freadas de curva.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Ritomo Miyata", ovr: 70, pot: 82, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Refinado mecanicamente.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Nicolás Varrone", ovr: 70, pot: 83, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Excelente no cuidado do motor.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Mari Boya", ovr: 69, pot: 82, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Constante em stints longos.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Noel León", ovr: 68, pot: 81, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Destaca-se na chuva.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Roman Bilinski", ovr: 67, pot: 80, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Buscando espaço no automobilismo.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Rafael Villagómez", ovr: 67, pot: 79, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Traz o carro inteiro até o fim.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Tasanapol Inthraphuvasak", ovr: 66, pot: 79, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Talento asiático em evolução.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Emerson Fittipaldi Jr.", ovr: 65, pot: 88, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Nome clássico em desenvolvimento.", categoriaOrigem: "Fórmula 2" },
+        { nome: "John Bennett", ovr: 64, pot: 78, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Ganhando bagagem europeia.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Cian Shields", ovr: 63, pot: 76, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Buscando ritmo de corrida constante.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Ayumu Iwasa", ovr: 74, pot: 88, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Piloto reserva da Red Bull/RB.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Frederik Vesti", ovr: 74, pot: 87, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Piloto reserva da Mercedes.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Victor Martins", ovr: 73, pot: 87, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Academia Alpine.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Zak O'Sullivan", ovr: 71, pot: 86, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Academia Williams.", categoriaOrigem: "Fórmula 2" },
+        { nome: "Luke Browning", ovr: 71, pot: 85, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Academia Williams.", categoriaOrigem: "Fórmula 2" }
     ];
 
-    const todosPilotosMapeados = [...pilotos2026, ...pilotosHistoricos, ...pilotosF2];
+    // ========================================================
+    // ⚡ ESTRUTURA DA FÓRMULA E (GRID 2025/2026/2027)
+    // ========================================================
+    const campeoesGridFE = [
+        { nome: "Pascal Wehrlein", ovr: 85, pot: 90, xp: 0, inicio: 2019, campeao: true, titulos: 1, desc: "Campeão Mundial da Temporada 10 (TAG Heuer Porsche).", categoriaOrigem: "Fórmula E" },
+        { nome: "Jake Dennis", ovr: 83, pot: 88, xp: 0, inicio: 2021, campeao: true, titulos: 1, desc: "Campeão Mundial da Temporada 9 (Avalanche Andretti).", categoriaOrigem: "Fórmula E" },
+        { nome: "Stoffel Vandoorne", ovr: 82, pot: 87, xp: 0, inicio: 2018, campeao: true, titulos: 1, desc: "Campeão Mundial da Temporada 8 (Maserati / ex-Mercedes).", categoriaOrigem: "Fórmula E" },
+        { nome: "Nyck de Vries", ovr: 82, pot: 88, xp: 0, inicio: 2019, campeao: true, titulos: 1, desc: "Campeão Mundial da Temporada 7 (Mahindra Racing).", categoriaOrigem: "Fórmula E" },
+        { nome: "António Félix da Costa", ovr: 83, pot: 88, xp: 0, inicio: 2014, campeao: true, titulos: 1, desc: "Campeão Mundial da Temporada 6 (Jaguar TCS Racing).", categoriaOrigem: "Fórmula E" },
+        { nome: "Jean-Éric Vergne", ovr: 83, pot: 87, xp: 0, inicio: 2014, campeao: true, titulos: 2, desc: "Bicampeão Mundial das Temporadas 4 e 5 (Citroën / DS Penske).", categoriaOrigem: "Fórmula E" },
+        { nome: "Sébastien Buemi", ovr: 82, pot: 86, xp: 0, inicio: 2014, campeao: true, titulos: 1, desc: "Campeão da Temporada 2 e recordista de vitórias (Envision Racing).", categoriaOrigem: "Fórmula E" },
+        { nome: "Lucas di Grassi", ovr: 81, pot: 85, xp: 0, inicio: 2014, campeao: true, titulos: 1, desc: "Campeão da Temporada 3 e pioneiro da categoria (Lola Yamaha ABT).", categoriaOrigem: "Fórmula E" }
+    ];
+
+    const desafiantesGridFE = [
+        { nome: "Mitch Evans", ovr: 84, pot: 89, xp: 0, inicio: 2016, campeao: false, titulos: 0, desc: "Especialista em ultrapassagens e vice-campeão (Jaguar TCS Racing).", categoriaOrigem: "Fórmula E" },
+        { nome: "Nick Cassidy", ovr: 84, pot: 89, xp: 0, inicio: 2020, campeao: false, titulos: 0, desc: "Gestão cirúrgica de energia e ritmo (Citroën).", categoriaOrigem: "Fórmula E" },
+        { nome: "Oliver Rowland", ovr: 81, pot: 86, xp: 0, inicio: 2015, campeao: false, titulos: 0, desc: "Agressivo em voltas rápidas (Nissan Formula E Team).", categoriaOrigem: "Fórmula E" },
+        { nome: "Felipe Drugovich", ovr: 78, pot: 91, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Campeão da F2 em sua chegada à Fórmula E (Andretti).", categoriaOrigem: "Fórmula E" },
+        { nome: "Maximilian Günther", ovr: 80, pot: 86, xp: 0, inicio: 2018, campeao: false, titulos: 0, desc: "Veloz em circuitos de rua travados (DS Penske).", categoriaOrigem: "Fórmula E" },
+        { nome: "Edoardo Mortara", ovr: 79, pot: 84, xp: 0, inicio: 2017, campeao: false, titulos: 0, desc: "Veterano multicampeão de etapas (Mahindra Racing).", categoriaOrigem: "Fórmula E" },
+        { nome: "Nico Müller", ovr: 78, pot: 84, xp: 0, inicio: 2019, campeao: false, titulos: 0, desc: "Ritmo constante e técnico (TAG Heuer Porsche).", categoriaOrigem: "Fórmula E" },
+        { nome: "Norman Nato", ovr: 77, pot: 83, xp: 0, inicio: 2021, campeao: false, titulos: 0, desc: "Piloto experiente no apoio de corrida (Nissan).", categoriaOrigem: "Fórmula E" },
+        { nome: "Robin Frijns", ovr: 79, pot: 84, xp: 0, inicio: 2015, campeao: false, titulos: 0, desc: "Excelente leitura tática de corrida (Envision Racing).", categoriaOrigem: "Fórmula E" },
+        { nome: "Taylor Barnard", ovr: 76, pot: 88, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Jovem promessa britânica (DS Penske).", categoriaOrigem: "Fórmula E" },
+        { nome: "Zane Maloney", ovr: 75, pot: 88, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Talento vindo da F2 (Lola Yamaha ABT).", categoriaOrigem: "Fórmula E" },
+        { nome: "Dan Ticktum", ovr: 75, pot: 83, xp: 0, inicio: 2022, campeao: false, titulos: 0, desc: "Agressivo na defesa de posição (Kiro Race Co).", categoriaOrigem: "Fórmula E" },
+        { nome: "Pepe Martí", ovr: 74, pot: 86, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Jovem da academia Red Bull em estreia na FE (Kiro Race Co).", categoriaOrigem: "Fórmula E" },
+        { nome: "Jehan Daruvala", ovr: 73, pot: 82, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Jovem vindo da F2 (Maserati MSG Racing).", categoriaOrigem: "Fórmula E" },
+        { nome: "Joel Eriksson", ovr: 72, pot: 80, xp: 0, inicio: 2021, campeao: false, titulos: 0, desc: "Compondo o cockpit de fábrica (Envision Racing).", categoriaOrigem: "Fórmula E" }
+    ];
+
+    const pilotosFE = [...campeoesGridFE, ...desafiantesGridFE];
+    const categoriasAlternativasMercado = [...pilotosF2, ...pilotosFE];
+    
+    const todosPilotosMapeados = [...pilotos2026, ...pilotosHistoricos, ...pilotosF2, ...pilotosFE];
     
     todosPilotosMapeados.forEach(p => {
         let maxPot = (p.nome === "Lewis Hamilton") ? 100 : 99;
@@ -1784,11 +1828,11 @@
         }
 
         let gridF1 = getRandomSubarray(pilotos2026, 4);
-        let novatosF2 = getRandomSubarray(pilotosF2, 4); 
+        let novatosF2eFE = getRandomSubarray(categoriasAlternativasMercado, 4); 
 
         return [
             { titulo: '🏎️ Grid F1 2026', itens: gridF1 },
-            { titulo: '🎓 Fórmula 2 & Novatos', itens: novatosF2 }
+            { titulo: '⚡ Fórmula E & Fórmula 2', itens: novatosF2eFE }
         ];
     }
 
@@ -1827,9 +1871,11 @@
                     ? `<span class="titles-badge">🏆 ${item.titulos}x</span>` 
                     : '';
 
+                const feTag = (item.categoriaOrigem === "Fórmula E") ? `<span class="category-tag-fe">Fórmula E</span>` : '';
+
                 div.innerHTML = `
                     <div class="ovr-badge">OVR ${item.ovr} <span class="rarity-badge ${rarity.className}">${rarity.label}</span></div>
-                    <strong>${item.nome}</strong><br>
+                    <strong>${item.nome}</strong> ${feTag}<br>
                     <small style="display:block; margin-top:6px; color:#aaa; font-size:0.8rem;">
                         ${item.desc} <span style="color:var(--gold)">(POT: ${item.pot || item.ovr})</span> ${titulosBadgeHtml}
                     </small>
@@ -2013,13 +2059,8 @@
         });
 
         noticiasPossiveis.push({
-            headline: `"Piloto Cabo-Verdiano agride chefe de equipe"`,
-            body: `Durante o fim de semana da F4 Brasil, o piloto agrediu o chefe de equipe, o que deve gerar severas punições disciplinares.`
-        });
-
-        noticiasPossiveis.push({
-            headline: `"Max Verstappen afirma: 'Eu amo o regulamento atual'"`,
-            body: `O tetracampeão mundial afirmou sua paixão platônica pelas pistas de rua e como o regulamento atual é perfeito para o seu estilo de pilotagem.`
+            headline: `"EQUIPES DA F1 DE OLHO EM TALENTOS DA FÓRMULA E"`,
+            body: `Diretores de equipe estão monitorando de perto campeões e destaques do grid elétrico para suprir vagas em aberto na Fórmula 1.`
         });
 
         noticiasPossiveis.push({
@@ -2378,13 +2419,14 @@
             });
         });
 
-        pilotosF2.forEach(pObj => {
-            let itemHtml = createMarketItemElement(pObj, 'Fórmula 2', true, ambosTrancados);
+        categoriasAlternativasMercado.forEach(pObj => {
+            let catNome = pObj.categoriaOrigem || 'Fórmula 2';
+            let itemHtml = createMarketItemElement(pObj, catNome, true, ambosTrancados);
             f2Container.appendChild(itemHtml);
         });
     }
 
-    function createMarketItemElement(pObj, categoriaNome, isF2, ambosTrancados) {
+    function createMarketItemElement(pObj, categoriaNome, isAlternativo, ambosTrancados) {
         let nomeP = pObj.nome;
         let ehMeuPiloto = (selectedDraft.piloto1.nome === nomeP || selectedDraft.piloto2.nome === nomeP);
         let ehRescindido = pilotosLivresRescindidos.includes(nomeP);
@@ -2393,7 +2435,7 @@
 
         const div = document.createElement('div');
         div.className = 'market-item';
-        if (!isF2) div.style.borderLeft = `4px solid ${corEq}`;
+        if (!isAlternativo) div.style.borderLeft = `4px solid ${corEq}`;
 
         let keyP1 = `${nomeP}_P1`;
         let keyP2 = `${nomeP}_P2`;
@@ -2411,18 +2453,20 @@
         } else if (ambosTrancados) {
             actionButtons = '<span style="color:#777; font-size:0.75rem;">Cockpits Fechados</span>';
         } else {
-            let btnClass = isF2 ? 'btn-gold' : 'btn-money';
+            let btnClass = (categoriaNome === "Fórmula E") ? 'btn-fe' : isAlternativo ? 'btn-gold' : 'btn-money';
             actionButtons = `
                 <button class="btn ${btnClass}" onclick="toggleMarketProposalBox('${nomeP}', 'P1')" style="padding:2px 6px; font-size:0.65rem;">${painelAbertoP1 ? 'Fechar P1' : 'Assinar P1'}</button>
                 <button class="btn ${btnClass}" onclick="toggleMarketProposalBox('${nomeP}', 'P2')" style="padding:2px 6px; font-size:0.65rem;">${painelAbertoP2 ? 'Fechar P2' : 'Assinar P2'}</button>
             `;
         }
 
+        let catTag = (categoriaNome === "Fórmula E") ? `<span class="category-tag-fe">Fórmula E</span>` : `(${categoriaNome})`;
+
         let mainInfo = `
             <div class="market-item-main">
                 <div>
-                    <strong>${pObj.nome}</strong> ${!isF2 ? `(<span style="color:${corEq}; font-weight:bold;">${categoriaNome}</span>)` : ''} <span style="color:var(--gold)">OVR ${pObj.ovr}</span> <small style="color:#aaa;">(POT ${pObj.pot || (pObj.nome === "Lewis Hamilton" ? 100 : 99)})</small><br>
-                    <small style="color:${ehRescindido ? 'var(--warning-orange)' : '#aaa'};">${ehRescindido ? 'Livre (Não Recontratável)' : isF2 ? 'Fórmula 2' : `Contrato F1: ${pObj.anosContratoF1 || 1} ano(s)`}</small>
+                    <strong>${pObj.nome}</strong> ${catTag} <span style="color:var(--gold)">OVR ${pObj.ovr}</span> <small style="color:#aaa;">(POT ${pObj.pot || (pObj.nome === "Lewis Hamilton" ? 100 : 99)})</small><br>
+                    <small style="color:${ehRescindido ? 'var(--warning-orange)' : '#aaa'};">${ehRescindido ? 'Livre (Não Recontratável)' : isAlternativo ? categoriaNome : `Contrato F1: ${pObj.anosContratoF1 || 1} ano(s)`}</small>
                 </div>
                 <div>${actionButtons}</div>
             </div>
@@ -2592,7 +2636,6 @@
         });
 
         if (propostasMercadoEmAnalise.length > 0) {
-            let novasPendentes = [];
             propostasMercadoEmAnalise.forEach(item => {
                 let aceitou = false;
                 let penalidadeAnos = (item.anosPedida === 2) ? 0.10 : (item.anosPedida === 3) ? 0.20 : 0;
@@ -2603,7 +2646,7 @@
 
                 if (aceitou) {
                     preContratoAnoSeguinte[item.slotKey] = item.pilotoObj;
-                    respostasVistoria.push(`✍️ <b>MERCADO DE PILOTOS:</b> ${item.pilotoObj.nome} ACEITOU a proposta de pré-contrato para assumir o vaga de ${item.slotAlvo} no próximo ano!`);
+                    respostasVistoria.push(`✍️ <b>MERCADO DE PILOTOS:</b> ${item.pilotoObj.nome} (${item.pilotoObj.categoriaOrigem || 'Mercado Global'}) ACEITOU a proposta de pré-contrato para assumir a vaga de ${item.slotAlvo} no próximo ano!`);
                 } else {
                     respostasVistoria.push(`❌ <b>MERCADO DE PILOTOS:</b> ${item.pilotoObj.nome} RECUSOU a proposta de mercado em modo ${item.postura.toUpperCase()}.`);
                 }
@@ -2974,10 +3017,11 @@
             if (!ehTitular && !pilotosLivresRescindidos.includes(p.nome)) {
                 let div = document.createElement('div');
                 div.className = 'market-item';
+                let catLabel = p.categoriaOrigem ? `[${p.categoriaOrigem}]` : '';
                 div.innerHTML = `
                     <div class="market-item-main">
                         <div>
-                            <strong>${p.nome}</strong> <span style="color:var(--gold)">OVR ${p.ovr}</span>
+                            <strong>${p.nome}</strong> <small style="color:var(--fe-cyan);">${catLabel}</small> <span style="color:var(--gold)">OVR ${p.ovr}</span>
                         </div>
                         <div style="display:flex; gap:4px;">
                             ${vagasLivres.includes('P1') ? `<button class="btn btn-money" onclick="quickSignEmergency('${p.nome}', 'p1')" style="padding:2px 6px; font-size:0.65rem;">Assinar P1 (R$ 8M)</button>` : ''}
