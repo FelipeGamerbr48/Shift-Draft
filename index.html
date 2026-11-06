@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>7x0: F1 Shift & Draft</title>
+    <title>7x0: F1 Shift & Draft - Edição Integrada Campeões & Tema Hall da Fama</title>
     <style>
         :root {
             --bg-color: #0b0c10;
@@ -24,18 +24,69 @@
             color: var(--text-main);
             margin: 0;
             padding: 20px;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
 
-        /* ========================================================
-           ESTILOS EXCLUSIVOS DA EDIÇÃO ESPECIAL - GP DO BRASIL 🇧🇷
-           ======================================================== */
+        /* 🏆 TEMA EXCLUSIVO: MODO CAMPEÕES MUNDIAIS & LENDAS (HALL DA FAMA) */
+        body.champions-theme {
+            --bg-color: #080705;
+            --card-bg: #14120f;
+            --text-main: #e6e1d5;
+            --accent: #f1c40f;       /* Dourado Imperial */
+            --zica-red: #d93838;
+            --gold: #ffdf00;
+            --money-blue: #d4af37;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at top center, rgba(241, 196, 15, 0.15), transparent 60%),
+                radial-gradient(circle at bottom right, rgba(128, 0, 32, 0.18), transparent 70%);
+        }
+
+        body.champions-theme header {
+            border-bottom: 3px solid var(--gold);
+        }
+
+        body.champions-theme header::after {
+            content: "👑 MODO EXCLUSIVO: HALL DA FAMA & LENDAS MUNDIAIS 👑";
+            display: block;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--gold);
+            letter-spacing: 2px;
+            margin-top: 6px;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+        }
+
+        body.champions-theme header h1 span {
+            color: var(--gold);
+            text-shadow: 0 0 12px rgba(241, 196, 15, 0.4);
+        }
+
+        body.champions-theme .screen {
+            border: 1px solid rgba(241, 196, 15, 0.4);
+            box-shadow: 0 4px 20px rgba(241, 196, 15, 0.15);
+        }
+
+        body.champions-theme .btn {
+            background: linear-gradient(135deg, #f1c40f, #b8860b);
+            color: #000;
+            font-weight: 800;
+            box-shadow: 0 2px 8px rgba(241, 196, 15, 0.3);
+        }
+
+        body.champions-theme .btn:hover:not(:disabled) {
+            background: #fffb00;
+            color: #000;
+            box-shadow: 0 0 12px rgba(241, 196, 15, 0.6);
+        }
+
+        /* ESTILOS DA EDIÇÃO ESPECIAL - GP DO BRASIL 🇧🇷 */
         body.gp-brasil-theme {
             --bg-color: #05190e;
             --card-bg: #0d2b18;
             --text-main: #e2f0d9;
-            --accent: #ffdf00;      /* Amarelo Canarinho */
-            --zica-red: #009c3b;    /* Verde Bandeira */
+            --accent: #ffdf00;
+            --zica-red: #009c3b;
             --gold: #ffdf00;
             background-color: var(--bg-color);
             background-image: radial-gradient(circle at top right, rgba(0, 156, 59, 0.2), transparent 70%);
@@ -74,7 +125,6 @@
             color: #000;
         }
 
-        /* Controle Do Tema*/
         .theme-switcher-box {
             position: fixed;
             bottom: 15px;
@@ -91,7 +141,8 @@
             font-size: 0.8rem;
             backdrop-filter: blur(4px);
         }
-        body.gp-brasil-theme .theme-switcher-box {
+        body.gp-brasil-theme .theme-switcher-box,
+        body.champions-theme .theme-switcher-box {
             border-color: var(--gold);
         }
         .theme-switcher-box label {
@@ -315,6 +366,18 @@
             margin-top: 10px;
         }
 
+        .champions-hq-banner {
+            background: linear-gradient(135deg, rgba(241, 196, 15, 0.25), rgba(0, 0, 0, 0.9));
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.2);
+        }
+
         #autoplay-countdown { color: var(--gold); font-weight: bold; font-size: 1.1rem; margin-top: 10px; text-align: center; min-height: 24px; }
         .page-credit {
             margin-top: 24px;
@@ -534,6 +597,37 @@
             border-color: var(--success-green);
             background: rgba(46, 204, 113, 0.15);
         }
+
+        .challenge-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--gold);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .challenge-title {
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+        .challenge-desc {
+            font-size: 0.8rem;
+            color: #ccc;
+            margin-bottom: 6px;
+        }
+        .challenge-reward {
+            font-size: 0.75rem;
+            color: var(--success-green);
+            font-weight: bold;
+        }
+        .challenge-status {
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+        .status-completed { color: var(--success-green); }
+        .status-pending { color: var(--warning-orange); }
     </style>
 </head>
 <body>
@@ -541,16 +635,16 @@
 <div class="container">
     <header>
         <h1>7x0: <span>F1 Shift & Draft</span></h1>
-        <p>Atualização 3.1 — Grid Fórmula E no Mercado de Pilotos & Desenvolvimento Global</p>
+        <p>Atualização 3.5 — Edição Integrada Campeões & Tema Hall da Fama</p>
     </header>
 
     <div id="screen-menu" class="screen active" style="text-align: center;">
         <h2>Escolha o seu Modo de Jogo</h2>
-        <p>Simule ou dispute campeonatos completos compostos por 24 circuitos clássicos.</p>
+        <p>Simule ou dispute campeonatos completos compostos por circuitos clássicos da Formula 1.</p>
         <br>
         <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
             <button class="btn" onclick="startNewGame('normal')">Modo Carreira Manager</button>
-            <button class="btn btn-gold" onclick="startNewGame('champions')">🏆 Apenas Campeões Mundiais (1950-Atuais)</button>
+            <button class="btn btn-gold" onclick="startNewGame('champions')">🏆 Apenas Campeões Mundiais & Lendas</button>
             <button class="btn btn-load" onclick="triggerFileInput()">📂 Carregar Jogo Salvo (.txt)</button>
             <input type="file" id="load-file-input" accept=".txt" style="display: none;" onchange="importSaveFile(event)">
         </div>
@@ -571,7 +665,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <button class="btn-back" onclick="returnToMenuFromDraft()">← Voltar ao Menu</button>
             <h2>Draft de Engenharia e Pilotos</h2>
-            <div id="game-mode-indicator"></div>
+            <div id="game-mode-indicator" style="color:var(--gold); font-weight:bold;"></div>
         </div>
         
         <div style="background: rgba(230, 126, 34, 0.1); border: 1px solid var(--warning-orange); padding: 12px; border-radius: 6px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
@@ -615,7 +709,7 @@
             </div>
         </div>
 
-        <button class="btn" id="btn-confirm-draft" onclick="confirmDraftAndLaunch()" style="width: 100%; margin-top: 20px;">Assinar e Ir para o Grid 🚦</button>
+        <button class="btn" id="btn-confirm-draft" onclick="confirmDraftAndLaunch()" style="width: 100%; margin-top: 20px;">Assinar e Ir para o QG 🏢</button>
     </div>
 
     <div id="screen-manager-hq" class="screen">
@@ -630,17 +724,27 @@
             </div>
         </div>
 
+        <div id="champions-hq-banner" class="champions-hq-banner" style="display: none;">
+            <div>
+                <h3 style="margin: 0; color: var(--gold);">🏆 QG DEDICADO: MODO CAMPEÕES MUNDIAIS & LENDAS</h3>
+                <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: #ddd;">
+                    Centro de operações histórico ativo! Cumpra metas épicas, supere desafios históricos e gerencie parcerias do Paddock.
+                </p>
+            </div>
+            <span style="font-size: 1.8rem;">👑</span>
+        </div>
+
         <div class="racer-news-box">
             <div class="racer-news-header">
                 <span class="racer-news-title">THE RACER NEWS</span>
                 <span class="racer-news-date" id="racer-date">EDIÇÃO ESPECIAL DE PADDOCK</span>
             </div>
-            <div class="racer-headline" id="racer-headline">"TEMPORADA F1 2026 COMEÇA COM DISPUTA INTENSA PELO TÍTULO"</div>
+            <div class="racer-headline" id="racer-headline">"TEMPORADA F1 COMEÇA COM DISPUTA INTENSA PELO TÍTULO"</div>
             <div class="racer-news-body" id="racer-body">As equipes continuam refinando a aerodinâmica dos carros para os próximos circuitos da temporada.</div>
         </div>
 
         <div class="summary-box">
-            <p>Ano Corrente: <b id="hq-season-year">Ano 1</b> | Temporada: <b><span id="hq-round-info">1 de 24</span></b></p>
+            <p>Ano Corrente: <b id="hq-season-year">Ano 1</b> | Temporada: <b><span id="hq-round-info">1 de 24</span></b> | Escuderia: <b id="hq-team-name-display" style="color:var(--gold);">Sua Escuderia</b></p>
             <div class="color-picker-box" style="margin-top: 4px;">
                 <label style="font-size: 0.85rem; color: #aaa;">Cor da Equipe:</label>
                 <input id="hq-team-color-input" type="color" value="#2ecc71" onchange="updateTeamColorHQ(this.value)">
@@ -671,7 +775,19 @@
         </div>
 
         <div class="manager-grid">
-            <div class="manager-card">
+            <div class="manager-card" id="hq-card-metas" style="display: none;">
+                <h4>🎯 1. Metas de Temporada das Lendas</h4>
+                <p style="font-size: 0.8rem; color: #aaa;">Cumpra os objetivos de desempenho para garantir bônus de caixa e reputação histórica.</p>
+                <div id="metas-champions-list"></div>
+            </div>
+
+            <div class="manager-card" id="hq-card-desafios" style="display: none;">
+                <h4>⚔️ 3. Desafios & Duelos Lendários</h4>
+                <p style="font-size: 0.8rem; color: #aaa;">Supere escuderias e rivais mitológicos da história do automobilismo mundial em 39 corridas.</p>
+                <div id="desafios-champions-list" style="max-height: 480px; overflow-y: auto; padding-right: 5px;"></div>
+            </div>
+
+            <div class="manager-card" id="hq-card-fabrica">
                 <h4>🏎️ 1. Fábrica & Desenvolvimento Gradual</h4>
                 <p>Upgrades aplicados gradualmente nas corridas seguintes (Máx 100 OVR).</p>
                 <div style="margin-bottom: 8px;">
@@ -688,7 +804,7 @@
                 </div>
             </div>
 
-            <div class="manager-card">
+            <div class="manager-card" id="hq-card-patrocinio">
                 <h4>📢 2. Estrutura Comercial & Patrocínios</h4>
                 <p>Gestão da marca e receita contratual por GP.</p>
                 <p style="font-size: 0.85rem; margin:4px 0;">Bônus Base Mkt: <b id="hq-sponsor-bonus">R$ 2M</b> / GP</p>
@@ -699,7 +815,7 @@
                 <button class="btn btn-money" onclick="openSponsorsModal()" style="padding: 4px 8px; font-size: 0.75rem; width:100%; margin-top:6px;">Gerenciar Patrocínios 🤝</button>
             </div>
 
-            <div class="manager-card">
+            <div class="manager-card" id="hq-card-cockpit">
                 <h4>👥 3. Cockpit & Desenvolvimento dos Pilotos</h4>
                 <p>Veja a evolução de XP e negocie extensões.</p>
                 
@@ -750,25 +866,25 @@
         </div>
 
         <div class="summary-box" style="border-color: var(--money-blue);">
-            <h3 style="color: var(--money-blue); margin-top: 0;">🌐 Mercado Global de Pilotos</h3>
+            <h3 style="color: var(--money-blue); margin-top: 0;" id="hq-market-title">🌐 Mercado Global de Pilotos</h3>
             <div id="market-locked-banner" style="display:none; background:rgba(46, 204, 113, 0.15); border:1px solid var(--success-green); padding:10px; border-radius:6px; margin-bottom:10px; color:var(--success-green); font-weight:bold;">
                 🔒 MERCADO TRANCADO: Ambos os cockpits titulares possuem contratos válidos garantidos para a próxima temporada!
             </div>
-            <p style="font-size: 0.85rem; color: #aaa;">Monitore contratos da F1 ou contrate talentos da Fórmula E e Fórmula 2. As respostas dos empresários chegam na próxima visita ao QG!</p>
+            <p style="font-size: 0.85rem; color: #aaa;" id="hq-market-desc">Monitore contratos ou contrate talentos. As respostas dos empresários chegam na próxima visita ao QG!</p>
 
             <div class="race-grid">
                 <div>
-                    <h4>🏎️ Grid F1 (Contratos com Equipes)</h4>
+                    <h4 id="market-col1-title">🏎️ Grid Principal</h4>
                     <div class="market-list" id="market-f1-list"></div>
                 </div>
                 <div>
-                    <h4>⚡ Categorias Alternativas: Fórmula E & Fórmula 2</h4>
+                    <h4 id="market-col2-title">⚡ Categorias Alternativas / Lendas Reserva</h4>
                     <div class="market-list" id="market-f2-list"></div>
                 </div>
             </div>
         </div>
 
-        <button class="btn" onclick="closeHQAndProceed()" style="width: 100%; margin-top: 10px;">Retornar às Corridas 🚦</button>
+        <button class="btn btn-gold" onclick="closeHQAndProceed()" style="width: 100%; margin-top: 10px;">Retornar às Corridas 🚦</button>
     </div>
 
     <div id="screen-pre-race" class="screen">
@@ -905,15 +1021,15 @@
     </div>
 
     <div class="page-credit">Feito por FelipeGamerbr48</div>
-    <div class="page-credit">Versão 3.1</div>
+    <div class="page-credit">Versão 3.5 — Edição Integrada QG Campeões & Tema Hall da Fama</div>
 </div>
 
-<!-- SELETOR DE TEMA FLUTUANTE (CANTO INFERIOR DIREITO) -->
 <div class="theme-switcher-box">
     <label for="theme-select">🎨 Tema:</label>
     <select id="theme-select" onchange="alterarTemaManual(this.value)">
         <option value="auto">Automático (Calendário)</option>
         <option value="normal">Padrão F1 Shift</option>
+        <option value="champions">🏆 Hall da Fama (Campeões)</option>
         <option value="gp-brasil">🇧🇷 GP do Brasil</option>
     </select>
 </div>
@@ -953,7 +1069,6 @@
     </div>
 </div>
 
-<!-- Modal Objetivo de Contratação Obrigatória de Fim de Temporada -->
 <div id="modal-emergency-market" class="modal-overlay">
     <div class="modal-card" style="border-color: var(--zica-red); max-width: 700px;">
         <h3 style="color: var(--zica-red); margin-top: 0; text-align: center;">🚨 CENTRAL DE EMERGÊNCIA DE CONTRATOS</h3>
@@ -961,7 +1076,6 @@
             Sua equipe não pode avançar para a próxima temporada sem a dupla titular 100% garantida. Resolva a pendência abaixo:
         </p>
 
-        <!-- Status dos Cockpits -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
             <div id="emergency-p1-card" class="manager-card" style="margin: 0; padding: 10px;">
                 <h4 style="margin: 0 0 6px 0; font-size: 0.9rem;">Cockpit P1</h4>
@@ -973,7 +1087,6 @@
             </div>
         </div>
 
-        <!-- Mercado Direto Isolado -->
         <h4 style="color: var(--gold); margin: 10px 0 5px 0;">Opções de Mercado Imediato</h4>
         <div class="market-list" id="emergency-market-list" style="height: 220px;"></div>
 
@@ -986,28 +1099,42 @@
 </div>
 
 <script>
-    /* ========================================================
-       GERENCIAMENTO DE TEMAS (AUTOMÁTICO & MANUAL)
-       ======================================================== */
+    let temaAnteriorSalvo = null; // Guarda o tema ativo antes de entrar no modo Campeões
+    let modoJogo = 'normal';
+    let autoPlayAtivo = false;
+    let autoPlayTimer = null;
+
     function atualizarTemaAplicado() {
         const opcaoSalva = localStorage.getItem('f1_theme_preference') || 'auto';
         const selectElem = document.getElementById('theme-select');
         if (selectElem) selectElem.value = opcaoSalva;
 
-        if (opcaoSalva === 'gp-brasil') {
-            document.body.classList.add('gp-brasil-theme');
-        } else if (opcaoSalva === 'normal') {
-            document.body.classList.remove('gp-brasil-theme');
-        } else {
-            const hoje = new Date();
-            const dia = hoje.getDate();
-            const mes = hoje.getMonth(); 
+        document.body.classList.remove('gp-brasil-theme', 'champions-theme');
 
-            if (mes === 10 && (dia === 6 || dia === 7 || dia === 8)) {
+        // 1. Prioridade para a escolha manual do jogador no dropdown
+        if (opcaoSalva !== 'auto') {
+            if (opcaoSalva === 'champions') {
+                document.body.classList.add('champions-theme');
+            } else if (opcaoSalva === 'gp-brasil') {
                 document.body.classList.add('gp-brasil-theme');
-            } else {
-                document.body.classList.remove('gp-brasil-theme');
             }
+            return;
+        }
+
+        // 2. Se estiver em "Automático" (auto):
+        // Prioridade do Modo de Jogo: se estiver jogando Modo Lendas ('champions'), força o tema Hall da Fama
+        if (modoJogo === 'champions') {
+            document.body.classList.add('champions-theme');
+            return;
+        }
+
+        // Caso esteja em "Automático" no Modo Normal, valida a data festiva (Exemplo: GP do Brasil em Novembro)
+        const hoje = new Date();
+        const dia = hoje.getDate();
+        const mes = hoje.getMonth(); // Novembro = mês 10 (base 0)
+
+        if (mes === 10 && (dia === 6 || dia === 7 || dia === 8)) {
+            document.body.classList.add('gp-brasil-theme');
         }
     }
 
@@ -1017,11 +1144,6 @@
     }
 
     window.addEventListener('DOMContentLoaded', atualizarTemaAplicado);
-
-    /* Código primario*/
-    let modoJogo = 'normal';
-    let autoPlayAtivo = false;
-    let autoPlayTimer = null;
 
     const coresEquipesOficiais = {
         "Ferrari": "#D52E37",
@@ -1035,14 +1157,15 @@
         "Williams": "#3267D4",
         "Haas": "#DFE1E2",
         "Cadillac": "#AAAAAD",
-        "Lotus": "#F1C40F",
-        "Cooper": "#2ECC71",
-        "Brabham": "#3498DB",
-        "Renault": "#F39C12",
+
+        "Renault": "#FFD700",
+        "Lotus": "#D4AF37",
+        "Brabham": "#FFFFFF",
+        "Tyrrell": "#001F3F",
+        "Cooper": "#004225",
         "Vanwall": "#1ABC9C",
         "BRM": "#9B59B6",
         "Matra": "#2980B9",
-        "Tyrrell": "#34495E",
         "Benetton": "#E67E22",
         "Brawn GP": "#CDDC39"
     };
@@ -1070,6 +1193,16 @@
     let qualiInterval = null;
 
     let patrociniosAtivos = []; 
+
+    let metasCampeoesState = {
+        podiosConquistados: 0,
+        vitoriasConquistadas: 0,
+        dobradinhasConquistadas: 0,
+        top5Conquistados: 0,
+        duelosVencidosEquipes: {},
+        metasResgatadas: {}
+    };
+
     const bancoPatrocinadores = [
         { id: "shell", nome: "Shell Energy", bonus: 4, metaPos: 3, desc: "Paga R$ 4M se um piloto terminar no TOP 3." },
         { id: "redbull_corp", nome: "Red Bull Aero", bonus: 5, metaPos: 1, desc: "Paga R$ 5M caso conquiste a Vitória no GP." },
@@ -1094,7 +1227,7 @@
         { nome: "GP da Inglaterra (Silverstone)", bioma: "Velocidade", voltas: 29, desc: "Curvas históricas rápidas de altíssima energia." },
         { nome: "GP da Hungria (Hungaroring)", bioma: "Rua", voltas: 38, desc: "Travado e sinuoso, sem momentos para respirar." },
         { nome: "GP da Bélgica (Spa-Francorchamps)", bioma: "Velocidade", voltas: 24, desc: "A mística subida da Eau Rouge com clima instável." },
-        { nome: "GP da Holanda (Zandvoort)", bioma: "Equilibrado", voltas: 39, desc: "Curvas ovais inclinadas altamente técnicas." },
+        { nome: "GP da Holanda (Zandvoort)", bioma: "Equilibrado", voltas: 39, desc: "Curvas ovais inclinadas highly técnicas." },
         { nome: "GP da Itália (Monza)", bioma: "Velocidade", voltas: 29, desc: "O templo sagrado clássico de velocidade de ponta." },
         { nome: "GP do Azerbaijão (Baku)", bioma: "Rua", voltas: 28, desc: "Setor ultra-estreito com monumental reta de 2km." },
         { nome: "GP de Singapura (Marina Bay)", bioma: "Rua", voltas: 33, desc: "Calor insuportável e umidade extrema exaustiva." },
@@ -1203,7 +1336,7 @@
 
     const equipesCampeãs = [
         { nome: "Ferrari", ovr: 99, titulos: 16, desc: "Maior campeã da história da F1." },
-        { nome: "McLaren", ovr: 97, titulos: 10, desc: "Referência de inovação técnica." },
+        { nome: "McLaren", ovr: 97, titulos: 9, desc: "Referência de inovação técnica e campeã de 2024." },
         { nome: "Williams", ovr: 95, titulos: 9, desc: "Potência britânica clássica." },
         { nome: "Mercedes", ovr: 94, titulos: 8, desc: "Domínio absoluto na era moderna." },
         { nome: "Lotus", ovr: 92, titulos: 7, desc: "Leveza e soluções geniais." },
@@ -1248,7 +1381,7 @@
         { nome: "Lewis Hamilton", ovr: 96, pot: 100, xp: 0, inicio: 2007, campeao: true, titulos: 7, desc: "Leitura de corrida e consistência impecável.", anosContratoF1: 1 },
         { nome: "Fernando Alonso", ovr: 95, pot: 99, xp: 0, inicio: 2001, campeao: true, titulos: 2, desc: "Veterano agressivo no duelo direto.", anosContratoF1: 1 },
         { nome: "Lando Norris", ovr: 93, pot: 96, xp: 0, inicio: 2019, campeao: true, titulos: 1, desc: "Coragem nas ultrapassagens e preservação de pneus.", anosContratoF1: 4 },
-        { nome: "Andrea Kimi Antonelli", ovr: 88, pot: 100, xp: 0, inicio: 2025, campeao: true, titulos: 1, desc: "Talento precoce de velocidade natural.", anosContratoF1: 1 },
+        { nome: "Andrea Kimi Antonelli", ovr: 88, pot: 100, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Talento precoce de velocidade natural.", anosContratoF1: 1 },
         { nome: "Charles Leclerc", ovr: 88, pot: 95, xp: 0, inicio: 2018, campeao: false, titulos: 0, desc: "Explosivo e veloz em volta lançada.", anosContratoF1: 4 },
         { nome: "George Russell", ovr: 88, pot: 94, xp: 0, inicio: 2019, campeao: false, titulos: 0, desc: "Frieza e método tático refinado.", anosContratoF1: 1 },
         { nome: "Oscar Piastri", ovr: 87, pot: 95, xp: 0, inicio: 2023, campeao: false, titulos: 0, desc: "Calculista de ritmo maduro.", anosContratoF1: 2 },
@@ -1266,6 +1399,141 @@
         { nome: "Franco Colapinto", ovr: 80, pot: 89, xp: 0, inicio: 2024, campeao: false, titulos: 0, desc: "Briga com firmeza sob alta pressão.", anosContratoF1: 1 },
         { nome: "Isack Hadjar", ovr: 87, pot: 93, xp: 0, inicio: 2026, campeao: false, titulos: 0, desc: "Agressivo em voltas voadoras.", anosContratoF1: 1 },
         { nome: "Arvid Lindblad", ovr: 79, pot: 90, xp: 0, inicio: 2026, campeao: false, titulos: 0, desc: "Fome de evolução e velocidade limpa.", anosContratoF1: 1 }
+    ];
+
+    const companheirosEpsCampeoes = [
+        { nome: "Sir Stirling Moss", ovr: 96, pot: 96, xp: 0, inicio: 1951, campeao: false, titulos: 0, desc: "O maior piloto sem título mundial da F1.", categoriaOrigem: "Lenda F1" },
+        { nome: "Ronnie Peterson", ovr: 93, pot: 94, xp: 0, inicio: 1970, campeao: false, titulos: 0, desc: "O 'SuperSwede', gênio do drift e controle.", categoriaOrigem: "Lenda F1" },
+        { nome: "François Cevert", ovr: 89, pot: 91, xp: 0, inicio: 1970, campeao: false, titulos: 0, desc: "Veloz companheiro de Jackie Stewart na Tyrrell.", categoriaOrigem: "Lenda F1" },
+        { nome: "Carlos Reutemann", ovr: 91, pot: 92, xp: 0, inicio: 1972, campeao: false, titulos: 0, desc: "Vice-campeão em 1981 e vitorioso em 12 GPs.", categoriaOrigem: "Lenda F1" },
+        { nome: "Jacky Ickx", ovr: 92, pot: 93, xp: 0, inicio: 1967, campeao: false, titulos: 0, desc: "Multicampeão de endurance e vice na F1.", categoriaOrigem: "Lenda F1" },
+        { nome: "Rubens Barrichello", ovr: 91, pot: 92, xp: 0, inicio: 1993, campeao: false, titulos: 0, desc: "Veterano lendário com passagens marcantes por Ferrari e Brawn GP.", categoriaOrigem: "Lenda F1" },
+        { nome: "Riccardo Patrese", ovr: 89, pot: 90, xp: 0, inicio: 1977, campeao: false, titulos: 0, desc: "Companheiro de Mansell na Williams e 256 GPs.", categoriaOrigem: "Lenda F1" },
+        { nome: "Gerhard Berger", ovr: 90, pot: 91, xp: 0, inicio: 1984, campeao: false, titulos: 0, desc: "Parceiro épico de Senna na McLaren e da Ferrari.", categoriaOrigem: "Lenda F1" },
+        { nome: "David Coulthard", ovr: 90, pot: 91, xp: 0, inicio: 1994, campeao: false, titulos: 0, desc: "Firme companheiro na Williams e McLaren (vice em 2001).", categoriaOrigem: "Lenda F1" },
+        { nome: "Eddie Irvine", ovr: 87, pot: 88, xp: 0, inicio: 1993, campeao: false, titulos: 0, desc: "Vice-campeão de 1999 com a Ferrari.", categoriaOrigem: "Lenda F1" },
+        { nome: "Heinz-Harald Frentzen", ovr: 89, pot: 90, xp: 0, inicio: 1994, campeao: false, titulos: 0, desc: "Veloz na Williams e Jordan no fim dos anos 90.", categoriaOrigem: "Lenda F1" },
+        { nome: "Giancarlo Fisichella", ovr: 88, pot: 89, xp: 0, inicio: 1996, campeao: false, titulos: 0, desc: "Companheiro de Alonso no bicampeonato da Renault (2005-2006).", categoriaOrigem: "Lenda F1" },
+        { nome: "Felipe Massa", ovr: 91, pot: 92, xp: 0, inicio: 2002, campeao: false, titulos: 0, desc: "Vice-campeão de 2008 e pilar da Ferrari.", categoriaOrigem: "Lenda F1" },
+        { nome: "Mark Webber", ovr: 90, pot: 91, xp: 0, inicio: 2002, campeao: false, titulos: 0, desc: "Rival interno de Vettel no auge da Red Bull.", categoriaOrigem: "Lenda F1" },
+        { nome: "Valtteri Bottas", ovr: 89, pot: 90, xp: 0, inicio: 2013, campeao: false, titulos: 0, desc: "Escudeiro de Hamilton no domínio da Mercedes.", categoriaOrigem: "Lenda F1" },
+        { nome: "Daniel Ricciardo", ovr: 89, pot: 90, xp: 0, inicio: 2011, campeao: false, titulos: 0, desc: "Vencedor de GPs e companheiro de Vettel e Verstappen.", categoriaOrigem: "Lenda F1" },
+        { nome: "Sergio Pérez", ovr: 88, pot: 89, xp: 0, inicio: 2011, campeao: false, titulos: 0, desc: "Companheiro de Verstappen na conquista dos mundiais.", categoriaOrigem: "Fórmula 1" },
+        { nome: "Bruno Senna", ovr: 82, pot: 85, xp: 0, inicio: 2010, campeao: false, titulos: 0, desc: "Reserva oficial e piloto de testes histórico da Brawn GP.", categoriaOrigem: "Lenda F1" }
+    ];
+
+    const pilotosModoCampeoes = [
+        { nome: "Max Verstappen", ovr: 98, pot: 100, xp: 0, inicio: 2015, campeao: true, titulos: 4, desc: "Ritmo puro e pressão cirúrgica constante.", categoriaOrigem: "Fórmula 1" },
+        { nome: "Lewis Hamilton", ovr: 96, pot: 100, xp: 0, inicio: 2007, campeao: true, titulos: 7, desc: "Leitura de corrida e consistência impecável.", categoriaOrigem: "Fórmula 1" },
+        { nome: "Fernando Alonso", ovr: 95, pot: 99, xp: 0, inicio: 2001, campeao: true, titulos: 2, desc: "Veterano agressivo no duelo direto.", categoriaOrigem: "Fórmula 1" },
+        { nome: "Lando Norris", ovr: 93, pot: 96, xp: 0, inicio: 2019, campeao: true, titulos: 1, desc: "Coragem nas ultrapassagens e preservação de pneus.", categoriaOrigem: "Fórmula 1" },
+        { nome: "Ayrton Senna", ovr: 99, pot: 99, xp: 0, inicio: 1984, campeao: true, titulos: 3, desc: "Mágico da chuva e das voltas voadoras.", categoriaOrigem: "Lenda F1" },
+        { nome: "Michael Schumacher", ovr: 99, pot: 99, xp: 0, inicio: 1991, campeao: true, titulos: 7, desc: "Sete vezes campeão e obstinado por vitórias.", categoriaOrigem: "Lenda F1" },
+        { nome: "Juan Manuel Fangio", ovr: 98, pot: 98, xp: 0, inicio: 1950, campeao: true, titulos: 5, desc: "Pentacampeão e lenda absoluta da era inicial.", categoriaOrigem: "Lenda F1" },
+        { nome: "Alain Prost", ovr: 97, pot: 97, xp: 0, inicio: 1980, campeao: true, titulos: 4, desc: "O 'Professor', impecável na gestão de prova.", categoriaOrigem: "Lenda F1" },
+        { nome: "Jim Clark", ovr: 96, pot: 97, xp: 0, inicio: 1960, campeao: true, titulos: 2, desc: "Dominante e extremamente fluído na pista.", categoriaOrigem: "Lenda F1" },
+        { nome: "Niki Lauda", ovr: 95, pot: 96, xp: 0, inicio: 1971, campeao: true, titulos: 3, desc: "Frieza analítica e resiliência histórica.", categoriaOrigem: "Lenda F1" },
+        { nome: "Sebastian Vettel", ovr: 95, pot: 96, xp: 0, inicio: 2007, campeao: true, titulos: 4, desc: "Tetracampeão dominante e estratégico.", categoriaOrigem: "Lenda F1" },
+        { nome: "Jackie Stewart", ovr: 94, pot: 95, xp: 0, inicio: 1965, campeao: true, titulos: 3, desc: "Mestre da estratégia e da segurança.", categoriaOrigem: "Lenda F1" },
+        { nome: "Nelson Piquet", ovr: 94, pot: 95, xp: 0, inicio: 1978, campeao: true, titulos: 3, desc: "Tricampeão técnico e gênio dos acertos.", categoriaOrigem: "Lenda F1" },
+        { nome: "Mika Häkkinen", ovr: 94, pot: 95, xp: 0, inicio: 1991, campeao: true, titulos: 2, desc: "O rival definitivo de Schumacher.", categoriaOrigem: "Lenda F1" },
+        { nome: "Alberto Ascari", ovr: 94, pot: 95, xp: 0, inicio: 1950, campeao: true, titulos: 2, desc: "Primeiro bicampeão da Ferrari.", categoriaOrigem: "Lenda F1" },
+        { nome: "Nigel Mansell", ovr: 93, pot: 94, xp: 0, inicio: 1980, campeao: true, titulos: 1, desc: "O 'Leão', pura bravura nas ultrapassagens.", categoriaOrigem: "Lenda F1" },
+        { nome: "Emerson Fittipaldi", ovr: 92, pot: 94, xp: 0, inicio: 1970, campeao: true, titulos: 2, desc: "Pioneiro brasileiro e bicampeão mundial.", categoriaOrigem: "Lenda F1" },
+        { nome: "Sir Jack Brabham", ovr: 92, pot: 93, xp: 0, inicio: 1955, campeao: true, titulos: 3, desc: "Campeão pilotando o próprio carro.", categoriaOrigem: "Lenda F1" },
+        { nome: "Kimi Räikkönen", ovr: 92, pot: 93, xp: 0, inicio: 2001, campeao: true, titulos: 1, desc: "O 'Iceman', ritmo puro de corrida.", categoriaOrigem: "Lenda F1" },
+        { nome: "Graham Hill", ovr: 91, pot: 92, xp: 0, inicio: 1958, campeao: true, titulos: 2, desc: "O único detentor da Tríplice Coroa.", categoriaOrigem: "Lenda F1" },
+        { nome: "Mario Andretti", ovr: 91, pot: 92, xp: 0, inicio: 1968, campeao: true, titulos: 1, desc: "Campeão na F1 e na Indy.", categoriaOrigem: "Lenda F1" },
+        { nome: "Jochen Rindt", ovr: 91, pot: 92, xp: 0, inicio: 1964, campeao: true, titulos: 1, desc: "Campeão póstumo ultra-veloz.", categoriaOrigem: "Lenda F1" },
+        { nome: "Nico Rosberg", ovr: 91, pot: 92, xp: 0, inicio: 2006, campeao: true, titulos: 1, desc: "Venceu a batalha épica contra Hamilton em 2016.", categoriaOrigem: "Lenda F1" },
+        { nome: "John Surtees", ovr: 90, pot: 91, xp: 0, inicio: 1960, campeao: true, titulos: 1, desc: "Campeão nas duas e nas quatro rodas.", categoriaOrigem: "Lenda F1" },
+        { nome: "Jenson Button", ovr: 90, pot: 91, xp: 0, inicio: 2000, campeao: true, titulos: 1, desc: "Suave no volante e mestre no clima variado.", categoriaOrigem: "Lenda F1" },
+        { nome: "James Hunt", ovr: 89, pot: 90, xp: 0, inicio: 1973, campeao: true, titulos: 1, desc: "Agressivo e espetacular em pista.", categoriaOrigem: "Lenda F1" },
+        { nome: "Damon Hill", ovr: 89, pot: 90, xp: 0, inicio: 1992, campeao: true, titulos: 1, desc: "Consistente e campeão da Williams em 96.", categoriaOrigem: "Lenda F1" },
+        { nome: "Jacques Villeneuve", ovr: 89, pot: 90, xp: 0, inicio: 1996, campeao: true, titulos: 1, desc: "Destemido em disputas roda a roda.", categoriaOrigem: "Lenda F1" },
+        { nome: "Keke Rosberg", ovr: 88, pot: 89, xp: 0, inicio: 1978, campeao: true, titulos: 1, desc: "Pilotagem no limite da aderência.", categoriaOrigem: "Lenda F1" },
+        { nome: "Jody Scheckter", ovr: 88, pot: 89, xp: 0, inicio: 1972, campeao: true, titulos: 1, desc: "Campeão emblemático com a Ferrari em 1979.", categoriaOrigem: "Lenda F1" },
+        ...companheirosEpsCampeoes
+    ];
+
+    const gridHistoricoCampeoes = [
+        { 
+            equipe: "Ferrari", 
+            p1: "Michael Schumacher", 
+            p2: "Felipe Massa", 
+            sub: "Kimi Räikkönen",
+            chassisOvr: 99, motorOvr: 99, aeroOvr: 99 
+        },
+        { 
+            equipe: "Mercedes", 
+            p1: "Lewis Hamilton", 
+            p2: "Nico Rosberg", 
+            sub: "Valtteri Bottas",
+            chassisOvr: 94, motorOvr: 98, aeroOvr: 94 
+        },
+        { 
+            equipe: "McLaren", 
+            p1: "Ayrton Senna", 
+            p2: "Alain Prost", 
+            sub: "Mika Häkkinen",
+            chassisOvr: 97, motorOvr: 96, aeroOvr: 97 
+        },
+        { 
+            equipe: "Red Bull", 
+            p1: "Max Verstappen", 
+            p2: "Sebastian Vettel", 
+            sub: "Mark Webber",
+            chassisOvr: 91, motorOvr: 94, aeroOvr: 91 
+        },
+        { 
+            equipe: "Williams", 
+            p1: "Nigel Mansell", 
+            p2: "Nelson Piquet", 
+            sub: "Damon Hill",
+            chassisOvr: 95, motorOvr: 95, aeroOvr: 95 
+        },
+        { 
+            equipe: "Lotus", 
+            p1: "Jim Clark", 
+            p2: "Emerson Fittipaldi", 
+            sub: "Graham Hill",
+            chassisOvr: 92, motorOvr: 95, aeroOvr: 92 
+        },
+        { 
+            equipe: "Brawn GP", 
+            p1: "Jenson Button", 
+            p2: "Rubens Barrichello", 
+            sub: "Bruno Senna",
+            chassisOvr: 96, motorOvr: 94, aeroOvr: 96 
+        },
+        { 
+            equipe: "Renault", 
+            p1: "Fernando Alonso", 
+            p2: "Giancarlo Fisichella", 
+            sub: "Sir Stirling Moss",
+            chassisOvr: 82, motorOvr: 96, aeroOvr: 82 
+        },
+        { 
+            equipe: "Brabham", 
+            p1: "Sir Jack Brabham", 
+            p2: "Carlos Reutemann", 
+            sub: "Jacky Ickx",
+            chassisOvr: 83, motorOvr: 89, aeroOvr: 83 
+        },
+        { 
+            equipe: "Tyrrell", 
+            p1: "Jackie Stewart", 
+            p2: "François Cevert", 
+            sub: "Jody Scheckter",
+            chassisOvr: 78, motorOvr: 95, aeroOvr: 78 
+        },
+        { 
+            equipe: "Cooper", 
+            p1: "Alberto Ascari", 
+            p2: "John Surtees", 
+            sub: "Jochen Rindt",
+            chassisOvr: 84, motorOvr: 91, aeroOvr: 84 
+        }
     ];
 
     const gridOficialF12026 = [
@@ -1307,16 +1575,6 @@
         "Valtteri Bottas": { promovido: "Colton Herta", equipePromovido: null, substitutoBase: null }
     };
 
-    const pilotosHistoricos = [
-        { nome: "Michael Schumacher", ovr: 99, pot: 99, xp: 0, inicio: 1991, campeao: true, titulos: 7, desc: "Domínio cirúrgico e mentalidade vencedora." },
-        { nome: "Ayrton Senna", ovr: 99, pot: 99, xp: 0, inicio: 1984, campeao: true, titulos: 3, desc: "Precisão absurda e velocidade histórica." },
-        { nome: "Juan Manuel Fangio", ovr: 98, pot: 98, xp: 0, inicio: 1950, campeao: true, titulos: 5, desc: "Taxa de aproveitamento lendária." },
-        { nome: "Jim Clark", ovr: 96, pot: 97, xp: 0, inicio: 1960, campeao: true, titulos: 2, desc: "Naturalidade e ritmo limpo ao volante." },
-        { nome: "Niki Lauda", ovr: 95, pot: 96, xp: 0, inicio: 1971, campeao: true, titulos: 3, desc: "Racional e especialista técnico." },
-        { nome: "Jackie Stewart", ovr: 94, pot: 95, xp: 0, inicio: 1965, campeao: true, titulos: 3, desc: "Mestre da inteligência de corrida." },
-        { nome: "Emerson Fittipaldi", ovr: 92, pot: 94, xp: 0, inicio: 1970, campeao: true, titulos: 2, desc: "Versatilidade e sangue competitivo." }
-    ];
-
     const pilotosF2 = [
         { nome: "Gabriele Minì", ovr: 75, pot: 89, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Forte em corridas de recuperação.", categoriaOrigem: "Fórmula 2" },
         { nome: "Colton Herta", ovr: 75, pot: 91, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Velocidade bruta excepcional e piloto de testes Cadillac.", categoriaOrigem: "Fórmula 2" },
@@ -1347,9 +1605,6 @@
         { nome: "Luke Browning", ovr: 71, pot: 85, xp: 0, inicio: 2025, campeao: false, titulos: 0, desc: "Academia Williams.", categoriaOrigem: "Fórmula 2" }
     ];
 
-    // ========================================================
-    // ⚡ ESTRUTURA DA FÓRMULA E (GRID 2025/2026/2027)
-    // ========================================================
     const campeoesGridFE = [
         { nome: "Pascal Wehrlein", ovr: 85, pot: 90, xp: 0, inicio: 2019, campeao: true, titulos: 1, desc: "Campeão Mundial da Temporada 10 (TAG Heuer Porsche).", categoriaOrigem: "Fórmula E" },
         { nome: "Jake Dennis", ovr: 83, pot: 88, xp: 0, inicio: 2021, campeao: true, titulos: 1, desc: "Campeão Mundial da Temporada 9 (Avalanche Andretti).", categoriaOrigem: "Fórmula E" },
@@ -1382,7 +1637,7 @@
     const pilotosFE = [...campeoesGridFE, ...desafiantesGridFE];
     const categoriasAlternativasMercado = [...pilotosF2, ...pilotosFE];
     
-    const todosPilotosMapeados = [...pilotos2026, ...pilotosHistoricos, ...pilotosF2, ...pilotosFE];
+    const todosPilotosMapeados = [...pilotos2026, ...pilotosModoCampeoes, ...pilotosF2, ...pilotosFE];
     
     todosPilotosMapeados.forEach(p => {
         let maxPot = (p.nome === "Lewis Hamilton") ? 100 : 99;
@@ -1497,7 +1752,7 @@
 
         let tempoCorridoMS = 60000;
         let intervaloAdicao = autoPlayAtivo ? 50 : 2200;
-        let decrementoTimer = autoPlayAtivo ? 2500 : 2500; 
+        let decrementoTimer = 2500; 
 
         let indiceEntrada = 0;
 
@@ -1650,7 +1905,9 @@
             fixedTeamName: fixedTeamName,
             playerTeamColor: playerTeamColor,
             pontosPilotos: pontosPilotos,
-            pontosConstrutores: pontosConstrutores
+            pontosConstrutores: pontosConstrutores,
+            metasCampeoesState: metasCampeoesState,
+            temaAnteriorSalvo: temaAnteriorSalvo
         };
 
         const jsonString = JSON.stringify(gameState);
@@ -1701,8 +1958,18 @@
                 playerTeamColor = loadedState.playerTeamColor;
                 pontosPilotos = loadedState.pontosPilotos;
                 pontosConstrutores = loadedState.pontosConstrutores;
+                temaAnteriorSalvo = loadedState.temaAnteriorSalvo || null;
+                metasCampeoesState = loadedState.metasCampeoesState || {
+                    podiosConquistados: 0, vitoriasConquistadas: 0, dobradinhasConquistadas: 0, top5Conquistados: 0, duelosVencidosEquipes: {}, metasResgatadas: {}
+                };
 
-                alert(`✅ Jogo Carregado com Sucesso!\nEscuderia: ${fixedTeamName}\nAno: ${temporadaAno} | GP: ${currentGP + 1}`);
+                if (modoJogo === 'champions') {
+                    alterarTemaManual('champions');
+                } else {
+                    atualizarTemaAplicado();
+                }
+
+                alert(`✅ Jogo Carregado com Sucesso!\nEscuderia: ${fixedTeamName}\nModo: ${modoJogo === 'champions' ? 'Apenas Campeões & Lendas' : 'Carreira F1'}\nAno: ${temporadaAno} | GP: ${currentGP + 1}`);
                 openHQManagerScreen();
             } catch (err) {
                 alert("❌ Ocorreu um erro ao carregar o arquivo de save. Certifique-se de que é um arquivo .txt válido do jogo.");
@@ -1799,6 +2066,28 @@
         fixedTeamName = 'Sua Escuderia';
         autoPlayAtivo = gameSettings.autoplayAlwaysOn;
 
+        metasCampeoesState = {
+            podiosConquistados: 0,
+            vitoriasConquistadas: 0,
+            dobradinhasConquistadas: 0,
+            top5Conquistados: 0,
+            duelosVencidosEquipes: {},
+            metasResgatadas: {}
+        };
+
+        if (modo === 'champions') {
+            temaAnteriorSalvo = localStorage.getItem('f1_theme_preference') || 'auto';
+            atualizarTemaAplicado();
+        } else {
+            temaAnteriorSalvo = null;
+            atualizarTemaAplicado();
+        }
+
+        const indicator = document.getElementById('game-mode-indicator');
+        if (indicator) {
+            indicator.innerText = modo === 'champions' ? '🏆 Modo Campeões Mundiais & Lendas' : '🏎️ Modo Carreira Manager F1';
+        }
+
         const btnAp = document.getElementById('btn-toggle-autoplay');
         if (autoPlayAtivo) { btnAp.classList.add('active-ap'); btnAp.innerText = "Auto-Play Ligado 🤖"; }
         else { btnAp.classList.remove('active-ap'); btnAp.innerText = "Ligar Auto-Play 🤖"; }
@@ -1817,13 +2106,20 @@
         generatePool('piloto2');
     }
 
-    function returnToMenuFromDraft() { showScreen('screen-menu'); }
+    function returnToMenuFromDraft() {
+        if (temaAnteriorSalvo !== null) {
+            alterarTemaManual(temaAnteriorSalvo);
+            temaAnteriorSalvo = null;
+        } else {
+            atualizarTemaAplicado();
+        }
+        showScreen('screen-menu');
+    }
 
     function getPilotosPorCategoria() {
         if (modoJogo === 'champions') {
             return [
-                { titulo: 'Pilotos Históricos', itens: getRandomSubarray(pilotosHistoricos, 4) },
-                { titulo: 'Campeões Mundiais Atuais', itens: getRandomSubarray(pilotos2026.filter(p => p.campeao), 4) }
+                { titulo: '🏆 Campeões Mundiais & Lendas Históricas', itens: getRandomSubarray(pilotosModoCampeoes, 8) }
             ];
         }
 
@@ -1942,39 +2238,35 @@
         let escolhidosPeloPlayer = [selectedDraft.piloto1.nome, selectedDraft.piloto2.nome];
 
         if (modoJogo === 'champions') {
-            const listaEquipesUniverso = equipesCampeãs;
-            let listaPilotosUniverso = todosPilotosMapeados.filter(p => p.campeao === true);
-            let pilotosDisponiveis = listaPilotosUniverso.filter(p => !escolhidosPeloPlayer.includes(p.nome));
-            let selecionados = getRandomSubarray(pilotosDisponiveis, 22);
+            let gridMontado = JSON.parse(JSON.stringify(gridHistoricoCampeoes));
 
-            let equipesAleatorias = getRandomSubarray(listaEquipesUniverso, 11);
+            escolhidosPeloPlayer.forEach(nomeDraft => {
+                gridMontado.forEach(eq => {
+                    if (eq.p1 === nomeDraft || eq.p2 === nomeDraft) {
+                        if (eq.p1 === nomeDraft) eq.p1 = eq.sub;
+                        else eq.p2 = eq.sub;
+                    }
+                });
+            });
+
             rivaisFixosGrid = [];
-            
-            for (let i = 0; i < 11; i++) {
-                let eqObj = equipesAleatorias[i];
-                let p1 = selecionados[i * 2];
-                let p2 = selecionados[i * 2 + 1];
-
-                rivaisFixosGrid.push({ 
-                    nome: p1.nome, 
-                    equipe: eqObj.nome, 
-                    ovr: p1.ovr, 
-                    eqOvr: eqObj.ovr,
-                    chassisOvr: eqObj.ovr,
-                    motorOvr: eqObj.ovr,
-                    aeroOvr: eqObj.ovr
+            gridMontado.forEach(eq => {
+                [eq.p1, eq.p2].forEach(nomeP => {
+                    let pObj = pilotosModoCampeoes.find(p => p.nome === nomeP) || { nome: nomeP, ovr: 88 };
+                    
+                    rivaisFixosGrid.push({ 
+                        nome: pObj.nome, 
+                        equipe: eq.equipe, 
+                        ovr: pObj.ovr, 
+                        eqOvr: getMediaCarro(eq.chassisOvr, eq.motorOvr, eq.aeroOvr),
+                        chassisOvr: eq.chassisOvr,
+                        motorOvr: eq.motorOvr,
+                        aeroOvr: eq.aeroOvr
+                    });
                 });
-                rivaisFixosGrid.push({ 
-                    nome: p2.nome, 
-                    equipe: eqObj.nome, 
-                    ovr: p2.ovr, 
-                    eqOvr: eqObj.ovr,
-                    chassisOvr: eqObj.ovr,
-                    motorOvr: eqObj.ovr,
-                    aeroOvr: eqObj.ovr
-                });
-            }
-        } else {
+            });
+        } 
+        else {
             let gridMontado = JSON.parse(JSON.stringify(gridOficialF12026));
 
             escolhidosPeloPlayer.forEach(nomePilotoDraft => {
@@ -2016,7 +2308,7 @@
         }
 
         resetStandingsPoints();
-        openPreRaceScreen();
+        openHQManagerScreen();
     }
 
     function updateTheRacerNews() {
@@ -2034,49 +2326,30 @@
 
         let noticiasPossiveis = [];
 
-        noticiasPossiveis.push({
-            headline: `"${fixedTeamName.toUpperCase()} INVESTE PESADO EM ATUALIZAÇÕES PARA O CHASSIS"`,
-            body: `Engenheiros do Paddock afirmam que os pacotes aerodinâmicos encomendados por ${fixedTeamName} podem mudar a hierarquia de forças no grid.`
-        });
-
-        if (sponsorBonusPorCorrida > 2) {
+        if (modoJogo === 'champions') {
             noticiasPossiveis.push({
-                headline: `"DEPARTAMENTO DE MARKETING DE ${fixedTeamName.toUpperCase()} COMEMORA BÔNUS RECORDE"`,
-                body: `Com a ampliação da estrutura comercial, novos investidores estão apostando forte na imagem da escuderia.`
+                headline: `"DISSIDÊNCIA NO PADDOCK: TEMPORADA DE LENDAS HISTÓRICAS É INICIADA!"`,
+                body: `Campeões mundiais de todas as épocas aceleram forte para impor respeito nos circuitos clássicos da F1.`
+            });
+            noticiasPossiveis.push({
+                headline: `"${p1.nome.toUpperCase()} VS ${p2.nome.toUpperCase()}: DUELO DE TITÃS NA ${fixedTeamName.toUpperCase()}!"`,
+                body: `A imprensa internacional destaca a disputa interna memorável entre os dois grandes campeões da equipe.`
+            });
+        } else {
+            noticiasPossiveis.push({
+                headline: `"${fixedTeamName.toUpperCase()} INVESTE PESADO EM ATUALIZAÇÕES PARA O CHASSIS"`,
+                body: `Engenheiros do Paddock afirmam que os pacotes aerodinâmicos encomendados por ${fixedTeamName} podem mudar a hierarquia de forças no grid.`
+            });
+            noticiasPossiveis.push({
+                headline: `"CADILLAC F1 IMPRESSIONA PADDOCK COM EVOLUÇÃO CONSTANTE"`,
+                body: `A nova escuderia americana continua ganhando terreno no grid e incomodando equipes tradicionais da Fórmula 1.`
             });
         }
-
-        if (patrociniosAtivos.length > 0) {
-            noticiasPossiveis.push({
-                headline: `"PATROCINADORES EXIGEM METAS OUSADAS DA ${fixedTeamName.toUpperCase()}"`,
-                body: `Marcas parceiras estão atentas aos resultados na pista para liberarem os bônus contratuais da rodada.`
-            });
-        }
-
-        noticiasPossiveis.push({
-            headline: `"FOCO TOTAL NO TÚNEL DE VENTO: AERODINÂMICA É A CHAVE"`,
-            body: `Especialistas apontam que a eficiência de arrasto em retas longas será o fator decisivo para os próximos grandes prêmios.`
-        });
-
-        noticiasPossiveis.push({
-            headline: `"EQUIPES DA F1 DE OLHO EM TALENTOS DA FÓRMULA E"`,
-            body: `Diretores de equipe estão monitorando de perto campeões e destaques do grid elétrico para suprir vagas em aberto na Fórmula 1.`
-        });
-
-        noticiasPossiveis.push({
-            headline: `"${p1.nome.toUpperCase()} E ${p2.nome.toUpperCase()} TRAVAM BATALHA INTERNA DE RITMO"`,
-            body: `Analistas do The Racer destacam o equilíbrio entre a dupla da ${fixedTeamName}. A telemetria mostra tempos de volta quase idênticos.`
-        });
-
-        noticiasPossiveis.push({
-            headline: `"CADILLAC F1 IMPRESSIONA PADDOCK COM EVOLUÇÃO CONSTANTE"`,
-            body: `A nova escuderia americana continua ganhando terreno no grid e incomodando equipes tradicionais da Fórmula 1.`
-        });
 
         if (diffPontosInterna <= 6 && currentGP > 2) {
             noticiasPossiveis.push({
                 headline: `"CLIMA DE GUERRA FRIA NA GARAGEM DA ${fixedTeamName.toUpperCase()}!"`,
-                body: `Com apenas ${diffPontosInterna} ponto(s) separando ${p1.nome} e ${p2.nome}, o clima no motorhome esquentou. Rádios de equipe mostram insatisfação com ordens de pista.`
+                body: `Com apenas ${diffPontosInterna} ponto(s) separando ${p1.nome} e ${p2.nome}, o clima no motorhome esquentou.`
             });
         }
 
@@ -2160,7 +2433,7 @@
             selectedDraft.chassis.ovr = Math.max(50, selectedDraft.chassis.ovr - 5);
             selectedDraft.motor.ovr = Math.max(50, selectedDraft.motor.ovr - 5);
             selectedDraft.aero.ovr = Math.max(50, selectedDraft.aero.ovr - 5);
-            respostasVistoria.push(`📉 <b>DEGRADAÇÃO ANUAL:</b> O desgastes de fim de temporada reduziu -5 OVR do Chassis, Motor e Aéro.`);
+            respostasVistoria.push(`📉 <b>DEGRADAÇÃO ANUAL:</b> O desgaste de fim de temporada reduziu -5 OVR do Chassis, Motor e Aéro.`);
         }
 
         rivaisFixosGrid.forEach(rival => {
@@ -2303,12 +2576,123 @@
         `).join('');
     }
 
+    function renderMetasEDesafiosHQ() {
+        const containerMetas = document.getElementById('metas-champions-list');
+        const containerDesafios = document.getElementById('desafios-champions-list');
+
+        if (!containerMetas || !containerDesafios) return;
+
+        const metasConfig = [
+            { id: "podios_3", titulo: "🥉 Pódios Históricos", desc: "Conquiste 3 pódios na temporada.", atual: metasCampeoesState.podiosConquistados, meta: 3, recompensa: 12 },
+            { id: "top5_5", titulo: "🎯 Consistência de Elite", desc: "Alcance o TOP 5 em 5 GPs diferentes.", atual: metasCampeoesState.top5Conquistados, meta: 5, recompensa: 10 },
+            { id: "vitoria_1", titulo: "🥇 Primeira Vitória de Lenda", desc: "Vença pelo menos 1 GP com sua escuderia.", atual: metasCampeoesState.vitoriasConquistadas, meta: 1, recompensa: 15 },
+            { id: "dobradinha_1", titulo: "🏆 Dobradinha Perfeita", desc: "Termine um GP com P1 e P2 (Dobradinha da equipe).", atual: metasCampeoesState.dobradinhasConquistadas, meta: 1, recompensa: 20 }
+        ];
+
+        const equipesDesafio = [
+            "Ferrari", "McLaren", "Williams", "Mercedes", "Lotus", 
+            "Red Bull", "Brawn GP", "Renault", "Brabham", "Tyrrell", "Cooper"
+        ];
+
+        const desafiosConfig = equipesDesafio.map(eq => {
+            let chaveKey = `duelo_${eq.toLowerCase().replace(/\s+/g, '_')}`;
+            let vitoriasAtuais = (metasCampeoesState.duelosVencidosEquipes && metasCampeoesState.duelosVencidosEquipes[eq]) || 0;
+            let corEq = getTeamColor(eq);
+
+            return {
+                id: chaveKey,
+                equipe: eq,
+                titulo: `⚔️ Desafio ${eq}`,
+                desc: `Supere a ${eq} em 39 GPs na classificação final para garantir o domínio histórico.`,
+                atual: vitoriasAtuais,
+                meta: 39,
+                recompensa: 25,
+                cor: corEq
+            };
+        });
+
+        containerMetas.innerHTML = metasConfig.map(m => {
+            let resgatado = metasCampeoesState.metasResgatadas[m.id];
+            let concluido = m.atual >= m.meta;
+            let statusText = resgatado ? `<span class="status-completed">✅ Recompensa Resgatada (+R$ ${m.recompensa}M)</span>` :
+                             concluido ? `<button class="btn btn-gold" onclick="resgatarRecompensaMeta('${m.id}', ${m.recompensa})" style="padding:4px 8px; font-size:0.75rem;">Resgatar R$ ${m.recompensa}M 🎁</button>` :
+                             `<span class="status-pending">Progresso: ${m.atual}/${m.meta}</span>`;
+
+            return `
+                <div class="challenge-card">
+                    <div class="challenge-title">${m.titulo}</div>
+                    <div class="challenge-desc">${m.desc}</div>
+                    <div class="challenge-reward">Recompensa: R$ ${m.recompensa}M de bônus</div>
+                    <div class="challenge-status">${statusText}</div>
+                </div>
+            `;
+        }).join('');
+
+        containerDesafios.innerHTML = desafiosConfig.map(d => {
+            let resgatado = metasCampeoesState.metasResgatadas[d.id];
+            let concluido = d.atual >= d.meta;
+            let statusText = resgatado ? `<span class="status-completed">✅ Desafio Concluído (+R$ ${d.recompensa}M)</span>` :
+                             concluido ? `<button class="btn btn-gold" onclick="resgatarRecompensaMeta('${d.id}', ${d.recompensa})" style="padding:4px 8px; font-size:0.75rem;">Resgatar R$ ${d.recompensa}M ⚔️</button>` :
+                             `<span class="status-pending">Vitórias em GP: ${d.atual}/${d.meta}</span>`;
+
+            return `
+                <div class="challenge-card" style="border-left: 4px solid ${d.cor};">
+                    <div class="challenge-title" style="color: ${d.cor};">${d.titulo}</div>
+                    <div class="challenge-desc">${d.desc}</div>
+                    <div class="challenge-reward">Premiação em Caixa: R$ ${d.recompensa}M</div>
+                    <div class="challenge-status">${statusText}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function resgatarRecompensaMeta(metaId, recompensaValor) {
+        if (metasCampeoesState.metasResgatadas[metaId]) return;
+        metasCampeoesState.metasResgatadas[metaId] = true;
+        orcamentoEquipe += recompensaValor;
+        alert(`🎁 Parabéns! Você resgatou a premiação de R$ ${recompensaValor}M pela conquista da Meta/Desafio!`);
+        openHQManagerScreen();
+    }
+
     function openHQManagerScreen() {
         showScreen('screen-manager-hq');
         document.getElementById('hq-budget').innerText = `R$ ${orcamentoEquipe}M`;
         document.getElementById('hq-season-year').innerText = `Ano ${temporadaAno}`;
         document.getElementById('hq-round-info').innerText = `${currentGP + 1} de ${getCurrentGpList().length}`;
+        document.getElementById('hq-team-name-display').innerText = fixedTeamName;
         document.getElementById('hq-team-color-input').value = playerTeamColor;
+
+        const bannerChamp = document.getElementById('champions-hq-banner');
+        const cardFabrica = document.getElementById('hq-card-fabrica');
+        const cardCockpit = document.getElementById('hq-card-cockpit');
+        const cardMetas = document.getElementById('hq-card-metas');
+        const cardDesafios = document.getElementById('hq-card-desafios');
+
+        if (modoJogo === 'champions') {
+            bannerChamp.style.display = 'flex';
+            document.getElementById('hq-market-title').innerText = "🏆 Mercado do Paddock Histórico & Lendas";
+            document.getElementById('hq-market-desc').innerText = "Monitore os contratos de campeões mundiais ativos ou contrate grandes lendas históricas para sua escuderia.";
+            document.getElementById('market-col1-title').innerText = "🏎️ Grid de Campeões Mundiais";
+            document.getElementById('market-col2-title').innerText = "🏆 Lendas Históricas Reservas";
+
+            if (cardFabrica) cardFabrica.style.display = 'none';
+            if (cardCockpit) cardCockpit.style.display = 'none';
+            if (cardMetas) cardMetas.style.display = 'block';
+            if (cardDesafios) cardDesafios.style.display = 'block';
+
+            renderMetasEDesafiosHQ();
+        } else {
+            bannerChamp.style.display = 'none';
+            document.getElementById('hq-market-title').innerText = "🌐 Mercado Global de Pilotos (F1, FE & F2)";
+            document.getElementById('hq-market-desc').innerText = "Monitore contratos da F1 ou contrate talentos da Fórmula E e Fórmula 2.";
+            document.getElementById('market-col1-title').innerText = "🏎️ Grid F1 2026";
+            document.getElementById('market-col2-title').innerText = "⚡ Fórmula E & Fórmula 2";
+
+            if (cardFabrica) cardFabrica.style.display = 'block';
+            if (cardCockpit) cardCockpit.style.display = 'block';
+            if (cardMetas) cardMetas.style.display = 'none';
+            if (cardDesafios) cardDesafios.style.display = 'none';
+        }
 
         updateTheRacerNews();
         renderSponsorsUIHQ();
@@ -2395,11 +2779,11 @@
     }
 
     function renderMarketLists() {
-        const f1Container = document.getElementById('market-f1-list');
-        const f2Container = document.getElementById('market-f2-list');
+        const col1Container = document.getElementById('market-f1-list');
+        const col2Container = document.getElementById('market-f2-list');
         const lockBanner = document.getElementById('market-locked-banner');
-        f1Container.innerHTML = '';
-        f2Container.innerHTML = '';
+        col1Container.innerHTML = '';
+        col2Container.innerHTML = '';
 
         let p1Garantido = (contratosPilotos.p1 > 1 || preContratoAnoSeguinte.p1 !== null);
         let p2Garantido = (contratosPilotos.p2 > 1 || preContratoAnoSeguinte.p2 !== null);
@@ -2411,19 +2795,33 @@
             lockBanner.style.display = 'none';
         }
 
-        gridOficialF12026.forEach(eq => {
-            [eq.p1, eq.p2].forEach(nomeP => {
-                let pObj = todosPilotosMapeados.find(p => p.nome === nomeP) || { nome: nomeP, ovr: 75, pot: 80, anosContratoF1: 1 };
-                let itemHtml = createMarketItemElement(pObj, eq.equipe, false, ambosTrancados);
-                f1Container.appendChild(itemHtml);
+        if (modoJogo === 'champions') {
+            rivaisFixosGrid.forEach(rival => {
+                let pObj = pilotosModoCampeoes.find(p => p.nome === rival.nome) || { nome: rival.nome, ovr: rival.ovr, pot: 99, titulos: 0 };
+                let itemHtml = createMarketItemElement(pObj, rival.equipe, false, ambosTrancados);
+                col1Container.appendChild(itemHtml);
             });
-        });
 
-        categoriasAlternativasMercado.forEach(pObj => {
-            let catNome = pObj.categoriaOrigem || 'Fórmula 2';
-            let itemHtml = createMarketItemElement(pObj, catNome, true, ambosTrancados);
-            f2Container.appendChild(itemHtml);
-        });
+            let lendasReservas = pilotosModoCampeoes.filter(p => !rivaisFixosGrid.some(r => r.nome === p.nome));
+            lendasReservas.forEach(pObj => {
+                let itemHtml = createMarketItemElement(pObj, "Lenda F1", true, ambosTrancados);
+                col2Container.appendChild(itemHtml);
+            });
+        } else {
+            gridOficialF12026.forEach(eq => {
+                [eq.p1, eq.p2].forEach(nomeP => {
+                    let pObj = todosPilotosMapeados.find(p => p.nome === nomeP) || { nome: nomeP, ovr: 75, pot: 80, anosContratoF1: 1 };
+                    let itemHtml = createMarketItemElement(pObj, eq.equipe, false, ambosTrancados);
+                    col1Container.appendChild(itemHtml);
+                });
+            });
+
+            categoriasAlternativasMercado.forEach(pObj => {
+                let catNome = pObj.categoriaOrigem || 'Fórmula 2';
+                let itemHtml = createMarketItemElement(pObj, catNome, true, ambosTrancados);
+                col2Container.appendChild(itemHtml);
+            });
+        }
     }
 
     function createMarketItemElement(pObj, categoriaNome, isAlternativo, ambosTrancados) {
@@ -2443,6 +2841,8 @@
         let painelAbertoP2 = (mercadoPainelAberto === keyP2);
         let slotAtivo = painelAbertoP1 ? 'P1' : painelAbertoP2 ? 'P2' : null;
 
+        let safeNameEscaped = nomeP.replace(/'/g, "\\'");
+
         let actionButtons = '';
         if (ehMeuPiloto) {
             actionButtons = '<span style="color:var(--success-green); font-size:0.75rem;">Titular</span>';
@@ -2453,20 +2853,20 @@
         } else if (ambosTrancados) {
             actionButtons = '<span style="color:#777; font-size:0.75rem;">Cockpits Fechados</span>';
         } else {
-            let btnClass = (categoriaNome === "Fórmula E") ? 'btn-fe' : isAlternativo ? 'btn-gold' : 'btn-money';
+            let btnClass = (categoriaNome === "Fórmula E") ? 'btn-fe' : (modoJogo === 'champions' || isAlternativo) ? 'btn-gold' : 'btn-money';
             actionButtons = `
-                <button class="btn ${btnClass}" onclick="toggleMarketProposalBox('${nomeP}', 'P1')" style="padding:2px 6px; font-size:0.65rem;">${painelAbertoP1 ? 'Fechar P1' : 'Assinar P1'}</button>
-                <button class="btn ${btnClass}" onclick="toggleMarketProposalBox('${nomeP}', 'P2')" style="padding:2px 6px; font-size:0.65rem;">${painelAbertoP2 ? 'Fechar P2' : 'Assinar P2'}</button>
+                <button class="btn ${btnClass}" onclick="toggleMarketProposalBox('${safeNameEscaped}', 'P1')" style="padding:2px 6px; font-size:0.65rem;">${painelAbertoP1 ? 'Fechar P1' : 'Assinar P1'}</button>
+                <button class="btn ${btnClass}" onclick="toggleMarketProposalBox('${safeNameEscaped}', 'P2')" style="padding:2px 6px; font-size:0.65rem;">${painelAbertoP2 ? 'Fechar P2' : 'Assinar P2'}</button>
             `;
         }
 
-        let catTag = (categoriaNome === "Fórmula E") ? `<span class="category-tag-fe">Fórmula E</span>` : `(${categoriaNome})`;
+        let catTag = (pObj.titulos && pObj.titulos > 0) ? `<span class="titles-badge">🏆 ${pObj.titulos}x</span>` : (categoriaNome === "Fórmula E") ? `<span class="category-tag-fe">FE</span>` : `(${categoriaNome})`;
 
         let mainInfo = `
             <div class="market-item-main">
                 <div>
-                    <strong>${pObj.nome}</strong> ${catTag} <span style="color:var(--gold)">OVR ${pObj.ovr}</span> <small style="color:#aaa;">(POT ${pObj.pot || (pObj.nome === "Lewis Hamilton" ? 100 : 99)})</small><br>
-                    <small style="color:${ehRescindido ? 'var(--warning-orange)' : '#aaa'};">${ehRescindido ? 'Livre (Não Recontratável)' : isAlternativo ? categoriaNome : `Contrato F1: ${pObj.anosContratoF1 || 1} ano(s)`}</small>
+                    <strong>${pObj.nome}</strong> ${catTag} <span style="color:var(--gold)">OVR ${pObj.ovr}</span> <small style="color:#aaa;">(POT ${pObj.pot || 99})</small><br>
+                    <small style="color:${ehRescindido ? 'var(--warning-orange)' : '#aaa'};">${ehRescindido ? 'Livre (Não Recontratável)' : isAlternativo ? categoriaNome : `Contrato: 1 ano(s)`}</small>
                 </div>
                 <div>${actionButtons}</div>
             </div>
@@ -2474,7 +2874,6 @@
 
         let offerBox = '';
         if (slotAtivo) {
-            let safeName = nomeP.replace(/'/g, "\\'");
             offerBox = `
                 <div class="market-offer-box">
                     <div style="font-size:0.8rem; font-weight:bold; color:var(--gold); margin-bottom:6px;">
@@ -2482,16 +2881,16 @@
                     </div>
                     <div style="margin-bottom: 6px;">
                         <label style="font-size: 0.75rem;">Duração: </label>
-                        <select id="market-years-${safeName}-${slotAtivo}" style="background:#111; color:#fff; border:1px solid #444; padding:2px 4px; border-radius:4px; font-size:0.75rem;">
+                        <select id="market-years-${safeNameEscaped}-${slotAtivo}" style="background:#111; color:#fff; border:1px solid #444; padding:2px 4px; border-radius:4px; font-size:0.75rem;">
                             <option value="1">1 Ano</option>
                             <option value="2">2 Anos</option>
                             <option value="3">3 Anos</option>
                         </select>
                     </div>
                     <div style="display:flex; gap:4px; flex-wrap:wrap;">
-                        <button class="btn btn-fast" onclick="submitMarketProposal('${safeName}', '${slotAtivo}', 'agressiva')" style="padding: 4px 6px; font-size: 0.65rem;">🔴 Agressiva (R$ 5M/ano)</button>
-                        <button class="btn btn-money" onclick="submitMarketProposal('${safeName}', '${slotAtivo}', 'moderada')" style="padding: 4px 6px; font-size: 0.65rem;">🟡 Moderada (R$ 8M/ano)</button>
-                        <button class="btn" onclick="submitMarketProposal('${safeName}', '${slotAtivo}', 'conservadora')" style="padding: 4px 6px; font-size: 0.65rem; background:var(--success-green); color:#000;">🟢 Conservadora (R$ 12M/ano)</button>
+                        <button class="btn btn-fast" onclick="submitMarketProposal('${safeNameEscaped}', '${slotAtivo}', 'agressiva')" style="padding: 4px 6px; font-size: 0.65rem;">🔴 Agressiva (R$ 5M/ano)</button>
+                        <button class="btn btn-money" onclick="submitMarketProposal('${safeNameEscaped}', '${slotAtivo}', 'moderada')" style="padding: 4px 6px; font-size: 0.65rem;">🟡 Moderada (R$ 8M/ano)</button>
+                        <button class="btn" onclick="submitMarketProposal('${safeNameEscaped}', '${slotAtivo}', 'conservadora')" style="padding: 4px 6px; font-size: 0.65rem; background:var(--success-green); color:#000;">🟢 Conservadora (R$ 12M/ano)</button>
                     </div>
                 </div>
             `;
@@ -2858,6 +3257,8 @@
         let p1PosFinal = 99;
         let p2PosFinal = 99;
 
+        let melhorPosicaoPorEquipe = {};
+
         gridCorrida.forEach((carro, index) => {
             let posFinal = index + 1;
             let pts = tabelaPontos[index] || 0;
@@ -2873,8 +3274,43 @@
                 }
             }
 
+            if (!melhorPosicaoPorEquipe[carro.equipe] || posFinal < melhorPosicaoPorEquipe[carro.equipe]) {
+                melhorPosicaoPorEquipe[carro.equipe] = posFinal;
+            }
+
             processDriverXPAndEvolution(carro, posFinal);
         });
+
+        if (modoJogo === 'champions') {
+            if (p1PosFinal <= 3) metasCampeoesState.podiosConquistados++;
+            if (p2PosFinal <= 3) metasCampeoesState.podiosConquistados++;
+
+            if (p1PosFinal === 1 || p2PosFinal === 1) metasCampeoesState.vitoriasConquistadas++;
+
+            if ((p1PosFinal === 1 && p2PosFinal === 2) || (p1PosFinal === 2 && p2PosFinal === 1)) {
+                metasCampeoesState.dobradinhasConquistadas++;
+            }
+
+            if (p1PosFinal <= 5) metasCampeoesState.top5Conquistados++;
+            if (p2PosFinal <= 5) metasCampeoesState.top5Conquistados++;
+
+            let melhorPosPlayer = Math.min(p1PosFinal, p2PosFinal);
+
+            if (!metasCampeoesState.duelosVencidosEquipes) {
+                metasCampeoesState.duelosVencidosEquipes = {};
+            }
+
+            for (let eq in melhorPosicaoPorEquipe) {
+                if (eq !== fixedTeamName) {
+                    if (melhorPosPlayer < melhorPosicaoPorEquipe[eq]) {
+                        if (!metasCampeoesState.duelosVencidosEquipes[eq]) {
+                            metasCampeoesState.duelosVencidosEquipes[eq] = 0;
+                        }
+                        metasCampeoesState.duelosVencidosEquipes[eq]++;
+                    }
+                }
+            }
+        }
 
         let melhorPosicaoEquipe = Math.min(p1PosFinal, p2PosFinal);
         patrociniosAtivos.forEach(sp => {
@@ -3012,20 +3448,23 @@
         if (!p1Ok) vagasLivres.push('P1');
         if (!p2Ok) vagasLivres.push('P2');
 
-        todosPilotosMapeados.forEach(p => {
+        let bancoPilotosEmergencia = (modoJogo === 'champions') ? pilotosModoCampeoes : todosPilotosMapeados;
+
+        bancoPilotosEmergencia.forEach(p => {
             let ehTitular = (selectedDraft.piloto1.nome === p.nome || selectedDraft.piloto2.nome === p.nome);
             if (!ehTitular && !pilotosLivresRescindidos.includes(p.nome)) {
                 let div = document.createElement('div');
                 div.className = 'market-item';
                 let catLabel = p.categoriaOrigem ? `[${p.categoriaOrigem}]` : '';
+                let safeName = p.nome.replace(/'/g, "\\'");
                 div.innerHTML = `
                     <div class="market-item-main">
                         <div>
                             <strong>${p.nome}</strong> <small style="color:var(--fe-cyan);">${catLabel}</small> <span style="color:var(--gold)">OVR ${p.ovr}</span>
                         </div>
                         <div style="display:flex; gap:4px;">
-                            ${vagasLivres.includes('P1') ? `<button class="btn btn-money" onclick="quickSignEmergency('${p.nome}', 'p1')" style="padding:2px 6px; font-size:0.65rem;">Assinar P1 (R$ 8M)</button>` : ''}
-                            ${vagasLivres.includes('P2') ? `<button class="btn btn-money" onclick="quickSignEmergency('${p.nome}', 'p2')" style="padding:2px 6px; font-size:0.65rem;">Assinar P2 (R$ 8M)</button>` : ''}
+                            ${vagasLivres.includes('P1') ? `<button class="btn btn-money" onclick="quickSignEmergency('${safeName}', 'p1')" style="padding:2px 6px; font-size:0.65rem;">Assinar P1 (R$ 8M)</button>` : ''}
+                            ${vagasLivres.includes('P2') ? `<button class="btn btn-money" onclick="quickSignEmergency('${safeName}', 'p2')" style="padding:2px 6px; font-size:0.65rem;">Assinar P2 (R$ 8M)</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -3059,7 +3498,8 @@
             alert("Caixa insuficiente para contratar (Custo: R$ 8M).");
             return;
         }
-        let pObj = todosPilotosMapeados.find(p => p.nome === nomePiloto);
+        let banco = (modoJogo === 'champions') ? pilotosModoCampeoes : todosPilotosMapeados;
+        let pObj = banco.find(p => p.nome === nomePiloto);
         if (!pObj) return;
 
         orcamentoEquipe -= 8;
@@ -3106,9 +3546,15 @@
                     let contratado = preContratoAnoSeguinte[slot];
                     let rivalNoGrid = rivaisFixosGrid.find(r => r.nome === contratado.nome);
                     if (rivalNoGrid) {
-                        let subInfo = mapaSubstitutosAcademia[contratado.nome] || { promovido: "Gabriele Minì" };
-                        rivalNoGrid.nome = subInfo.promovido;
-                        rivalNoGrid.ovr = 75;
+                        if (modoJogo === 'champions') {
+                            let lendaLivre = pilotosModoCampeoes.find(p => !rivaisFixosGrid.some(x => x.nome === p.nome) && !pilotosLivresRescindidos.includes(p.nome)) || { nome: "Ronnie Peterson", ovr: 93 };
+                            rivalNoGrid.nome = lendaLivre.nome;
+                            rivalNoGrid.ovr = lendaLivre.ovr;
+                        } else {
+                            let subInfo = mapaSubstitutosAcademia[contratado.nome] || { promovido: "Gabriele Minì" };
+                            rivalNoGrid.nome = subInfo.promovido;
+                            rivalNoGrid.ovr = 75;
+                        }
                     }
 
                     selectedDraft[slot === 'p1' ? 'piloto1' : 'piloto2'] = contratado;
